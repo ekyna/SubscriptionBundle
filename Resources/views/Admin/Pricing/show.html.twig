@@ -1,0 +1,51 @@
+{% extends "EkynaAdminBundle:Entity:sided.html.twig" %}
+
+{% block title %}
+<h1>{{ 'ekyna_subscription.pricing.header.show'|trans({'%name%': pricing})|raw }}</h1>
+{% endblock %}
+
+{% block actions %}
+{{ admin_resource_btn(pricing, 'list') }}
+{{ admin_resource_btn(pricing, 'new') }}
+{% endblock %}
+
+{% block main %}
+<div class="actions">
+    {{ admin_resource_btn(pricing, 'edit') }}
+    {{ admin_resource_btn(pricing, 'remove') }}
+</div>
+<div class="show show-with-tabs">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#subscription-pricing-general" data-toggle="tab">{{ 'ekyna_core.field.general'|trans }}</a></li>
+    </ul>
+    <div class="show-body">
+        <div class="tab-content">
+            <div class="tab-pane active" id="subscription-pricing-general">
+                {{ show_row(pricing.year, 'text', 'ekyna_subscription.pricing.field.year') }}
+
+                <div class="row show-row">
+                    <div class="col-md-2 show-label">
+                        {{ 'ekyna_subscription.pricing.field.prices'|trans }}
+                    </div>
+                    <div class="col-md-10">
+                        <div class="show-widget">
+                            <table class="table">
+                                <tr>
+                                    <th>{{ 'ekyna_subscription.price.field.name'|trans }}</th>
+                                    <th>{{ 'ekyna_subscription.price.field.amount'|trans }}</th>
+                                </tr>
+                                {% for price in pricing.prices %}
+                                    <tr>
+                                        <td>{{ price|trans|raw }}</td>
+                                        <td>{{ price.amount|localizednumber }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#subscription-pricing-general" data-toggle="tab">{{ 'ekyna_core.field.general'|trans }}</a></li>
+</ul>
+<div class="panel-body form-body">
+    {{ bootstrap_set_style('horizontal') }}
+    {{ form_errors(form) }}
+    <div class="tab-content">
+	    <div class="tab-pane active" id="subscription-pricing-general">
+	        {{ form_row(form.year) }}
+	        {{ form_row(form.prices) }}
+	    </div>
+    </div>
+    {{ form_rest(form) }}
+</div>

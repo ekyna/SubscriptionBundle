@@ -1,0 +1,38 @@
+ekyna_subscription_pricing_admin_home:
+    path: ""
+    defaults: { _controller: "ekyna_subscription.pricing.controller:homeAction" }
+    requirements:
+        _method: GET
+
+ekyna_subscription_pricing_admin_list:
+    path: /list
+    defaults: { _controller: "ekyna_subscription.pricing.controller:listAction" }
+    requirements:
+        _method: GET|POST
+
+ekyna_subscription_pricing_admin_new:
+    path: /new
+    defaults: { _controller: "ekyna_subscription.pricing.controller:newAction" }
+    requirements:
+        _method: GET|POST
+
+ekyna_subscription_pricing_admin_show:
+    path: /{pricingId}/show
+    defaults: { _controller: "ekyna_subscription.pricing.controller:showAction" }
+    requirements:
+        _method: GET
+        pricingId:  \d+
+
+ekyna_subscription_pricing_admin_edit:
+    path: /{pricingId}/edit
+    defaults: { _controller: "ekyna_subscription.pricing.controller:editAction" }
+    requirements:
+        _method: GET|POST
+        pricingId:  \d+
+
+ekyna_subscription_pricing_admin_remove:
+    path: /{pricingId}/remove
+    defaults: { _controller: "ekyna_subscription.pricing.controller:removeAction" }
+    requirements:
+        _method: GET|POST
+        pricingId:  \d+

@@ -1,0 +1,29 @@
+{% extends 'EkynaAdminBundle:Form:form_div_layout.html.twig' %}
+
+{% block ekyna_subscription_price_collection_widget %}
+{% spaceless %}
+{{ form_errors(form) }}
+<table class="table">
+    <tr>
+        <th>{{ 'ekyna_subscription.price.field.name'|trans }}</th>
+        <th>{{ 'ekyna_subscription.price.field.amount'|trans }}</th>
+    </tr>
+    {% for child in form %}
+        {{ form_widget(child) }}
+    {% endfor %}
+</table>
+{% endspaceless %}
+{% endblock ekyna_subscription_price_collection_widget %}
+
+{% block ekyna_subscription_price_widget %}
+{% spaceless %}
+<tr>
+    <td>
+        {{ form.vars.price_name|trans|raw }}
+    </td>
+    <td>
+        {{ form_widget(form.amount) }}
+    </td>
+</tr>
+{% endspaceless %}
+{% endblock ekyna_subscription_price_widget %}

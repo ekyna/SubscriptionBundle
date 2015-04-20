@@ -1,0 +1,32 @@
+{
+    "name" : "ekyna/subscription-bundle",
+    "description" : "Various utilities",
+    "type" : "symfony-bundle",
+    "authors" : [{
+            "name" : "Etienne Dauvergne",
+            "homepage" : "http://ekyna.com"
+        }
+    ],
+    "keywords" : [
+        "symfony2",
+        "bundle"
+    ],
+    "homepage" : "https://github.com/ekyna/SubscriptionBundle",
+    "license" : [
+        "MIT"
+    ],
+    "require" : {
+        "ekyna/admin-bundle": "0.1.*@dev"
+    },
+    "autoload" : {
+        "psr-0" : {
+            "Ekyna\\Bundle\\SubscriptionBundle" : ""
+        }
+    },
+    "target-dir" : "Ekyna/Bundle/SubscriptionBundle",
+    "extra" : {
+        "branch-alias" : {
+            "dev-master" : "0.1.x-dev"
+        }
+    }
+}

@@ -1,0 +1,26 @@
+ekyna_subscription:
+    pricing:
+        label:
+            singular: Tarif
+            plural: Tarifs
+        header:
+            list: Tarifs <small>Liste des tarifs</small>
+            show: Détail du tarif <small>%name%</small>
+            new: Créer un nouveau tarif
+            edit: Modifier le tarif <small>%name%</small>
+            remove: Supprimer le tarif <small>%name%</small>
+        button:
+            list: Liste des tarifs
+            show: Détail du tarif
+            new: Nouveau tarif
+            edit: Modifier le tarif
+            remove: Supprimer le tarif
+        field:
+            year: Année
+            prices: Prix
+        alert:
+            empty_list: Aucun tarif configuré
+    price:
+        field:
+            name: Groupe
+            amount: Montant

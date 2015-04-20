@@ -1,0 +1,3 @@
+ekyna_subscription_pricing_admin:
+    resource: "admin/pricing.yml"
+    prefix:   /pricings

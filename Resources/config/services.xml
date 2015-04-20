@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="ekyna_subscription.price.class">Ekyna\Bundle\SubscriptionBundle\Entity\GroupPrice</parameter>
+        <parameter key="ekyna_subscription.price.form_type.class">Ekyna\Bundle\SubscriptionBundle\Form\Type\PriceType</parameter>
+    </parameters>
+
+    <services>
+
+        <!-- Form types -->
+        <service id="ekyna_subscription.price.form_type" class="%ekyna_subscription.price.form_type.class%">
+            <argument>%ekyna_subscription.price.class%</argument>
+            <tag name="form.type" alias="ekyna_subscription_price" />
+        </service>
+        <service id="ekyna_subscription.price_collection.form_type" class="Ekyna\Bundle\SubscriptionBundle\Form\Type\PriceCollectionType">
+            <tag name="form.type" alias="ekyna_subscription_price_collection" />
+        </service>
+
+        <!-- Providers -->
+        <service id="ekyna_subscription.provider.group" class="Ekyna\Bundle\SubscriptionBundle\Pricing\Provider\GroupProvider">
+            <argument type="service" id="ekyna_user.group.repository" />
+        </service>
+
+        <!-- Matcher -->
+        <service id="ekyna_subscription.matcher.group" class="Ekyna\Bundle\SubscriptionBundle\Pricing\Matcher\GroupMatcher">
+
+        </service>
+
+    </services>
+
+</container>
