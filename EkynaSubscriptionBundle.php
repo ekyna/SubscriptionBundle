@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\SubscriptionBundle;
 
 use Ekyna\Bundle\SubscriptionBundle\DependencyInjection\Compiler\AdminMenuPass;
 use Ekyna\Bundle\CoreBundle\AbstractBundle;
+use Ekyna\Bundle\SubscriptionBundle\DependencyInjection\Compiler\PricingPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
@@ -21,6 +22,7 @@ class EkynaSubscriptionBundle extends AbstractBundle
         parent::build($container);
 
         $container->addCompilerPass(new AdminMenuPass());
+        $container->addCompilerPass(new PricingPass());
     }
 
     /**

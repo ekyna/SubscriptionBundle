@@ -1,0 +1,36 @@
+<?php
+
+namespace Ekyna\Bundle\SubscriptionBundle\DependencyInjection\Compiler;
+
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+
+/**
+ * Class PricingPass
+ * @package Ekyna\Bundle\SubscriptionBundle\DependencyInjection\Compiler
+ * @author Étienne Dauvergne <contact@ekyna.com>
+ */
+class PricingPass implements CompilerPassInterface
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function process(ContainerBuilder $container)
+    {
+        $config = $container->getParameter('ekyna_subscription.pricing.config');
+
+        $providerKey = $config['provider'];
+
+        if (!$container->hasDefinition($providerKey)) {
+            throw new ServiceNotFoundException($providerKey);
+        }
+        $providerDef = $container->getDefinition($providerKey);
+
+        // Pricing repository
+        $container
+            ->getDefinition('ekyna_subscription.pricing.repository')
+            ->addMethodCall('setProvider', array($providerDef))
+        ;
+    }
+}

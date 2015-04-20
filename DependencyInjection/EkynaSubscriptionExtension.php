@@ -21,28 +21,7 @@ class EkynaSubscriptionExtension extends AbstractExtension
     {
         $config = $this->configure($configs, 'ekyna_subscription', new Configuration(), $container);
 
-        $this->configurePricing($container, $config['pricing']);
-    }
-
-    /**
-     * Configures the pricing services.
-     *
-     * @param ContainerBuilder $container
-     * @param array $config
-     */
-    private function configurePricing(ContainerBuilder $container, array $config)
-    {
-        if (!$container->hasDefinition($config['provider'])) {
-            throw new ServiceNotFoundException($config['provider']);
-        }
-
-        $providerDef = $container->getDefinition($config['provider']);
-
-        // Pricing repository
-        $container
-            ->getDefinition('ekyna_subscription.pricing.repository')
-            ->addMethodCall('setProvider', array($providerDef))
-        ;
+        $container->setParameter('ekyna_subscription.pricing.config', $config['pricing']);
     }
 
     /**
