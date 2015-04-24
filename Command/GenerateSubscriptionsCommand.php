@@ -40,6 +40,7 @@ EOT
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $debug = !$input->getOption('no-debug');
         $years = $input->getArgument('years');
 
         $generator = $this->getContainer()->get('ekyna_subscription.generator');
@@ -50,6 +51,9 @@ EOT
                 $count = $generator->generateByYear($year);
                 $output->writeln(sprintf('%d subscriptions generated.', $count));
             } catch(\Exception $e) {
+                if ($debug) {
+                    $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
+                }
             }
         }
 

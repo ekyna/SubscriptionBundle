@@ -7,6 +7,7 @@ use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvent;
 use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
 use Ekyna\Bundle\SubscriptionBundle\Exception\GenerationException;
 use Ekyna\Bundle\SubscriptionBundle\Generator\Provider\PriceProviderInterface;
+use Ekyna\Bundle\SubscriptionBundle\Model\PriceInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\PriceProviderSubjectInterface;
 use Ekyna\Bundle\SubscriptionBundle\Util\Year;
 use Ekyna\Bundle\UserBundle\Model\UserInterface;
@@ -118,10 +119,8 @@ class SubscriptionGenerator implements PriceProviderSubjectInterface
     {
         $year = Year::validate($year);
 
-        if (null === $price = $this->pricingProvider->findPriceByUserAndYear($user, $year)) {
-            throw new GenerationException('No price found (%s).', $year);
-        }
-        if (false === $price) {
+        $price = $this->pricingProvider->findPriceByUserAndYear($user, $year);
+        if (!$price instanceof PriceInterface) {
             return null;
         }
 

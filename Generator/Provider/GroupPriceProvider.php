@@ -3,7 +3,6 @@
 namespace Ekyna\Bundle\SubscriptionBundle\Generator\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\SubscriptionBundle\Entity\GroupPrice;
 use Ekyna\Bundle\SubscriptionBundle\Util\Year;
 use Ekyna\Bundle\UserBundle\Model\UserInterface;
 
@@ -39,7 +38,8 @@ class GroupPriceProvider extends AbstractPriceProvider
 
         $prices = new ArrayCollection();
         foreach ($groups as $group) {
-            $price = new GroupPrice();
+            /** @var \Ekyna\Bundle\SubscriptionBundle\Entity\GroupPrice $price */
+            $price = new $this->priceClass();
             $price->setGroup($group);
             $prices->add($price);
         }

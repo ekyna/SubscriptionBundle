@@ -71,8 +71,9 @@ class PricingController extends ResourceController
             // TODO Flashes
             if ($generate) {
                 $notifyArg = $notify ? ' --notify' : '';
+                $env = ' --env='.$this->container->getParameter('kernel.environment');
                 $process = new Process(
-                    'php app/console ekyna:subscription:generate ' . implode(' ', $years) . $notifyArg,
+                    'php app/console ekyna:subscription:generate ' . implode(' ', $years) . $notifyArg . $env,
                     dirname($this->container->getParameter('kernel.root_dir'))
                 );
                 $process->start();
@@ -84,8 +85,10 @@ class PricingController extends ResourceController
 
             } elseif ($notify) {
                 // TODO
-                /*$process = new Process(
-                    'php app/console ekyna:subscription:notify',
+                /*
+                $env = ' --env='.$this->container->getParameter('kernel.environment');
+                $process = new Process(
+                    'php app/console ekyna:subscription:notify' . $env,
                     dirname($this->container->getParameter('kernel.root_dir'))
                 );
                 $process->start();
