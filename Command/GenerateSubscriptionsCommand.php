@@ -24,12 +24,12 @@ class GenerateSubscriptionsCommand  extends ContainerAwareCommand
         $this
             ->setName('ekyna:subscription:generate')
             ->setDescription('Creates a super admin user.')
-            ->addArgument('year', InputArgument::OPTIONAL, 'The year for which subscriptions must be generated.', date('Y'))
-            ->addOption('notify', null, InputOption::VALUE_NONE, 'Whether to notify the users or not.')
+            ->addArgument('years', InputArgument::IS_ARRAY|InputArgument::OPTIONAL, 'The years for which subscriptions must be generated.', array(date('Y')))
+            ->addOption('notify', null, InputOption::VALUE_NONE, 'Whether to notify the user after subscription generation or not.')
             ->setHelp(<<<EOT
-The <info>ekyna:subscription:generate</info> generates subscriptions for the given year, and notifies the users:
+The <info>ekyna:subscription:generate</info> generates subscriptions for the given years:
 
-  <info>php app/console ekyna:subscription:generate 2015 --notify</info>
+  <info>php app/console ekyna:subscription:generate 2015 2014</info>
 EOT
             )
         ;
@@ -40,15 +40,24 @@ EOT
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $year = Year::validate($input->getArgument('year'));
+        $years = $input->getArgument('years');
 
-        $output->writeln(sprintf('<info>Generating subscription for year %s</info>', $year));
+        $generator = $this->getContainer()->get('ekyna_subscription.generator');
 
-        $count = $this->getContainer()
-            ->get('ekyna_subscription.generator')
-            ->generateByYear($year)
-        ;
+        foreach ($years as $year) {
+            try {
+                $output->writeln(sprintf('<info>Generating subscription for year %s</info>', $year));
+                $count = $generator->generateByYear($year);
+                $output->writeln(sprintf('%d subscriptions generated.', $count));
+            } catch(\Exception $e) {
+            }
+        }
 
-        $output->writeln(sprintf('%d subscriptions generated.', $count));
+        if ($input->getOption('notify')) {
+            // TODO
+            //$this->getApplication()->find('ekyna:subscription:notify');
+        }
+
+        // TODO notify admin about result
     }
 }

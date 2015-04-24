@@ -54,11 +54,12 @@ class Configuration implements ConfigurationInterface
                             ->children()
                                 ->variableNode('templates')->defaultValue(array(
                                     '_form.html' => 'EkynaSubscriptionBundle:Admin/Pricing:_form.html',
+                                    'list.html'  => 'EkynaSubscriptionBundle:Admin/Pricing:list.html',
                                     'show.html'  => 'EkynaSubscriptionBundle:Admin/Pricing:show.html',
                                 ))->end()
                                 ->scalarNode('parent')->end()
                                 ->scalarNode('entity')->defaultValue('Ekyna\Bundle\SubscriptionBundle\Entity\Pricing')->end()
-                                ->scalarNode('controller')->end()
+                                ->scalarNode('controller')->defaultValue('Ekyna\Bundle\SubscriptionBundle\Controller\Admin\PricingController')->end()
                                 ->scalarNode('operator')->end()
                                 ->scalarNode('repository')->defaultValue('Ekyna\Bundle\SubscriptionBundle\Entity\PricingRepository')->end()
                                 ->scalarNode('form')->defaultValue('Ekyna\Bundle\SubscriptionBundle\Form\Type\PricingType')->end()

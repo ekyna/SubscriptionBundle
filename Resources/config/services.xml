@@ -59,6 +59,7 @@
         <!-- Generator -->
         <service id="ekyna_subscription.generator" class="Ekyna\Bundle\SubscriptionBundle\Generator\SubscriptionGenerator">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="event_dispatcher" />
             <argument type="service" id="validator" />
             <argument>%ekyna_user.user.class%</argument>
             <argument>%ekyna_subscription.subscription.class%</argument>

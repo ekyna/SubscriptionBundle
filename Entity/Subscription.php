@@ -37,6 +37,11 @@ class Subscription implements SubscriptionInterface
     protected $state;
 
     /**
+     * @var \DateTime
+     */
+    protected $notifiedAt;
+
+    /**
      * @var ArrayCollection|PaymentInterface[]
      */
     protected $payments;
@@ -110,6 +115,23 @@ class Subscription implements SubscriptionInterface
     public function getState()
     {
         return $this->state;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setNotifiedAt(\DateTime $notifiedAt = null)
+    {
+        $this->notifiedAt = $notifiedAt;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getNotifiedAt()
+    {
+        return $this->notifiedAt;
     }
 
     /**

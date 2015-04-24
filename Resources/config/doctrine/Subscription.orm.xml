@@ -23,6 +23,7 @@
         </id>
 
         <field name="state" type="string" column="state" length="16" />
+        <field name="notifiedAt" type="datetime" column="notified_at" nullable="true" />
 
         <many-to-one target-entity="Ekyna\Bundle\UserBundle\Model\UserInterface" field="user">
             <join-column name="user_id" referenced-column-name="id" on-delete="CASCADE" />

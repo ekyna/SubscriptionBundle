@@ -4,6 +4,12 @@ ekyna_subscription_pricing_admin_home:
     requirements:
         _method: GET
 
+ekyna_subscription_pricing_admin_generate_notify:
+    path: /generate-notify
+    defaults: { _controller: "ekyna_subscription.pricing.controller:generateNotifyAction" }
+    requirements:
+        _method: GET|POST
+
 ekyna_subscription_pricing_admin_list:
     path: /list
     defaults: { _controller: "ekyna_subscription.pricing.controller:listAction" }

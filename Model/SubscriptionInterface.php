@@ -65,6 +65,21 @@ interface SubscriptionInterface
     public function getState();
 
     /**
+     * Sets the notifiedAt.
+     *
+     * @param \DateTime $notifiedAt
+     * @return SubscriptionInterface|$this
+     */
+    public function setNotifiedAt(\DateTime $notifiedAt = null);
+
+    /**
+     * Returns the notifiedAt.
+     *
+     * @return \DateTime
+     */
+    public function getNotifiedAt();
+
+    /**
      * Has the payment.
      *
      * @param PaymentInterface $payment

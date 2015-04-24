@@ -10,12 +10,14 @@ ekyna_subscription:
             new: Créer un nouveau tarif
             edit: Modifier le tarif <small>%name%</small>
             remove: Supprimer le tarif <small>%name%</small>
+            generate_notify: Générer des cotisations et/ou notifier les utilisateurs
         button:
             list: Liste des tarifs
             show: Détail du tarif
             new: Nouveau tarif
             edit: Modifier le tarif
             remove: Supprimer le tarif
+            generate_notify: Générer et notifier
         field:
             year: Année
             prices: Prix
@@ -36,6 +38,14 @@ ekyna_subscription:
         button:
             exempt: Dispenser
             unexempt: Annuler la dispense
+    generate_notify:
+        field:
+            years: Sélectionner les années
+            generate: Générer les cotisations manquantes.
+            notify: Appeler les utilisateurs à régler leurs cotisations.
+        message:
+            generate: La génération des cotisations est en cours.
+            notify: Des emails vont être envoyés pour appeler les utilisateurs à régler leur cotisation.
     account:
         menu: Mes cotisations
         title: Gérer mes cotisations

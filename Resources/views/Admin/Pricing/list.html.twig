@@ -1,0 +1,6 @@
+{% extends "EkynaAdminBundle:Entity/Default:list.html.twig" %}
+
+{% block actions %}
+{{ ui_button('ekyna_subscription.pricing.button.generate_notify', {'type': 'link', 'path': path('ekyna_subscription_pricing_admin_generate_notify'), 'theme': 'default', 'icon': 'cog'}) }}
+{{ parent() }}
+{% endblock actions %}

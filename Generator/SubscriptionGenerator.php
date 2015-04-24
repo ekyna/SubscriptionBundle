@@ -3,11 +3,14 @@
 namespace Ekyna\Bundle\SubscriptionBundle\Generator;
 
 use Doctrine\ORM\EntityManager;
+use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvent;
+use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
 use Ekyna\Bundle\SubscriptionBundle\Exception\GenerationException;
 use Ekyna\Bundle\SubscriptionBundle\Generator\Provider\PriceProviderInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\PriceProviderSubjectInterface;
 use Ekyna\Bundle\SubscriptionBundle\Util\Year;
 use Ekyna\Bundle\UserBundle\Model\UserInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -21,6 +24,11 @@ class SubscriptionGenerator implements PriceProviderSubjectInterface
      * @var EntityManager
      */
     private $em;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
 
     /**
      * @var ValidatorInterface
@@ -46,17 +54,24 @@ class SubscriptionGenerator implements PriceProviderSubjectInterface
     /**
      * Constructor.
      *
-     * @param EntityManager      $em
-     * @param ValidatorInterface $validator
-     * @param string             $userClass
-     * @param string             $subscriptionClass
+     * @param EntityManager            $em
+     * @param EventDispatcherInterface $dispatcher
+     * @param ValidatorInterface       $validator
+     * @param string                   $userClass
+     * @param string                   $subscriptionClass
      */
-    public function __construct(EntityManager $em, ValidatorInterface $validator, $userClass, $subscriptionClass)
-    {
-        $this->em = $em;
-        $this->validator = $validator;
+    public function __construct(
+        EntityManager $em,
+        EventDispatcherInterface $dispatcher,
+        ValidatorInterface $validator,
+        $userClass,
+        $subscriptionClass
+    ) {
+        $this->em         = $em;
+        $this->validator  = $validator;
+        $this->dispatcher = $dispatcher;
 
-        $this->userClass = $userClass;
+        $this->userClass         = $userClass;
         $this->subscriptionClass = $subscriptionClass;
     }
 
@@ -117,6 +132,13 @@ class SubscriptionGenerator implements PriceProviderSubjectInterface
             ->setPrice($price)
         ;
 
+        $event = new SubscriptionEvent($subscription);
+
+        $this->dispatcher->dispatch(SubscriptionEvents::PRE_GENERATE, $event);
+        if ($event->isPropagationStopped()) {
+            return null;
+        }
+
         /** @var \Symfony\Component\Validator\ConstraintViolationListInterface $errorList */
         $errorList = $this->validator->validate($subscription);
         if (0 < $errorList->count()) {
@@ -125,6 +147,8 @@ class SubscriptionGenerator implements PriceProviderSubjectInterface
 
         $this->em->persist($subscription);
         $this->em->flush();
+
+        $this->dispatcher->dispatch(SubscriptionEvents::POST_GENERATE, $event);
 
         return $subscription;
     }
