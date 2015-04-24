@@ -3,28 +3,29 @@
 namespace Ekyna\Bundle\SubscriptionBundle\Entity;
 
 use Ekyna\Bundle\AdminBundle\Doctrine\ORM\ResourceRepository;
-use Ekyna\Bundle\SubscriptionBundle\Pricing\Provider\ProviderInterface;
+use Ekyna\Bundle\SubscriptionBundle\Generator\Provider\PriceProviderInterface;
+use Ekyna\Bundle\SubscriptionBundle\Model\PriceProviderSubjectInterface;
 
 /**
  * Class PricingRepository
  * @package Ekyna\Bundle\SubscriptionBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class PricingRepository extends ResourceRepository
+class PricingRepository extends ResourceRepository implements PriceProviderSubjectInterface
 {
     /**
-     * @var ProviderInterface
+     * @var PriceProviderInterface
      */
-    protected $provider;
+    protected $priceProvider;
 
     /**
      * Sets the provider.
      *
-     * @param ProviderInterface $provider
+     * @param PriceProviderInterface $provider
      */
-    public function setProvider(ProviderInterface $provider)
+    public function setPriceProvider(PriceProviderInterface $provider)
     {
-        $this->provider = $provider;
+        $this->priceProvider = $provider;
     }
 
     /**
@@ -39,7 +40,7 @@ class PricingRepository extends ResourceRepository
 
         $pricing
             ->setYear(date('Y'))
-            ->setPrices($this->provider->createPriceCollection())
+            ->setPrices($this->priceProvider->createPriceCollection())
         ;
 
         return $pricing;

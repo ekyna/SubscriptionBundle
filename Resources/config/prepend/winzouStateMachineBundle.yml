@@ -1,0 +1,18 @@
+winzou_state_machine:
+    ekyna_subscription:
+        class:         Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface
+        property_path: state
+        states:
+            pending: ~
+            paid:    ~
+            exempt:  ~
+        transitions:
+            pay:
+                from: [pending]
+                to:   paid
+            exempt:
+                from: [pending]
+                to:   exempt
+            unexempt:
+                from: [exempt]
+                to:   pending

@@ -7,7 +7,7 @@
 
     <mapped-superclass
             name="Ekyna\Bundle\SubscriptionBundle\Entity\AbstractPrice"
-            table="subscription_price">
+            table="subs_price">
 
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO"/>

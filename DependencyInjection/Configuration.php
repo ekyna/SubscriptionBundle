@@ -23,11 +23,10 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->arrayNode('pricing')
+                ->arrayNode('generator')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('provider')->defaultValue('ekyna_subscription.provider.group')->cannotBeEmpty()->end()
-                        ->scalarNode('matcher')->defaultValue('ekyna_subscription.matcher.group')->cannotBeEmpty()->end()
+                        ->scalarNode('price_provider')->defaultValue('ekyna_subscription.generator.group_price_provider')->cannotBeEmpty()->end()
                     ->end()
                 ->end()
             ->end()

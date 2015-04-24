@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping
+        xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                            http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <mapped-superclass
+            name="Ekyna\Bundle\SubscriptionBundle\Entity\Subscription"
+            repository-class="Ekyna\Bundle\SubscriptionBundle\Entity\SubscriptionRepository"
+            table="subs_subscription">
+
+        <indexes>
+            <index columns="state" name="state_idx" />
+        </indexes>
+
+        <unique-constraints>
+            <unique-constraint columns="user_id,price_id" name="unique_subscription" />
+        </unique-constraints>
+
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+
+        <field name="state" type="string" column="state" length="16" />
+
+        <many-to-one target-entity="Ekyna\Bundle\UserBundle\Model\UserInterface" field="user">
+            <join-column name="user_id" referenced-column-name="id" on-delete="CASCADE" />
+        </many-to-one>
+
+        <many-to-one target-entity="Ekyna\Bundle\SubscriptionBundle\Model\PriceInterface" field="price">
+            <join-column name="price_id" referenced-column-name="id" on-delete="RESTRICT" />
+        </many-to-one>
+
+        <many-to-many target-entity="Ekyna\Bundle\SubscriptionBundle\Model\PaymentInterface" field="payments" mapped-by="subscriptions" fetch="EXTRA_LAZY">
+        </many-to-many>
+
+    </mapped-superclass>
+
+</doctrine-mapping>

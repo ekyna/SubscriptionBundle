@@ -8,7 +8,7 @@
     <mapped-superclass
             name="Ekyna\Bundle\SubscriptionBundle\Entity\Pricing"
             repository-class="Ekyna\Bundle\SubscriptionBundle\Entity\PricingRepository"
-            table="subscription_pricing">
+            table="subs_pricing">
 
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO"/>
@@ -16,7 +16,7 @@
 
         <field name="year" type="string" column="year" length="4" />
 
-        <one-to-many target-entity="Ekyna\Bundle\SubscriptionBundle\Model\PriceInterface" mapped-by="pricing" field="prices">
+        <one-to-many target-entity="Ekyna\Bundle\SubscriptionBundle\Model\PriceInterface" field="prices" mapped-by="pricing" orphan-removal="true">
             <cascade>
                 <cascade-all />
             </cascade>

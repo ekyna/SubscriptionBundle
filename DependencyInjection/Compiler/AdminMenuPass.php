@@ -32,7 +32,7 @@ class AdminMenuPass implements CompilerPassInterface
         $pool->addMethodCall('createEntry', array('users', array(
             'name'     => 'pricing',
             'route'    => 'ekyna_subscription_pricing_admin_home',
-            'label'    => 'ekyna_subscription.pricing.label.plural',
+            'label'    => 'ekyna_subscription.label',
             'resource' => 'ekyna_subscription_pricing',
             'position' => 10,
         )));

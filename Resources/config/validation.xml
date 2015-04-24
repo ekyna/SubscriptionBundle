@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<constraint-mapping
+        xmlns="http://symfony.com/schema/dic/constraint-mapping"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping
+                            http://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
+
+    <class name="Ekyna\Bundle\SubscriptionBundle\Entity\Pricing">
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">year</option>
+            <option name="message">ekyna_subscription.pricing.duplicate_year</option>
+        </constraint>
+        <property name="year">
+            <constraint name="NotBlank" />
+            <constraint name="Regex">
+                <option name="pattern">/^19|20[0-9]{2}$/</option>
+                <option name="message">ekyna_subscription.pricing.invalid_year</option>
+            </constraint>
+        </property>
+        <property name="prices">
+            <constraint name="Valid" />
+        </property>
+    </class>
+
+    <class name="Ekyna\Bundle\SubscriptionBundle\Entity\AbstractPrice">
+        <property name="amount">
+            <constraint name="NotBlank" />
+            <constraint name="GreaterThan">
+                <option name="value">0</option>
+            </constraint>
+        </property>
+    </class>
+
+    <class name="Ekyna\Bundle\SubscriptionBundle\Entity\Subscription">
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">
+                <value>price</value>
+                <value>user</value>
+            </option>
+            <option name="message">ekyna_subscription.subscription.duplicate</option>
+        </constraint>
+        <property name="user">
+            <constraint name="NotNull" />
+        </property>
+        <property name="price">
+            <constraint name="NotNull" />
+        </property>
+        <property name="payments">
+            <constraint name="Valid" />
+        </property>
+    </class>
+
+    <class name="Ekyna\Bundle\SubscriptionBundle\Entity\Payment">
+        <property name="subscriptions">
+            <constraint name="Valid" />
+        </property>
+    </class>
+
+</constraint-mapping>

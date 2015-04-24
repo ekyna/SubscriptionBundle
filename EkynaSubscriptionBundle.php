@@ -31,8 +31,10 @@ class EkynaSubscriptionBundle extends AbstractBundle
     protected function getModelInterfaces()
     {
         return array(
-            'Ekyna\Bundle\SubscriptionBundle\Model\PricingInterface' => 'ekyna_subscription.pricing.class',
-            'Ekyna\Bundle\SubscriptionBundle\Model\PriceInterface'   => 'ekyna_subscription.price.class',
+            'Ekyna\Bundle\SubscriptionBundle\Model\PricingInterface'      => 'ekyna_subscription.pricing.class',
+            'Ekyna\Bundle\SubscriptionBundle\Model\PriceInterface'        => 'ekyna_subscription.price.class',
+            'Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface' => 'ekyna_subscription.subscription.class',
+            'Ekyna\Bundle\SubscriptionBundle\Model\PaymentInterface'      => 'ekyna_subscription.payment.class',
         );
     }
 }

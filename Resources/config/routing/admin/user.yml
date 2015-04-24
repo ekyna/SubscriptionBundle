@@ -1,0 +1,15 @@
+ekyna_user_user_admin_subscription_exempt:
+    path: /{userId}/subscription/{subscriptionId}/exempt
+    defaults: { _controller: "ekyna_subscription.subscription.user_controller:exemptAction" }
+    requirements:
+        _method: GET|POST
+        userId: \d+
+        subscriptionId: \d+
+
+ekyna_user_user_admin_subscription_unexempt:
+    path: /{userId}/subscription/{subscriptionId}/unexempt
+    defaults: { _controller: "ekyna_subscription.subscription.user_controller:unexemptAction" }
+    requirements:
+        _method: GET|POST
+        userId: \d+
+        subscriptionId: \d+

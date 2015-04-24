@@ -1,0 +1,19 @@
+{% extends "EkynaUserBundle::layout.html.twig" %}
+
+{% block account %}
+{% spaceless %}
+<h3>{{ 'ekyna_subscription.account.title'|trans }}</h3>
+<hr>
+    <form action="{{ path('ekyna_subscription_account_payment') }}" method="post" class="form-horizontal" {{ form_enctype(form) }}>
+
+        {{ bootstrap_set_style('horizontal') }}
+        {{ form_widget(form) }}
+
+        <hr>
+        <p style="text-align: center;">
+            <button type="submit" class="btn btn-primary">Validate</button>
+        </p>
+
+    </form>
+{% endspaceless %}
+{% endblock account %}

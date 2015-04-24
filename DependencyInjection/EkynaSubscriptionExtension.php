@@ -4,7 +4,6 @@ namespace Ekyna\Bundle\SubscriptionBundle\DependencyInjection;
 
 use Ekyna\Bundle\AdminBundle\DependencyInjection\AbstractExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\DependencyInjection\Loader;
 
 /**
@@ -21,7 +20,10 @@ class EkynaSubscriptionExtension extends AbstractExtension
     {
         $config = $this->configure($configs, 'ekyna_subscription', new Configuration(), $container);
 
-        $container->setParameter('ekyna_subscription.pricing.config', $config['pricing']);
+        $container->setParameter(
+            'ekyna_subscription.generator.price_provider',
+            $config['generator']['price_provider']
+        );
     }
 
     /**

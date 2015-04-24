@@ -6,10 +6,36 @@
 
     <parameters>
         <parameter key="ekyna_subscription.price.class">Ekyna\Bundle\SubscriptionBundle\Entity\GroupPrice</parameter>
+        <parameter key="ekyna_subscription.subscription.class">Ekyna\Bundle\SubscriptionBundle\Entity\Subscription</parameter>
+        <parameter key="ekyna_subscription.payment.class">Ekyna\Bundle\SubscriptionBundle\Entity\Payment</parameter>
+
         <parameter key="ekyna_subscription.price.form_type.class">Ekyna\Bundle\SubscriptionBundle\Form\Type\PriceType</parameter>
+
+        <parameter key="ekyna_subscription.payum.action.paypal.capture_payment_using_express_checkout.class">Ekyna\Bundle\SubscriptionBundle\Payum\Action\Paypal\CapturePaymentUsingExpressCheckoutAction</parameter>
     </parameters>
 
     <services>
+
+        <!-- Event subscribers -->
+        <service id="ekyna_subscription.payment_event_subscriber" class="Ekyna\Bundle\SubscriptionBundle\EventListener\PaymentEventSubscriber">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="sm.factory" />
+            <argument type="service" id="router" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <!-- PayPal -->
+        <service id="ekyna_subscription.payum.action.paypal.capture_payment_using_express_checkout" class="%ekyna_subscription.payum.action.paypal.capture_payment_using_express_checkout.class%">
+            <tag name="payum.action" factory="paypal_express_checkout_nvp" />
+        </service>
+
+        <!-- Entity repositories -->
+        <service id="ekyna_subscription.subscription.repository"
+                 class="Ekyna\Bundle\SubscriptionBundle\Entity\SubscriptionRepository"
+                 factory-service="doctrine.orm.entity_manager"
+                 factory-method="getRepository">
+            <argument>%ekyna_subscription.subscription.class%</argument>
+        </service>
 
         <!-- Form types -->
         <service id="ekyna_subscription.price.form_type" class="%ekyna_subscription.price.form_type.class%">
@@ -21,13 +47,49 @@
         </service>
 
         <!-- Providers -->
-        <service id="ekyna_subscription.provider.group" class="Ekyna\Bundle\SubscriptionBundle\Pricing\Provider\GroupProvider">
-            <argument type="service" id="ekyna_user.group.repository" />
+        <service id="ekyna_subscription.generator.group_price_provider"
+                 class="Ekyna\Bundle\SubscriptionBundle\Generator\Provider\GroupPriceProvider">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument>%ekyna_subscription.price.class%</argument>
+            <call method="setGroupClass">
+                <argument>%ekyna_user.group.class%</argument>
+            </call>
         </service>
 
-        <!-- Matcher -->
-        <service id="ekyna_subscription.matcher.group" class="Ekyna\Bundle\SubscriptionBundle\Pricing\Matcher\GroupMatcher">
+        <!-- Generator -->
+        <service id="ekyna_subscription.generator" class="Ekyna\Bundle\SubscriptionBundle\Generator\SubscriptionGenerator">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="validator" />
+            <argument>%ekyna_user.user.class%</argument>
+            <argument>%ekyna_subscription.subscription.class%</argument>
+        </service>
 
+        <!-- Routing loader -->
+        <service id="ekyna_subscription.routing_loader" class="Ekyna\Bundle\SubscriptionBundle\Routing\AccountLoader">
+            <argument>%ekyna_user.config%</argument>
+            <tag name="routing.loader" />
+        </service>
+
+        <!-- User extension -->
+        <service id="ekyna_subscription.user.subscription_extension" class="Ekyna\Bundle\SubscriptionBundle\User\SubscriptionExtension">
+            <argument type="service" id="ekyna_subscription.subscription.repository" />
+            <tag name="ekyna_user.extension" />
+        </service>
+
+        <!-- Controllers -->
+        <service id="ekyna_subscription.subscription.user_controller" class="Ekyna\Bundle\SubscriptionBundle\Controller\Admin\UserController">
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+            <call method="setConfiguration">
+                <argument type="service" id="ekyna_user.user.configuration" />
+            </call>
+        </service>
+
+        <!-- Twig extensions -->
+        <service id="ekyna_subscription.twig.subscription_extension" class="Ekyna\Bundle\SubscriptionBundle\Twig\SubscriptionExtension">
+            <argument type="service" id="translator" />
+            <tag name="twig.extension" />
         </service>
 
     </services>

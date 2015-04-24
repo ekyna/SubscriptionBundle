@@ -18,9 +18,7 @@ class PricingPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $config = $container->getParameter('ekyna_subscription.pricing.config');
-
-        $providerKey = $config['provider'];
+        $providerKey = $container->getParameter('ekyna_subscription.generator.price_provider');
 
         if (!$container->hasDefinition($providerKey)) {
             throw new ServiceNotFoundException($providerKey);
@@ -30,7 +28,13 @@ class PricingPass implements CompilerPassInterface
         // Pricing repository
         $container
             ->getDefinition('ekyna_subscription.pricing.repository')
-            ->addMethodCall('setProvider', array($providerDef))
+            ->addMethodCall('setPriceProvider', array($providerDef))
+        ;
+
+        // Subscription generator
+        $container
+            ->getDefinition('ekyna_subscription.generator')
+            ->addMethodCall('setPriceProvider', array($providerDef))
         ;
     }
 }

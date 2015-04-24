@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping 
+    xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                        http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <mapped-superclass
+            name="Ekyna\Bundle\SubscriptionBundle\Entity\Payment"
+            table="subs_payment">
+
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO" />
+        </id>
+
+        <many-to-many target-entity="Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface" field="subscriptions" inversed-by="payments" fetch="EXTRA_LAZY">
+            <cascade>
+                <cascade-persist />
+            </cascade>
+            <join-table name="subs_payments_subscriptions">
+                <join-columns>
+                    <join-column name="payment_id" referenced-column-name="id" on-delete="CASCADE" />
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="subscription_id" referenced-column-name="id" on-delete="RESTRICT" />
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
+
+    </mapped-superclass>
+
+</doctrine-mapping>

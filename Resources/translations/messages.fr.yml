@@ -1,10 +1,11 @@
 ekyna_subscription:
+    label: Cotisations
     pricing:
         label:
             singular: Tarif
             plural: Tarifs
         header:
-            list: Tarifs <small>Liste des tarifs</small>
+            list: Cotisations <small>Liste des tarifs</small>
             show: Détail du tarif <small>%name%</small>
             new: Créer un nouveau tarif
             edit: Modifier le tarif <small>%name%</small>
@@ -24,3 +25,22 @@ ekyna_subscription:
         field:
             name: Groupe
             amount: Montant
+    subscription:
+        state:
+            pending: À régler
+            paid: À jour
+            exempt: Dispensé
+        header:
+            exempt: Dispenser de la cotisation <small>%year%</small>
+            unexempt: Annuluer la dispense de cotisation <small>%year%</small>
+        button:
+            exempt: Dispenser
+            unexempt: Annuler la dispense
+    account:
+        menu: Mes cotisations
+        title: Gérer mes cotisations
+        button:
+            payment: Régler mes cotisations
+        alert:
+            no_pending_subscription: Aucune cotisation en attente de paiment trouvé.
+            no_subscription: Aucune cotisation enregistrée.
