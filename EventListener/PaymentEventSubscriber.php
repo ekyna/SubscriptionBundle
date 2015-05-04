@@ -6,7 +6,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Ekyna\Bundle\PaymentBundle\Event\PaymentEvent;
 use Ekyna\Bundle\PaymentBundle\Event\PaymentEvents;
 use Ekyna\Bundle\SubscriptionBundle\Entity\Payment;
-use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
 use Ekyna\Component\Sale\Payment\PaymentStates;
 use SM\Factory\FactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -18,7 +17,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * @package Ekyna\Bundle\SubscriptionBundle\EventListener
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class PaymentEventSubscriber  implements EventSubscriberInterface
+class PaymentEventSubscriber implements EventSubscriberInterface
 {
     /**
      * @var ObjectManager
@@ -86,6 +85,14 @@ class PaymentEventSubscriber  implements EventSubscriberInterface
                 $stateMachine = $this->factory->get($subscription);
                 if ($stateMachine->can('pay')) {
                     $stateMachine->apply('pay');
+                    $this->manager->persist($subscription);
+                }
+            }
+        } elseif($payment->getState() === PaymentStates::STATE_REFUNDED) {
+            foreach ($payment->getSubscriptions() as $subscription) {
+                $stateMachine = $this->factory->get($subscription);
+                if ($stateMachine->can('refund')) {
+                    $stateMachine->apply('refund');
                     $this->manager->persist($subscription);
                 }
             }

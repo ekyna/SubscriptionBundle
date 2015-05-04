@@ -7,6 +7,7 @@
 
     <mapped-superclass
             name="Ekyna\Bundle\SubscriptionBundle\Entity\Payment"
+            repository-class="Ekyna\Bundle\SubscriptionBundle\Entity\PaymentRepository"
             table="subs_payment">
 
         <id name="id" type="integer" column="id">

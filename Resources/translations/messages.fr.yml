@@ -28,6 +28,9 @@ ekyna_subscription:
             name: Groupe
             amount: Montant
     subscription:
+        label:
+            singular: Cotisation
+            plural: Cotisations
         state:
             pending: À régler
             paid: À jour
@@ -38,6 +41,10 @@ ekyna_subscription:
         button:
             exempt: Dispenser
             unexempt: Annuler la dispense
+    payment:
+        label:
+            singular: Paiement
+            plural: Paiements
     generate_notify:
         field:
             years: Sélectionner les années
@@ -48,9 +55,15 @@ ekyna_subscription:
             notify: Des emails vont être envoyés pour appeler les utilisateurs à régler leur cotisation.
     account:
         menu: Mes cotisations
-        title: Gérer mes cotisations
-        button:
-            payment: Régler mes cotisations
+        subscription:
+            title: Gérer mes cotisations
+            payments: Mes réglements
+            button:
+                payment: Régler mes cotisations
+        payment:
+            title: Régler mes cotisations
+            button:
+                validate: Procéder au paiment
         alert:
             no_pending_subscription: Aucune cotisation en attente de paiment trouvé.
             no_subscription: Aucune cotisation enregistrée.

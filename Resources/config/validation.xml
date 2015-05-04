@@ -52,6 +52,7 @@
 
     <class name="Ekyna\Bundle\SubscriptionBundle\Entity\Payment">
         <property name="subscriptions">
+            <!-- TODO count > 0 -->
             <constraint name="Valid" />
         </property>
     </class>

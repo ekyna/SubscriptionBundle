@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\SubscriptionBundle\Controller\Admin;
 
 use Ekyna\Bundle\AdminBundle\Controller\ResourceController;
-use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
+use Ekyna\Bundle\PaymentBundle\Model\PaymentTransitionTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints;
@@ -15,6 +15,8 @@ use Symfony\Component\Validator\Constraints;
  */
 class UserController extends ResourceController
 {
+    use PaymentTransitionTrait;
+
     /**
      * Exempt action.
      *
@@ -62,7 +64,7 @@ class UserController extends ResourceController
         );
 
         $message = sprintf(
-            'Confirmer la dispense de cotisation %s (%s €) ?',
+            'Confirmer la dispense de cotisation %s (%s €) ?', // TODO translate
             $subscription->getPrice()->getPricing()->getYear(),
             number_format($subscription->getPrice()->getAmount(), 2, ',', '')
         );
@@ -151,7 +153,7 @@ class UserController extends ResourceController
         );
 
         $message = sprintf(
-            'Confirmer l\'annulation de la dispense de cotisation %s (%s €) ?',
+            'Confirmer l\'annulation de la dispense de cotisation %s (%s €) ?', // TODO translate
             $subscription->getPrice()->getPricing()->getYear(),
             number_format($subscription->getPrice()->getAmount(), 2, ',', '')
         );
@@ -191,5 +193,37 @@ class UserController extends ResourceController
                 'form' => $form->createView()
             ))
         );
+    }
+
+    /**
+     * Payment transition action.
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function paymentTransitionAction(Request $request)
+    {
+        $context = $this->loadContext($request);
+        $resourceName = $this->config->getResourceName();
+
+        /** @var \Ekyna\Bundle\UserBundle\Model\UserInterface $user */
+        $user = $context->getResource($resourceName);
+
+        $this->isGranted('EDIT', $user);
+
+        /** @var \Ekyna\Bundle\SubscriptionBundle\Entity\Payment $payment */
+        $payment = $this->get('ekyna_subscription.payment.repository')->find(
+            $request->attributes->get('paymentId')
+        );
+        if (null === $payment) { // TODO check that the payment belongs to the user
+            throw new NotFoundHttpException('Payment not found');
+        }
+
+        $this->applyPaymentTransition($payment, $request->attributes->get('transition'));
+
+        return $this->redirect($this->generateUrl(
+            $this->config->getRoute('show'),
+            $context->getIdentifiers(true)
+        ));
     }
 }

@@ -18,8 +18,11 @@ class PricingType extends ResourceTableType
     public function buildTable(TableBuilderInterface $builder, array $options = array())
     {
         $builder
-            ->addColumn('year', 'text', array(
+            ->addColumn('year', 'anchor', array(
                 'label' => 'ekyna_subscription.pricing.field.year',
+                'sortable' => true,
+                'route_name' => 'ekyna_subscription_pricing_admin_show',
+                'route_parameters_map' => array('pricingId' => 'id'),
             ))
             ->addColumn('actions', 'admin_actions', array(
                 'buttons' => array(
@@ -28,9 +31,7 @@ class PricingType extends ResourceTableType
                         'icon' => 'pencil',
                         'class' => 'warning',
                         'route_name' => 'ekyna_subscription_pricing_admin_edit',
-                        'route_parameters_map' => array(
-                            'pricingId' => 'id'
-                        ),
+                        'route_parameters_map' => array('pricingId' => 'id'),
                         'permission' => 'edit',
                     ),
                     array(
@@ -38,9 +39,7 @@ class PricingType extends ResourceTableType
                         'icon' => 'trash',
                         'class' => 'danger',
                         'route_name' => 'ekyna_subscription_pricing_admin_remove',
-                        'route_parameters_map' => array(
-                            'pricingId' => 'id'
-                        ),
+                        'route_parameters_map' => array('pricingId' => 'id'),
                         'permission' => 'delete',
                     ),
                 ),

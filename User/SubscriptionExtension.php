@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\SubscriptionBundle\User;
 
+use Ekyna\Bundle\SubscriptionBundle\Entity\PaymentRepository;
 use Ekyna\Bundle\SubscriptionBundle\Entity\SubscriptionRepository;
 use Ekyna\Bundle\UserBundle\Extension\AbstractExtension;
 use Ekyna\Bundle\UserBundle\Extension\Admin\ShowTab;
@@ -19,15 +20,22 @@ class SubscriptionExtension extends AbstractExtension
      */
     protected $subscriptionRepository;
 
+    /**
+     * @var PaymentRepository
+     */
+    protected $paymentRepository;
+
 
     /**
      * Constructor.
      *
      * @param SubscriptionRepository $subscriptionRepository
+     * @param PaymentRepository      $paymentRepository
      */
-    public function __construct(SubscriptionRepository $subscriptionRepository)
+    public function __construct(SubscriptionRepository $subscriptionRepository, PaymentRepository $paymentRepository)
     {
         $this->subscriptionRepository = $subscriptionRepository;
+        $this->paymentRepository      = $paymentRepository;
     }
 
     /**
@@ -35,7 +43,10 @@ class SubscriptionExtension extends AbstractExtension
      */
     public function getAdminShowTab(UserInterface $user)
     {
-        $data = ['subscriptions' => $this->subscriptionRepository->findByUser($user)];
+        $data = [
+            'subscriptions' => $this->subscriptionRepository->findByUser($user),
+            'payments'      => $this->paymentRepository->findByUser($user),
+        ];
 
         return new ShowTab(
             'ekyna_subscription.label',

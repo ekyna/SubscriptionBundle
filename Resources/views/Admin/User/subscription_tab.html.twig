@@ -1,3 +1,5 @@
+<h3>{{ 'ekyna_subscription.subscription.label.plural'|trans }}</h3>
+<hr>
 <table class="table table-striped">
     <tr>
         <th>{{ 'ekyna_subscription.pricing.field.year'|trans }}</th>
@@ -34,3 +36,31 @@
         </tr>
     {% endfor %}
 </table>
+
+{% if payments is not empty %}
+<br>
+<h3>{{ 'ekyna_subscription.payment.label.plural'|trans }}</h3>
+<hr>
+<table class="table table-striped">
+    <tr>
+        <th>{{ 'ekyna_core.field.date'|trans }}</th>
+        <th>{{ 'ekyna_payment.payment.field.amount'|trans }}</th>
+        <th>{{ 'ekyna_payment.payment.field.method'|trans }}</th>
+        <th>{{ 'ekyna_core.field.status'|trans }}</th>
+        <th></th>
+    </tr>
+    {% for payment in payments %}
+        <tr>
+            <td>{{ payment.createdAt|localizeddate('full', 'short') }}</td>
+            <td>{{ ((payment.amount|localizednumber()) ~ '&nbsp;€')|raw }}</td>
+            <td>{{ payment.method.paymentName }}</td>
+            <td>{{ render_payment_state(payment) }}</td>
+            <td class="actions">{{ render_payment_actions(
+                payment,
+                'ekyna_user_user_admin_subscription_payment_transition',
+                {'userId': user.id, 'paymentId': payment.id}
+                ) }}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endif %}

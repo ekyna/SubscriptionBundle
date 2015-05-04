@@ -7,7 +7,7 @@ use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
- * Class UserExtension
+ * Class SubscriptionExtension
  * @package Ekyna\Bundle\SubscriptionBundle\Twig
  * @author Étienne Dauvergne <contact@ekyna.com>
  */

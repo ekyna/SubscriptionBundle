@@ -13,3 +13,13 @@ ekyna_user_user_admin_subscription_unexempt:
         _method: GET|POST
         userId: \d+
         subscriptionId: \d+
+
+
+ekyna_user_user_admin_subscription_payment_transition:
+    path: /{userId}/subscription/{paymentId}/{transition}
+    defaults: { _controller: "ekyna_subscription.subscription.user_controller:paymentTransitionAction" }
+    requirements:
+        _method: GET
+        userId: \d+
+        paymentId: \d+
+        transitionId: "[a-z]+"

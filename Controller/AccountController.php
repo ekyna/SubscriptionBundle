@@ -24,22 +24,26 @@ class AccountController extends Controller
     public function indexAction()
     {
         $user = $this->getUser();
+
         $subscriptions = $this
             ->get('ekyna_subscription.subscription.repository')
             ->findByUser($user)
         ;
 
-        $paymentButton = false;
-        foreach ($subscriptions as $subscription) {
-            if ($subscription->getState() === SubscriptionStates::PENDING) {
-                $paymentButton = true;
-                break;
-            }
-        }
+        $payments = $this
+            ->get('ekyna_subscription.payment.repository')
+            ->findByUser($user)
+        ;
+
+        $subscriptionsWithPaymentRequired = $this
+            ->get('ekyna_subscription.subscription.repository')
+            ->findByUserAndPaymentRequired($user)
+        ;
 
         return $this->render('EkynaSubscriptionBundle:Account:index.html.twig', array(
-            'subscriptions' => $subscriptions,
-            'subscription_payment_button' => $paymentButton,
+            'subscriptions'  => $subscriptions,
+            'payments'       => $payments,
+            'payment_button' => !empty($subscriptionsWithPaymentRequired),
         ));
     }
 
@@ -54,26 +58,24 @@ class AccountController extends Controller
         $user = $this->getUser();
         $subscriptions = $this
             ->get('ekyna_subscription.subscription.repository')
-            ->findByUser($user, SubscriptionStates::PENDING)
+            ->findByUserAndPaymentRequired($user)
         ;
         if (empty($subscriptions)) {
             $this->addFlash('ekyna_subscription.account.alert.no_pending_subscription', 'info');
             return $this->redirect($this->generateUrl('ekyna_subscription_account_index'));
         }
 
+        // TODO watch for pending payments
+
         $payment = new Payment();
         foreach ($subscriptions as $subscription) {
             $payment->addSubscription($subscription);
         }
 
-        $form = $this->createForm('ekyna_payment_method');
+        $form = $this->createForm('ekyna_subscription_payment', $payment);
 
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $method = $form->get('method')->getData();
-
-            $payment->setMethod($method);
-
             $event = new PaymentEvent($payment);
             $this->getDispatcher()->dispatch(PaymentEvents::PREPARE, $event);
             if (null !== $response = $event->getResponse()) {

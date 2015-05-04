@@ -2,7 +2,7 @@
 
 {% block account %}
 {% spaceless %}
-<h3>{{ 'ekyna_subscription.account.title'|trans }}</h3>
+<h3>{{ 'ekyna_subscription.account.payment.title'|trans }}</h3>
 <hr>
     <form action="{{ path('ekyna_subscription_account_payment') }}" method="post" class="form-horizontal" {{ form_enctype(form) }}>
 
@@ -11,7 +11,9 @@
 
         <hr>
         <p style="text-align: center;">
-            <button type="submit" class="btn btn-primary">Validate</button>
+            <button type="submit" class="btn btn-primary">
+                {{ 'ekyna_subscription.account.payment.button.validate'|trans }}
+            </button>
         </p>
 
     </form>

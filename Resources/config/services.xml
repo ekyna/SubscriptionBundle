@@ -10,6 +10,7 @@
         <parameter key="ekyna_subscription.payment.class">Ekyna\Bundle\SubscriptionBundle\Entity\Payment</parameter>
 
         <parameter key="ekyna_subscription.price.form_type.class">Ekyna\Bundle\SubscriptionBundle\Form\Type\PriceType</parameter>
+        <parameter key="ekyna_subscription.payment.form_type.class">Ekyna\Bundle\SubscriptionBundle\Form\Type\PaymentType</parameter>
 
         <parameter key="ekyna_subscription.payum.action.paypal.capture_payment_using_express_checkout.class">Ekyna\Bundle\SubscriptionBundle\Payum\Action\Paypal\CapturePaymentUsingExpressCheckoutAction</parameter>
     </parameters>
@@ -36,6 +37,12 @@
                  factory-method="getRepository">
             <argument>%ekyna_subscription.subscription.class%</argument>
         </service>
+        <service id="ekyna_subscription.payment.repository"
+                 class="Ekyna\Bundle\SubscriptionBundle\Entity\PaymentRepository"
+                 factory-service="doctrine.orm.entity_manager"
+                 factory-method="getRepository">
+            <argument>%ekyna_subscription.payment.class%</argument>
+        </service>
 
         <!-- Form types -->
         <service id="ekyna_subscription.price.form_type" class="%ekyna_subscription.price.form_type.class%">
@@ -44,6 +51,10 @@
         </service>
         <service id="ekyna_subscription.price_collection.form_type" class="Ekyna\Bundle\SubscriptionBundle\Form\Type\PriceCollectionType">
             <tag name="form.type" alias="ekyna_subscription_price_collection" />
+        </service>
+        <service id="ekyna_subscription.payment.form_type" class="%ekyna_subscription.payment.form_type.class%">
+            <argument>%ekyna_subscription.payment.class%</argument>
+            <tag name="form.type" alias="ekyna_subscription_payment" />
         </service>
 
         <!-- Providers -->
@@ -74,6 +85,7 @@
         <!-- User extension -->
         <service id="ekyna_subscription.user.subscription_extension" class="Ekyna\Bundle\SubscriptionBundle\User\SubscriptionExtension">
             <argument type="service" id="ekyna_subscription.subscription.repository" />
+            <argument type="service" id="ekyna_subscription.payment.repository" />
             <tag name="ekyna_user.extension" />
         </service>
 

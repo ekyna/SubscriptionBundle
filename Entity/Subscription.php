@@ -102,9 +102,6 @@ class Subscription implements SubscriptionInterface
      */
     public function setState($state)
     {
-        if ($state === SubscriptionStates::PENDING && $this->state === SubscriptionStates::PAID) {
-            throw new \RuntimeException('Can\'t change state from "paid" to "pending".');
-        }
         $this->state = $state;
         return $this;
     }

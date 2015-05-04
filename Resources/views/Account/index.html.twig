@@ -2,7 +2,7 @@
 
 {% block account %}
 {% spaceless %}
-<h3>{{ 'ekyna_subscription.account.title'|trans }}</h3>
+<h3>{{ 'ekyna_subscription.account.subscription.title'|trans }}</h3>
 <hr>
 <table class="table table-striped">
     <tr>
@@ -27,13 +27,33 @@
     {% endfor %}
 </table>
 
-{#{% if subscription_payment_button %}
+{% if payment_button %}
 <p style="text-align: center;">
     <a href="{{ path('ekyna_subscription_account_payment') }}" class="btn btn-primary">
-        {{ 'ekyna_subscription.account.button.payment'|trans }}
+        {{ 'ekyna_subscription.account.subscription.button.payment'|trans }}
     </a>
 </p>
-{% endif %}#}
+{% endif %}
+
+{% if payments is not empty %}
+<br>
+<h3>{{ 'ekyna_subscription.account.subscription.payments'|trans }}</h3>
+<hr>
+<table class="table table-striped">
+    <tr>
+        <th>{{ 'ekyna_core.field.date'|trans }}</th>
+        <th>{{ 'ekyna_payment.payment.field.amount'|trans }}</th>
+        <th>{{ 'ekyna_core.field.status'|trans }}</th>
+    </tr>
+    {% for payment in payments %}
+    <tr>
+        <td>{{ payment.createdAt|localizeddate('full', 'short') }}</td>
+        <td>{{ ((payment.amount|localizednumber()) ~ '&nbsp;€')|raw }}</td>
+        <td>{{ render_payment_state(payment) }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
 
 {% endspaceless %}
 {% endblock account %}
