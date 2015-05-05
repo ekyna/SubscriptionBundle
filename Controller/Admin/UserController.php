@@ -3,7 +3,10 @@
 namespace Ekyna\Bundle\SubscriptionBundle\Controller\Admin;
 
 use Ekyna\Bundle\AdminBundle\Controller\ResourceController;
+use Ekyna\Bundle\PaymentBundle\Event\PaymentEvent;
+use Ekyna\Bundle\PaymentBundle\Event\PaymentEvents;
 use Ekyna\Bundle\PaymentBundle\Model\PaymentTransitionTrait;
+use Ekyna\Bundle\SubscriptionBundle\Entity\Payment;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints;
@@ -190,6 +193,64 @@ class UserController extends ResourceController
             'EkynaSubscriptionBundle:Admin/User:subscription_unexempt.html.twig',
             $context->getTemplateVars(array(
                 'subscription' => $subscription,
+                'form' => $form->createView()
+            ))
+        );
+    }
+
+    /**
+     * Payment action.
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function paymentAction(Request $request)
+    {
+        $context = $this->loadContext($request);
+        $resourceName = $this->config->getResourceName();
+
+        /** @var \Ekyna\Bundle\UserBundle\Model\UserInterface $user */
+        $user = $context->getResource($resourceName);
+
+        $this->isGranted('EDIT', $user);
+
+        $cancelPath = $this->generateUrl(
+            $this->config->getRoute('show'),
+            $context->getIdentifiers(true)
+        );
+
+        $payment = new Payment();
+
+        $options = array(
+            'user' => $user,
+            'admin_mode' => true,
+            '_redirect_enabled' => true,
+            '_footer' => array(
+                'cancel_path' => $cancelPath,
+                'buttons' => array(
+                    'submit' => array(
+                        'theme' => 'primary',
+                        'icon' => 'ok',
+                        'label' => 'ekyna_core.button.validate',
+                    )
+                )
+            ),
+        );
+
+        $form = $this->createForm('ekyna_subscription_payment', $payment, $options);
+
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $event = new PaymentEvent($payment);
+            $this->getDispatcher()->dispatch(PaymentEvents::PREPARE, $event);
+            if (null !== $response = $event->getResponse()) {
+                return $response;
+            }
+        }
+
+        return $this->render(
+            'EkynaSubscriptionBundle:Admin/User:subscription_payment.html.twig',
+            $context->getTemplateVars(array(
                 'form' => $form->createView()
             ))
         );

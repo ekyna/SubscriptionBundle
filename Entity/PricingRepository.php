@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\SubscriptionBundle\Entity;
 
 use Ekyna\Bundle\AdminBundle\Doctrine\ORM\ResourceRepository;
-use Ekyna\Bundle\SubscriptionBundle\Generator\Provider\PriceProviderInterface;
+use Ekyna\Bundle\SubscriptionBundle\Subscription\Provider\PriceProviderInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\PriceProviderSubjectInterface;
 
 /**

@@ -56,7 +56,6 @@ class PricingController extends ResourceController
             ->add('notify', 'checkbox', array(
                 'label' => 'ekyna_subscription.generate_notify.field.notify',
                 'required' => false,
-                'disabled' => true,
                 'attr' => array('align_with_widget' => true),
             ))
             ->getForm()
@@ -82,17 +81,14 @@ class PricingController extends ResourceController
                 if ($notify) {
                     $this->addFlash('ekyna_subscription.generate_notify.message.notify', 'info');
                 }
-
             } elseif ($notify) {
-                // TODO
-                /*
                 $env = ' --env='.$this->container->getParameter('kernel.environment');
                 $process = new Process(
                     'php app/console ekyna:subscription:notify' . $env,
                     dirname($this->container->getParameter('kernel.root_dir'))
                 );
                 $process->start();
-                $this->addFlash('ekyna_subscription.generate_notify.message.notify', 'info');*/
+                $this->addFlash('ekyna_subscription.generate_notify.message.notify', 'info');
             }
 
             return $this->redirect($cancelPath);

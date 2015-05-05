@@ -20,10 +20,10 @@ class EkynaSubscriptionExtension extends AbstractExtension
     {
         $config = $this->configure($configs, 'ekyna_subscription', new Configuration(), $container);
 
-        $container->setParameter(
-            'ekyna_subscription.generator.price_provider',
-            $config['generator']['price_provider']
-        );
+        $container->setParameter('ekyna_subscription.subscription.price_provider', $config['price_provider']);
+
+        $exposedConfig = ['templates' => $config['templates']];
+        $container->setParameter('ekyna_subscription.config', $exposedConfig);
     }
 
     /**

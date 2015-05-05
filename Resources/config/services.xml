@@ -22,6 +22,7 @@
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="sm.factory" />
             <argument type="service" id="router" />
+            <argument type="service" id="security.context" />
             <tag name="kernel.event_subscriber" />
         </service>
 
@@ -54,12 +55,13 @@
         </service>
         <service id="ekyna_subscription.payment.form_type" class="%ekyna_subscription.payment.form_type.class%">
             <argument>%ekyna_subscription.payment.class%</argument>
+            <argument>%ekyna_subscription.subscription.class%</argument>
             <tag name="form.type" alias="ekyna_subscription_payment" />
         </service>
 
         <!-- Providers -->
-        <service id="ekyna_subscription.generator.group_price_provider"
-                 class="Ekyna\Bundle\SubscriptionBundle\Generator\Provider\GroupPriceProvider">
+        <service id="ekyna_subscription.subscription.group_price_provider"
+                 class="Ekyna\Bundle\SubscriptionBundle\Subscription\Provider\GroupPriceProvider">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument>%ekyna_subscription.price.class%</argument>
             <call method="setGroupClass">
@@ -67,13 +69,23 @@
             </call>
         </service>
 
-        <!-- Generator -->
-        <service id="ekyna_subscription.generator" class="Ekyna\Bundle\SubscriptionBundle\Generator\SubscriptionGenerator">
+        <!-- Subscription -->
+        <service id="ekyna_subscription.subscription.generator" class="Ekyna\Bundle\SubscriptionBundle\Subscription\Generator">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="validator" />
             <argument>%ekyna_user.user.class%</argument>
             <argument>%ekyna_subscription.subscription.class%</argument>
+        </service>
+        <service id="ekyna_subscription.subscription.notifier" class="Ekyna\Bundle\SubscriptionBundle\Subscription\Notifier" >
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="translator" />
+            <argument type="service" id="router" />
+            <argument type="service" id="templating" />
+            <argument type="service" id="mailer" />
+            <argument type="service" id="ekyna_setting.manager" />
+            <argument>%ekyna_subscription.subscription.class%</argument>
+            <argument>%ekyna_subscription.config%</argument>
         </service>
 
         <!-- Routing loader -->

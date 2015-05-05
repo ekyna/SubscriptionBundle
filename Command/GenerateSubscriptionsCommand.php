@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\SubscriptionBundle\Command;
 
 use Ekyna\Bundle\SubscriptionBundle\Util\Year;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,7 +24,7 @@ class GenerateSubscriptionsCommand  extends ContainerAwareCommand
     {
         $this
             ->setName('ekyna:subscription:generate')
-            ->setDescription('Creates a super admin user.')
+            ->setDescription('Generates users subscriptions.')
             ->addArgument('years', InputArgument::IS_ARRAY|InputArgument::OPTIONAL, 'The years for which subscriptions must be generated.', array(date('Y')))
             ->addOption('notify', null, InputOption::VALUE_NONE, 'Whether to notify the user after subscription generation or not.')
             ->setHelp(<<<EOT
@@ -43,11 +44,11 @@ EOT
         $debug = !$input->getOption('no-debug');
         $years = $input->getArgument('years');
 
-        $generator = $this->getContainer()->get('ekyna_subscription.generator');
+        $generator = $this->getContainer()->get('ekyna_subscription.subscription.generator');
 
         foreach ($years as $year) {
             try {
-                $output->writeln(sprintf('<info>Generating subscription for year %s</info>', $year));
+                $output->writeln(sprintf('<info>Generating subscription for year %s ...</info>', $year));
                 $count = $generator->generateByYear($year);
                 $output->writeln(sprintf('%d subscriptions generated.', $count));
             } catch(\Exception $e) {
@@ -58,8 +59,12 @@ EOT
         }
 
         if ($input->getOption('notify')) {
-            // TODO
-            //$this->getApplication()->find('ekyna:subscription:notify');
+            $command = $this->getApplication()->find('ekyna:subscription:notify');
+            $i = new ArrayInput(array(
+                'command' => 'ekyna:subscription:notify',
+                '--env'   => $input->getOption('env'),
+            ));
+            $command->run($i, $output);
         }
 
         // TODO notify admin about result

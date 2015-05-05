@@ -38,9 +38,11 @@ ekyna_subscription:
         header:
             exempt: Dispenser de la cotisation <small>%year%</small>
             unexempt: Annuluer la dispense de cotisation <small>%year%</small>
+            payment: Créer un paiement
         button:
             exempt: Dispenser
             unexempt: Annuler la dispense
+            payment: Créer un paiement
     payment:
         label:
             singular: Paiement
@@ -67,3 +69,9 @@ ekyna_subscription:
         alert:
             no_pending_subscription: Aucune cotisation en attente de paiment trouvé.
             no_subscription: Aucune cotisation enregistrée.
+    email:
+        call_user_for_payment:
+            subject: Appel à cotisation
+            message: >
+                <p>Bonjour %identity%,</p>
+                <p>Vous recevez ce mail pour vous inviter à régler les cotisations.</p>

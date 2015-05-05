@@ -25,25 +25,21 @@ class AccountController extends Controller
     {
         $user = $this->getUser();
 
-        $subscriptions = $this
-            ->get('ekyna_subscription.subscription.repository')
-            ->findByUser($user)
-        ;
+        $subscriptionRepository = $this->get('ekyna_subscription.subscription.repository');
+
+        $subscriptions = $subscriptionRepository->findByUser($user);
 
         $payments = $this
             ->get('ekyna_subscription.payment.repository')
             ->findByUser($user)
         ;
 
-        $subscriptionsWithPaymentRequired = $this
-            ->get('ekyna_subscription.subscription.repository')
-            ->findByUserAndPaymentRequired($user)
-        ;
+        $paymentButton = $subscriptionRepository->userHasPaymentRequiredSubscriptions($user);
 
         return $this->render('EkynaSubscriptionBundle:Account:index.html.twig', array(
-            'subscriptions'  => $subscriptions,
-            'payments'       => $payments,
-            'payment_button' => !empty($subscriptionsWithPaymentRequired),
+            'subscriptions'          => $subscriptions,
+            'payments'               => $payments,
+            'display_payment_button' => $paymentButton,
         ));
     }
 

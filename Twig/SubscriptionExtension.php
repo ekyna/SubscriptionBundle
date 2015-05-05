@@ -44,6 +44,7 @@ class SubscriptionExtension extends \Twig_Extension
     {
         return array(
             new \Twig_SimpleFunction('render_subscription_state',  array($this, 'renderSubscriptionState'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('get_subscription_state',  array($this, 'getSubscriptionState'), array('is_safe' => array('html'))),
         );
     }
 
@@ -61,6 +62,17 @@ class SubscriptionExtension extends \Twig_Extension
             SubscriptionStates::getTheme($state),
             $this->translator->trans(SubscriptionStates::getLabel($state))
         );
+    }
+
+    /**
+     * Returns the subscription state.
+     *
+     * @param SubscriptionInterface $subscription
+     * @return string
+     */
+    public function getSubscriptionState(SubscriptionInterface $subscription)
+    {
+        return $this->translator->trans(SubscriptionStates::getLabel($subscription->getState()));
     }
 
     /**

@@ -2,7 +2,9 @@
 
 namespace Ekyna\Bundle\SubscriptionBundle\Form\Type;
 
+use Ekyna\Bundle\SubscriptionBundle\Entity\SubscriptionRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
@@ -17,15 +19,43 @@ class PaymentType extends AbstractType
      */
     protected $dataClass;
 
+    /**
+     * @var string
+     */
+    protected $subscriptionClass;
+
 
     /**
      * Constructor.
      *
-     * @param $dataClass
+     * @param string $dataClass
+     * @param string $subscriptionClass
      */
-    public function __construct($dataClass)
+    public function __construct($dataClass, $subscriptionClass)
     {
         $this->dataClass = $dataClass;
+        $this->subscriptionClass = $subscriptionClass;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options = array())
+    {
+        if (null !== $user = $options['user']) {
+            $builder
+                ->add('subscriptions', 'entity', array(
+                    'label' => 'ekyna_subscription.subscription.label.plural',
+                    'class' => $this->subscriptionClass,
+                    'multiple' => true,
+                    'expanded' => true,
+                    'required' => true,
+                    'query_builder' => function (SubscriptionRepository $er) use ($user) {
+                        return $er->createFindByUserAndPaymentRequiredQueryBuilder($user);
+                    },
+                ))
+            ;
+        }
     }
 
     /**
@@ -36,6 +66,10 @@ class PaymentType extends AbstractType
         $resolver
             ->setDefaults(array(
                 'class' => $this->dataClass,
+                'user'  => null,
+            ))
+            ->setAllowedTypes(array(
+                'user' => array('null', 'Ekyna\Bundle\UserBundle\Model\UserInterface')
             ))
         ;
     }

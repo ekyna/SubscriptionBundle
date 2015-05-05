@@ -11,6 +11,7 @@ use SM\Factory\FactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\SecurityContextInterface;
 
 /**
  * Class PaymentEventSubscriber
@@ -34,19 +35,30 @@ class PaymentEventSubscriber implements EventSubscriberInterface
      */
     private $urlGenerator;
 
+    /**
+     * @var SecurityContextInterface
+     */
+    private $securityContext;
+
 
     /**
      * Constructor.
      *
-     * @param ObjectManager         $manager
-     * @param FactoryInterface      $factory
-     * @param UrlGeneratorInterface $urlGenerator
+     * @param ObjectManager            $manager
+     * @param FactoryInterface         $factory
+     * @param UrlGeneratorInterface    $urlGenerator
+     * @param SecurityContextInterface $securityContext
      */
-    public function __construct(ObjectManager $manager, FactoryInterface $factory, UrlGeneratorInterface $urlGenerator)
-    {
-        $this->manager = $manager;
-        $this->factory = $factory;
-        $this->urlGenerator = $urlGenerator;
+    public function __construct(
+        ObjectManager $manager,
+        FactoryInterface $factory,
+        UrlGeneratorInterface $urlGenerator,
+        SecurityContextInterface $securityContext
+    ) {
+        $this->manager         = $manager;
+        $this->factory         = $factory;
+        $this->urlGenerator    = $urlGenerator;
+        $this->securityContext = $securityContext;
     }
 
     /**
@@ -110,6 +122,25 @@ class PaymentEventSubscriber implements EventSubscriberInterface
     {
         $payment = $event->getPayment();
         if (!$payment instanceof Payment) {
+            return;
+        }
+
+        if ($this->securityContext->isGranted('ROLE_ADMIN')) {
+            $subscriptions = $payment->getSubscriptions();
+            if (0 == $subscriptions->count()) {
+                throw new \LogicException('Payment has no subscription.');
+            }
+
+            /** @var \Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface $subscription */
+            $subscription = $subscriptions->first();
+
+            $event->setResponse(new RedirectResponse(
+                $this->urlGenerator->generate(
+                    'ekyna_user_user_admin_show',
+                    ['userId' => $subscription->getUser()->getId()]
+                )
+            ));
+
             return;
         }
 

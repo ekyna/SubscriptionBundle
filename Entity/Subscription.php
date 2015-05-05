@@ -56,6 +56,16 @@ class Subscription implements SubscriptionInterface
     }
 
     /**
+     * Returns the string representation.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->price->getPricing()->getYear();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getId()

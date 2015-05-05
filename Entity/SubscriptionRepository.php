@@ -41,7 +41,7 @@ class SubscriptionRepository extends EntityRepository
     }
 
     /**
-     * Returns subscriptions that are paid or subject to a processing payment.
+     * Returns subscriptions that are paid or subject to a processing payment by user.
      *
      * @param UserInterface $user
      * @return \Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface[]
@@ -63,7 +63,7 @@ class SubscriptionRepository extends EntityRepository
                 PaymentStates::STATE_COMPLETED,
                 PaymentStates::STATE_PENDING,
                 PaymentStates::STATE_PROCESSING,
-                PaymentStates::STATE_UNKNOWN,
+                //PaymentStates::STATE_UNKNOWN,
             ),
         );
 
@@ -76,36 +76,59 @@ class SubscriptionRepository extends EntityRepository
     }
 
     /**
-     * Returns subscriptions which require a payment.
+     * Creates a query builder initialized to select subscriptions which require a payment by user.
+     *
+     * @param UserInterface $user
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function createFindByUserAndPaymentRequiredQueryBuilder(UserInterface $user)
+    {
+        $qb = $this->createQueryBuilder('s');
+
+        $processingSubscriptions = $this->findByUserAndValidPayment($user);
+
+        $qb
+            ->join('s.price', 'price')
+            ->join('price.pricing', 'pricing')
+            ->andWhere($qb->expr()->eq('s.user', ':user'))
+            ->addOrderBy('pricing.year', 'DESC')
+            ->setParameter('user', $user)
+        ;
+
+        if (!empty($processingSubscriptions)) {
+            $qb->andWhere($qb->expr()->notIn('s', ':processing_subscriptions'));
+            $qb->setParameter('processing_subscriptions', $processingSubscriptions);
+        }
+
+        return $qb;
+    }
+
+    /**
+     * Returns subscriptions which require a payment by user.
      *
      * @param UserInterface $user
      * @return array
      */
     public function findByUserAndPaymentRequired(UserInterface $user)
     {
-        $qb = $this->createQueryBuilder('s');
-
-        $processingSubscriptions = $this->findByUserAndValidPayment($user);
-
-        $parameters = array('user' => $user);
-
-        $qb
-            ->leftJoin('s.payments', 'payment')
-            ->join('s.price', 'price')
-            ->join('price.pricing', 'pricing')
-            ->andWhere($qb->expr()->eq('s.user', ':user'))
-            ->addOrderBy('pricing.year', 'DESC')
-        ;
-
-        if (!empty($processingSubscriptions)) {
-            $qb->andWhere($qb->expr()->notIn('s', ':processing_subscriptions'));
-            $parameters['processing_subscriptions'] = $processingSubscriptions;
-        }
+        $qb = $this->createFindByUserAndPaymentRequiredQueryBuilder($user);
 
         return $qb
             ->getQuery()
-            ->setParameters($parameters)
             ->getResult()
         ;
+    }
+
+    /**
+     * Returns whether the user has subscriptions that requires a payment.
+     *
+     * @param UserInterface $user
+     * @return bool
+     */
+    public function userHasPaymentRequiredSubscriptions(UserInterface $user)
+    {
+        $s = $this->findByUserAndPaymentRequired($user);
+
+        return !empty($s);
     }
 }

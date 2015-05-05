@@ -37,6 +37,14 @@
     {% endfor %}
 </table>
 
+{% if display_payment_button %}
+<p style="text-align: center; margin-bottom: 20px;">
+    <a href="{{ path('ekyna_user_user_admin_subscription_payment', {'userId': user.id}) }}" class="btn btn-primary">
+        {{ 'ekyna_subscription.subscription.button.payment'|trans }}
+    </a>
+</p>
+{% endif %}
+
 {% if payments is not empty %}
 <br>
 <h3>{{ 'ekyna_subscription.payment.label.plural'|trans }}</h3>

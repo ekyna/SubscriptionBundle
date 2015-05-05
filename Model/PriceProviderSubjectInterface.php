@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\SubscriptionBundle\Model;
 
-use Ekyna\Bundle\SubscriptionBundle\Generator\Provider\PriceProviderInterface;
+use Ekyna\Bundle\SubscriptionBundle\Subscription\Provider\PriceProviderInterface;
 
 /**
  * Interface PriceProviderSubjectInterface

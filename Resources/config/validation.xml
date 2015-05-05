@@ -52,7 +52,10 @@
 
     <class name="Ekyna\Bundle\SubscriptionBundle\Entity\Payment">
         <property name="subscriptions">
-            <!-- TODO count > 0 -->
+            <constraint name="Count">
+                <option name="min">1</option>
+                <option name="minMessage">ekyna_subscription.payment.subscription_count</option>
+            </constraint>
             <constraint name="Valid" />
         </property>
     </class>

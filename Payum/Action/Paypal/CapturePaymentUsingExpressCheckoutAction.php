@@ -36,11 +36,23 @@ class CapturePaymentUsingExpressCheckoutAction extends AbstractCapturePaymentAct
         $details['PAYMENTREQUEST_0_AMT'] = round($payment->getAmount(), 2);
         $details['PAYMENTREQUEST_0_ITEMAMT'] = round($payment->getAmount(), 2);
 
-        $m = 0;
-        foreach ($payment->getSubscriptions() as $subscription) {
+        $m = $itemTotal = 0;
 
+        foreach ($payment->getSubscriptions() as $subscription) {
+            $price = $subscription->getPrice();
+            $amount = $price->getAmount();
+            $details['L_PAYMENTREQUEST_0_NAME'.$m] = 'Cotisation '.$price->getPricing()->getYear();
+            $details['L_PAYMENTREQUEST_0_AMT'.$m] = round($amount, 2);
+            $details['L_PAYMENTREQUEST_0_QTY'.$m] = 1;
+            $itemTotal += $amount;
             $m++;
         }
+
+        $details['PAYMENTREQUEST_0_ITEMAMT'] = round($itemTotal, 2);
+
+        $details['PAYMENTREQUEST_0_SHIPPINGAMT'] = 0;
+
+        $details['PAYMENTREQUEST_0_TAXAMT'] = 0;
 
         $payment->setDetails($details);
     }

@@ -1,0 +1,31 @@
+{% extends "EkynaSubscriptionBundle:Email:base.html.twig" %}
+
+{% block subject %}
+    {{ 'ekyna_subscription.email.call_user_for_payment.subject'|trans|raw }}
+{% endblock subject %}
+
+{% block body %}
+    {% set identity = render_identity(user) %}
+    {{ 'ekyna_subscription.email.call_user_for_payment.message'|trans({'%identity%': identity})|raw }}
+    <br>
+    <hr>
+    <table style="width: 100%;">
+        <tr>
+            <th>{{ 'ekyna_subscription.pricing.field.year'|trans }}</th>
+            <th>{{ 'ekyna_subscription.price.field.amount'|trans }}</th>
+            <th>{{ 'ekyna_core.field.status'|trans }}</th>
+        </tr>
+        {% for subscription in subscriptions %}
+            <tr>
+                <td>{{ subscription.price.pricing.year }}</td>
+                <td>{{ ((subscription.price.amount|localizednumber()) ~ '&nbsp;€')|raw }}</td>
+                <td>{{ get_subscription_state(subscription) }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <p style="text-align: center;">
+        <a href="{{ url('ekyna_subscription_account_index') }}">
+            {{ 'ekyna_subscription.account.subscription.button.payment'|trans }}
+        </a>
+    </p>
+{% endblock body %}

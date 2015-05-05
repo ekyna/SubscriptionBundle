@@ -27,7 +27,7 @@
     {% endfor %}
 </table>
 
-{% if payment_button %}
+{% if display_payment_button %}
 <p style="text-align: center;">
     <a href="{{ path('ekyna_subscription_account_payment') }}" class="btn btn-primary">
         {{ 'ekyna_subscription.account.subscription.button.payment'|trans }}
