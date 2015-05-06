@@ -51,6 +51,8 @@ class AccountController extends Controller
      */
     public function paymentAction(Request $request)
     {
+        $redirectPath = $this->generateUrl('ekyna_subscription_account_index');
+
         $user = $this->getUser();
         $subscriptions = $this
             ->get('ekyna_subscription.subscription.repository')
@@ -58,12 +60,15 @@ class AccountController extends Controller
         ;
         if (empty($subscriptions)) {
             $this->addFlash('ekyna_subscription.account.alert.no_pending_subscription', 'info');
-            return $this->redirect($this->generateUrl('ekyna_subscription_account_index'));
+            return $this->redirect($redirectPath);
         }
 
         // TODO watch for pending payments
 
         $payment = new Payment();
+        $payment->setDetails(array(
+            'done_redirect_path' => $redirectPath,
+        ));
         foreach ($subscriptions as $subscription) {
             $payment->addSubscription($subscription);
         }

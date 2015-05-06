@@ -43,12 +43,14 @@
     <tr>
         <th>{{ 'ekyna_core.field.date'|trans }}</th>
         <th>{{ 'ekyna_payment.payment.field.amount'|trans }}</th>
+        <th>{{ 'ekyna_payment.payment.field.method'|trans }}</th>
         <th>{{ 'ekyna_core.field.status'|trans }}</th>
     </tr>
     {% for payment in payments %}
     <tr>
         <td>{{ payment.createdAt|localizeddate('full', 'short') }}</td>
         <td>{{ ((payment.amount|localizednumber()) ~ '&nbsp;€')|raw }}</td>
+        <td>{{ payment.method.paymentName }}</td>
         <td>{{ render_payment_state(payment) }}</td>
     </tr>
     {% endfor %}

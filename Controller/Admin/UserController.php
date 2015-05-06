@@ -220,6 +220,12 @@ class UserController extends ResourceController
         );
 
         $payment = new Payment();
+        $payment->setDetails(array(
+            'done_redirect_path' => $this->generateUrl(
+                $this->config->getRoute('show'),
+                $context->getIdentifiers(true)
+            ),
+        ));
 
         $options = array(
             'user' => $user,

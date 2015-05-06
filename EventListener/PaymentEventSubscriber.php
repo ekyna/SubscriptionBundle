@@ -125,6 +125,12 @@ class PaymentEventSubscriber implements EventSubscriberInterface
             return;
         }
 
+        $details = $payment->getDetails();
+        if (array_key_exists('done_redirect_path', $details)) {
+            $event->setResponse(new RedirectResponse($details['done_redirect_path']));
+            return;
+        }
+
         if ($this->securityContext->isGranted('ROLE_ADMIN')) {
             $subscriptions = $payment->getSubscriptions();
             if (0 == $subscriptions->count()) {
