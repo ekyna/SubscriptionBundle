@@ -17,6 +17,7 @@
         <many-to-many target-entity="Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface" field="subscriptions" inversed-by="payments" fetch="EXTRA_LAZY">
             <cascade>
                 <cascade-persist />
+                <cascade-remove />
             </cascade>
             <join-table name="subs_payments_subscriptions">
                 <join-columns>

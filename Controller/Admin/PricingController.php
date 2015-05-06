@@ -24,6 +24,8 @@ class PricingController extends ResourceController
     {
         $this->checkPricing();
 
+        $context = $this->loadContext($request);
+
         $cancelPath = $this->generateUrl('ekyna_subscription_pricing_admin_list');
 
         $options = array(
@@ -93,6 +95,11 @@ class PricingController extends ResourceController
 
             return $this->redirect($cancelPath);
         }
+
+        $this->appendBreadcrumb(
+            'pricing-generate-notify',
+            'ekyna_subscription.pricing.button.generate_notify'
+        );
 
         return $this->render('EkynaSubscriptionBundle:Admin/Pricing:generate-notify.html.twig', array(
             'form' => $form->createView(),

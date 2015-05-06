@@ -34,6 +34,9 @@
         </many-to-one>
 
         <many-to-many target-entity="Ekyna\Bundle\SubscriptionBundle\Model\PaymentInterface" field="payments" mapped-by="subscriptions" fetch="EXTRA_LAZY">
+            <cascade>
+                <cascade-persist />
+            </cascade>
         </many-to-many>
 
     </mapped-superclass>
