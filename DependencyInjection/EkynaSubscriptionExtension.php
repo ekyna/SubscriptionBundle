@@ -36,19 +36,16 @@ class EkynaSubscriptionExtension extends AbstractExtension
         $bundles = $container->getParameter('kernel.bundles');
 
         if (array_key_exists('TwigBundle', $bundles)) {
-            $this->configureTwigBundle($container);
+            $container->prependExtensionConfig('twig', array(
+                'form' => array('resources' => array(
+                    'EkynaSubscriptionBundle:Form:form_div_layout.html.twig'
+                )),
+            ));
         }
-    }
-
-    /**
-     * Configures the TwigBundle.
-     *
-     * @param ContainerBuilder $container
-     */
-    protected function configureTwigBundle(ContainerBuilder $container)
-    {
-        $container->prependExtensionConfig('twig', array(
-            'form' => array('resources' => array('EkynaSubscriptionBundle:Form:form_div_layout.html.twig')),
-        ));
+        if (array_key_exists('AsseticBundle', $bundles)) {
+            $container->prependExtensionConfig('assetic', array(
+                'bundles' => array('EkynaSubscriptionBundle')
+            ));
+        }
     }
 }
