@@ -65,9 +65,9 @@ ekyna_subscription:
         payment:
             title: Régler mes cotisations
             button:
-                validate: Procéder au paiment
+                validate: Procéder au paiement
         alert:
-            no_pending_subscription: Aucune cotisation en attente de paiment trouvé.
+            no_pending_subscription: Aucune cotisation en attente de paiement trouvé.
             no_subscription: Aucune cotisation enregistrée.
     email:
         call_user_for_payment:
