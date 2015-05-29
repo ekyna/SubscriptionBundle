@@ -19,3 +19,12 @@
         {{ ui_form_footer(form) }}
     </form>
 {% endblock main %}
+
+{% block stylesheets -%}
+    {{ parent() }}
+    {% stylesheets output='css/payment.css' filter='cssrewrite, ?yui_css'
+    '@EkynaPaymentBundle/Resources/asset/css/payment.css'
+    %}
+    <link href="{{ asset_url }}" rel="stylesheet" type="text/css" />
+    {% endstylesheets %}
+{%- endblock stylesheets %}
