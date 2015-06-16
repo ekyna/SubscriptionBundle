@@ -2,7 +2,6 @@
 
 namespace Ekyna\Bundle\SubscriptionBundle\Command;
 
-use Ekyna\Bundle\SubscriptionBundle\Util\Year;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -15,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package Ekyna\Bundle\SubscriptionBundle\Command
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class GenerateSubscriptionsCommand  extends ContainerAwareCommand
+class GenerateSubscriptionsCommand extends ContainerAwareCommand
 {
     /**
      * {@inheritdoc}
