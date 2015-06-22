@@ -2,24 +2,26 @@ ekyna_subscription_account_index:
     pattern: ""
     defaults:
         _controller: EkynaSubscriptionBundle:Account:index
+    requirements:
+        _method: GET
+    options:
         _cms:
             name: "Mes cotisations"
             parent: ekyna_user_account_home
             seo:
                 follow: false
                 index: false
-    requirements:
-        _method: GET
 
 ekyna_subscription_account_payment:
     pattern: /payment
     defaults:
         _controller: EkynaSubscriptionBundle:Account:payment
+    requirements:
+        _method: GET|POST
+    options:
         _cms:
             name: "Régler mes cotisations"
             parent: ekyna_subscription_account_index
             seo:
                 follow: false
                 index: false
-    requirements:
-        _method: GET|POST
