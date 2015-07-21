@@ -5,7 +5,6 @@ namespace Ekyna\Bundle\SubscriptionBundle\EventListener;
 use Doctrine\Common\Persistence\ObjectManager;
 use Ekyna\Bundle\PaymentBundle\Event\PaymentEvent;
 use Ekyna\Bundle\PaymentBundle\Event\PaymentEvents;
-use Ekyna\Bundle\SubscriptionBundle\Entity\Payment;
 use Ekyna\Component\Sale\Payment\PaymentStates;
 use SM\Factory\FactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -68,7 +67,7 @@ class PaymentEventSubscriber implements EventSubscriberInterface
      */
     public function onPaymentPrepare(PaymentEvent $event)
     {
-        $payment = $event->getPayment();
+        /*$payment = $event->getPayment();
         if (!$payment instanceof Payment) {
             return;
         }
@@ -77,7 +76,7 @@ class PaymentEventSubscriber implements EventSubscriberInterface
         foreach ($payment->getSubscriptions() as $subscription) {
             $amount += $subscription->getPrice()->getAmount();
         }
-        $payment->setAmount($amount);
+        $payment->setAmount($amount);*/
     }
 
     /**
@@ -87,7 +86,7 @@ class PaymentEventSubscriber implements EventSubscriberInterface
      */
     public function onPaymentStateChange(PaymentEvent $event)
     {
-        $payment = $event->getPayment();
+        /*$payment = $event->getPayment();
         if (!$payment instanceof Payment) {
             return;
         }
@@ -110,7 +109,7 @@ class PaymentEventSubscriber implements EventSubscriberInterface
             }
         }
 
-        $this->manager->flush();
+        $this->manager->flush();*/
     }
 
     /**
@@ -120,7 +119,7 @@ class PaymentEventSubscriber implements EventSubscriberInterface
      */
     public function onPaymentDone(PaymentEvent $event)
     {
-        $payment = $event->getPayment();
+        /*$payment = $event->getPayment();
         if (!$payment instanceof Payment) {
             return;
         }
@@ -138,7 +137,7 @@ class PaymentEventSubscriber implements EventSubscriberInterface
             }
 
             /** @var \Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface $subscription */
-            $subscription = $subscriptions->first();
+            /*$subscription = $subscriptions->first();
 
             $event->setResponse(new RedirectResponse(
                 $this->urlGenerator->generate(
@@ -152,7 +151,7 @@ class PaymentEventSubscriber implements EventSubscriberInterface
 
         $event->setResponse(new RedirectResponse(
             $this->urlGenerator->generate('ekyna_subscription_account_index')
-        ));
+        ));*/
     }
 
     /**

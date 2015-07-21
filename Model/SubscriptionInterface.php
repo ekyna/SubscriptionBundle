@@ -3,7 +3,6 @@
 namespace Ekyna\Bundle\SubscriptionBundle\Model;
 
 use Ekyna\Bundle\UserBundle\Model\UserInterface;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Interface SubscriptionInterface
@@ -78,35 +77,4 @@ interface SubscriptionInterface
      * @return \DateTime
      */
     public function getNotifiedAt();
-
-    /**
-     * Has the payment.
-     *
-     * @param PaymentInterface $payment
-     * @return SubscriptionInterface|$this
-     */
-    public function hasPayment(PaymentInterface $payment);
-
-    /**
-     * Adds the payment.
-     *
-     * @param PaymentInterface $payment
-     * @return SubscriptionInterface|$this
-     */
-    public function addPayment(PaymentInterface $payment);
-
-    /**
-     * Removes the payment.
-     *
-     * @param PaymentInterface $payment
-     * @return SubscriptionInterface|$this
-     */
-    public function removePayment(PaymentInterface $payment);
-
-    /**
-     * Returns the payments.
-     *
-     * @return ArrayCollection|PaymentInterface[]
-     */
-    public function getPayments();
 }

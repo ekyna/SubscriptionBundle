@@ -13,6 +13,7 @@
     <form action="{{ path('ekyna_user_user_admin_subscription_unexempt', {'userId': user.id, 'subscriptionId': subscription.id}) }}" method="post" {{ form_enctype(form) }} class="form-horizontal">
         <div class="form-body">
             {{ bootstrap_set_style('horizontal') }}
+            {{ bootstrap_set_col_size('md') }}
 
             {{ form_widget(form) }}
         </div>

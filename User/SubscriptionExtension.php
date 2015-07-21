@@ -2,9 +2,7 @@
 
 namespace Ekyna\Bundle\SubscriptionBundle\User;
 
-use Ekyna\Bundle\SubscriptionBundle\Entity\PaymentRepository;
 use Ekyna\Bundle\SubscriptionBundle\Entity\SubscriptionRepository;
-use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
 use Ekyna\Bundle\UserBundle\Extension\AbstractExtension;
 use Ekyna\Bundle\UserBundle\Extension\Admin\ShowTab;
 use Ekyna\Bundle\UserBundle\Model\UserInterface;
@@ -21,22 +19,15 @@ class SubscriptionExtension extends AbstractExtension
      */
     protected $subscriptionRepository;
 
-    /**
-     * @var PaymentRepository
-     */
-    protected $paymentRepository;
-
 
     /**
      * Constructor.
      *
      * @param SubscriptionRepository $subscriptionRepository
-     * @param PaymentRepository      $paymentRepository
      */
-    public function __construct(SubscriptionRepository $subscriptionRepository, PaymentRepository $paymentRepository)
+    public function __construct(SubscriptionRepository $subscriptionRepository)
     {
         $this->subscriptionRepository = $subscriptionRepository;
-        $this->paymentRepository      = $paymentRepository;
     }
 
     /**
@@ -45,9 +36,8 @@ class SubscriptionExtension extends AbstractExtension
     public function getAdminShowTab(UserInterface $user)
     {
         $data = [
-            'subscriptions'          => $this->subscriptionRepository->findByUser($user),
-            'payments'               => $this->paymentRepository->findByUser($user),
-            'display_payment_button' => $this->subscriptionRepository->userHasPaymentRequiredSubscriptions($user),
+            'subscriptions' => $this->subscriptionRepository->findByUser($user),
+            'create_order'  => $this->subscriptionRepository->userHasPaymentRequiredSubscriptions($user),
         ];
 
         return new ShowTab(

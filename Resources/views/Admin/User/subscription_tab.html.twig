@@ -8,67 +8,39 @@
         <th></th>
     </tr>
     {% for subscription in subscriptions %}
-        <tr>
-            <td>{{ subscription.price.pricing.year }}</td>
-            <td>{{ ((subscription.price.amount|localizednumber()) ~ '&nbsp;€')|raw }}</td>
-            <td>{{ render_subscription_state(subscription) }}</td>
-            <td>
-                {% if sm_can(subscription, 'exempt') %}
-                <a href="{{ path('ekyna_user_user_admin_subscription_exempt', {'userId': user.id, 'subscriptionId': subscription.id}) }}"
-                   class="btn btn-xs btn-primary">
-                    {{ 'ekyna_subscription.subscription.button.exempt'|trans }}
-                </a>
-                {% elseif sm_can(subscription, 'unexempt') %}
-                <a href="{{ path('ekyna_user_user_admin_subscription_unexempt', {'userId': user.id, 'subscriptionId': subscription.id}) }}"
-                   class="btn btn-xs btn-primary">
-                    {{ 'ekyna_subscription.subscription.button.unexempt'|trans }}
-                </a>
-                {% endif %}
-            </td>
-        </tr>
+    <tr>
+        <td>{{ subscription.price.pricing.year }}</td>
+        <td>{{ ((subscription.price.amount|localizednumber()) ~ '&nbsp;€')|raw }}</td>
+        <td>{{ render_subscription_state(subscription) }}</td>
+        <td>
+            {% if sm_can(subscription, 'exempt') %}
+            <a href="{{ path('ekyna_user_user_admin_subscription_exempt', {'userId': user.id, 'subscriptionId': subscription.id}) }}"
+               class="btn btn-xs btn-primary">
+                {{ 'ekyna_subscription.subscription.button.exempt'|trans }}
+            </a>
+            {% elseif sm_can(subscription, 'unexempt') %}
+            <a href="{{ path('ekyna_user_user_admin_subscription_unexempt', {'userId': user.id, 'subscriptionId': subscription.id}) }}"
+               class="btn btn-xs btn-primary">
+                {{ 'ekyna_subscription.subscription.button.unexempt'|trans }}
+            </a>
+            {% endif %}
+        </td>
+    </tr>
     {% else %}
-        <tr>
-            <td colspan="3" style="text-align: center;">
-                <em class="alert alert-info" style="padding: 0 10px 0 10px;">
-                    {{ 'ekyna_subscription.account.alert.no_subscription'|trans }}
-                </em>
-            </td>
-        </tr>
+    <tr>
+        <td colspan="3" style="text-align: center;">
+            <em class="alert alert-info" style="padding: 0 10px 0 10px;">
+                {{ 'ekyna_subscription.account.alert.no_subscription'|trans }}
+            </em>
+        </td>
+    </tr>
     {% endfor %}
 </table>
 
-{% if display_payment_button %}
+{#{% if create_order %}
 <p style="text-align: center; margin-bottom: 20px;">
-    <a href="{{ path('ekyna_user_user_admin_subscription_payment', {'userId': user.id}) }}" class="btn btn-primary">
-        {{ 'ekyna_subscription.subscription.button.payment'|trans }}
+    <a href="{{ path('ekyna_user_user_admin_subscription_create_order', {'userId': user.id}) }}" class="btn btn-primary">
+        {{ 'ekyna_subscription.subscription.button.create_order'|trans }}
     </a>
 </p>
-{% endif %}
-
-{% if payments is not empty %}
-<br>
-<h3>{{ 'ekyna_subscription.payment.label.plural'|trans }}</h3>
-<hr>
-<table class="table table-striped">
-    <tr>
-        <th>{{ 'ekyna_core.field.date'|trans }}</th>
-        <th>{{ 'ekyna_payment.payment.field.amount'|trans }}</th>
-        <th>{{ 'ekyna_payment.payment.field.method'|trans }}</th>
-        <th>{{ 'ekyna_core.field.status'|trans }}</th>
-        <th></th>
-    </tr>
-    {% for payment in payments %}
-        <tr>
-            <td>{{ payment.createdAt|localizeddate('full', 'short') }}</td>
-            <td>{{ ((payment.amount|localizednumber()) ~ '&nbsp;€')|raw }}</td>
-            <td>{{ payment.method.paymentName }}</td>
-            <td>{{ render_payment_state(payment) }}</td>
-            <td class="actions">{{ render_payment_actions(
-                payment,
-                'ekyna_user_user_admin_subscription_payment_transition',
-                {'userId': user.id, 'paymentId': payment.id}
-                ) }}</td>
-        </tr>
-    {% endfor %}
-</table>
-{% endif %}
+{% endif %}#}

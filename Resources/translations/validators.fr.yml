@@ -4,5 +4,3 @@ ekyna_subscription:
         duplicate_year: Cette année a déjà été saisie.
     subscription:
         already_exists: Une cotisation éxiste déjà pour cet utilisateur et cette année.
-    payment:
-        subscription_count: Veuillez sélectionner au moins une cotisation.

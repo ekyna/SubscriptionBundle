@@ -1,3 +1,0 @@
-payum:
-    storages:
-        Ekyna\Bundle\SubscriptionBundle\Entity\Payment: { doctrine: orm }

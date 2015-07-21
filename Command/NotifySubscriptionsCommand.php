@@ -20,13 +20,8 @@ class NotifySubscriptionsCommand  extends ContainerAwareCommand
 SELECT s, u
 FROM %s s
 JOIN s.user u
-LEFT JOIN s.payments p
 WHERE s.state = %s
     AND s.notifiedAt IS NULL
-    AND (
-        p IS NULL
-        OR p.state NOT IN (%s)
-    )
 GROUP BY u.id
 DQL;
 
@@ -74,16 +69,7 @@ EOT
     protected function findUsersWithSubscriptionPaymentRequired()
     {
         $subscriptionClass = $this->getContainer()->getParameter('ekyna_subscription.subscription.class');
-
-        $subscriptionState = sprintf("'%s'", SubscriptionStates::PENDING);
-        $paymentStates = implode(',', array_map(function ($s) {
-            return sprintf("'%s'", $s);
-        }, array(
-            PaymentStates::STATE_AUTHORIZED,
-            PaymentStates::STATE_COMPLETED,
-            PaymentStates::STATE_PENDING,
-            PaymentStates::STATE_PROCESSING,
-        )));
+        $subscriptionState = sprintf("'%s'", SubscriptionStates::STATE_NEW);
 
         $query = $this
             ->getContainer()
@@ -91,8 +77,7 @@ EOT
                 sprintf(
                     self::USERS_WITH_SUBSCRIPTION_PAYMENT_REQUIRED_DQL,
                     $subscriptionClass,
-                    $subscriptionState,
-                    $paymentStates
+                    $subscriptionState
                 )
             )
         ;

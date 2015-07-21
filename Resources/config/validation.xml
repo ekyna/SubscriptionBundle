@@ -45,19 +45,6 @@
         <property name="price">
             <constraint name="NotNull" />
         </property>
-        <property name="payments">
-            <constraint name="Valid" />
-        </property>
-    </class>
-
-    <class name="Ekyna\Bundle\SubscriptionBundle\Entity\Payment">
-        <property name="subscriptions">
-            <constraint name="Count">
-                <option name="min">1</option>
-                <option name="minMessage">ekyna_subscription.payment.subscription_count</option>
-            </constraint>
-            <constraint name="Valid" />
-        </property>
     </class>
 
 </constraint-mapping>

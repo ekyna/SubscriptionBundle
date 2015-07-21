@@ -7,28 +7,19 @@
     <parameters>
         <parameter key="ekyna_subscription.price.class">Ekyna\Bundle\SubscriptionBundle\Entity\GroupPrice</parameter>
         <parameter key="ekyna_subscription.subscription.class">Ekyna\Bundle\SubscriptionBundle\Entity\Subscription</parameter>
-        <parameter key="ekyna_subscription.payment.class">Ekyna\Bundle\SubscriptionBundle\Entity\Payment</parameter>
 
         <parameter key="ekyna_subscription.price.form_type.class">Ekyna\Bundle\SubscriptionBundle\Form\Type\PriceType</parameter>
-        <parameter key="ekyna_subscription.payment.form_type.class">Ekyna\Bundle\SubscriptionBundle\Form\Type\PaymentType</parameter>
-
-        <parameter key="ekyna_subscription.payum.action.paypal.capture_payment_using_express_checkout.class">Ekyna\Bundle\SubscriptionBundle\Payum\Action\Paypal\CapturePaymentUsingExpressCheckoutAction</parameter>
+        <parameter key="ekyna_subscription.create_order.form_type.class">Ekyna\Bundle\SubscriptionBundle\Form\Type\CreateOrderType</parameter>
     </parameters>
 
     <services>
 
         <!-- Event subscribers -->
-        <service id="ekyna_subscription.payment_event_subscriber" class="Ekyna\Bundle\SubscriptionBundle\EventListener\PaymentEventSubscriber">
-            <argument type="service" id="doctrine.orm.entity_manager" />
-            <argument type="service" id="sm.factory" />
-            <argument type="service" id="router" />
-            <argument type="service" id="security.context" />
+        <service id="ekyna_subscription.order_event_subscriber" class="Ekyna\Bundle\SubscriptionBundle\EventListener\OrderEventSubscriber">
+            <argument id="ekyna_order.item_helper" type="service" />
+            <argument id="doctrine.orm.entity_manager" type="service" />
+            <argument id="sm.factory" type="service" />
             <tag name="kernel.event_subscriber" />
-        </service>
-
-        <!-- PayPal -->
-        <service id="ekyna_subscription.payum.action.paypal.capture_payment_using_express_checkout" class="%ekyna_subscription.payum.action.paypal.capture_payment_using_express_checkout.class%">
-            <tag name="payum.action" factory="paypal_express_checkout_nvp" />
         </service>
 
         <!-- Entity repositories -->
@@ -37,12 +28,6 @@
                  factory-service="doctrine.orm.entity_manager"
                  factory-method="getRepository">
             <argument>%ekyna_subscription.subscription.class%</argument>
-        </service>
-        <service id="ekyna_subscription.payment.repository"
-                 class="Ekyna\Bundle\SubscriptionBundle\Entity\PaymentRepository"
-                 factory-service="doctrine.orm.entity_manager"
-                 factory-method="getRepository">
-            <argument>%ekyna_subscription.payment.class%</argument>
         </service>
 
         <!-- Form types -->
@@ -53,10 +38,9 @@
         <service id="ekyna_subscription.price_collection.form_type" class="Ekyna\Bundle\SubscriptionBundle\Form\Type\PriceCollectionType">
             <tag name="form.type" alias="ekyna_subscription_price_collection" />
         </service>
-        <service id="ekyna_subscription.payment.form_type" class="%ekyna_subscription.payment.form_type.class%">
-            <argument>%ekyna_subscription.payment.class%</argument>
+        <service id="ekyna_subscription.create_order.form_type" class="%ekyna_subscription.create_order.form_type.class%">
             <argument>%ekyna_subscription.subscription.class%</argument>
-            <tag name="form.type" alias="ekyna_subscription_payment" />
+            <tag name="form.type" alias="ekyna_subscription_create_order" />
         </service>
 
         <!-- Providers -->
@@ -88,6 +72,20 @@
             <argument>%ekyna_subscription.config%</argument>
         </service>
 
+        <!-- Order feeder -->
+        <service id="ekyna_subscription.order.order_feeder" class="Ekyna\Bundle\SubscriptionBundle\Order\OrderFeeder">
+            <argument id="ekyna_order.order_helper" type="service" />
+            <argument id="ekyna_subscription.subscription.repository" type="service" />
+            <argument>%kernel.debug%</argument>
+        </service>
+
+        <!-- Order item provider -->
+        <service id="ekyna_subscription.order.order_item_provider" class="Ekyna\Bundle\SubscriptionBundle\Order\OrderItemProvider">
+            <argument id="ekyna_subscription.subscription.repository" type="service" />
+            <argument id="router" type="service" />
+            <tag name="ekyna_order.item_provider" />
+        </service>
+
         <!-- Routing loader -->
         <service id="ekyna_subscription.routing_loader" class="Ekyna\Bundle\SubscriptionBundle\Routing\AccountLoader">
             <argument>%ekyna_user.config%</argument>
@@ -97,7 +95,6 @@
         <!-- User extension -->
         <service id="ekyna_subscription.user.subscription_extension" class="Ekyna\Bundle\SubscriptionBundle\User\SubscriptionExtension">
             <argument type="service" id="ekyna_subscription.subscription.repository" />
-            <argument type="service" id="ekyna_subscription.payment.repository" />
             <tag name="ekyna_user.extension" />
         </service>
 

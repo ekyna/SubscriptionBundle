@@ -3,10 +3,8 @@
 namespace Ekyna\Bundle\SubscriptionBundle\Controller\Admin;
 
 use Ekyna\Bundle\AdminBundle\Controller\ResourceController;
-use Ekyna\Bundle\PaymentBundle\Event\PaymentEvent;
-use Ekyna\Bundle\PaymentBundle\Event\PaymentEvents;
 use Ekyna\Bundle\PaymentBundle\Model\PaymentTransitionTrait;
-use Ekyna\Bundle\SubscriptionBundle\Entity\Payment;
+use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionTransitions;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints;
@@ -42,7 +40,7 @@ class UserController extends ResourceController
             ->find($request->attributes->get('subscriptionId'))
         ;
         $stateMachine = $this->get('sm.factory')->get($subscription);
-        if (null === $subscription || !$stateMachine->can('exempt')) {
+        if (null === $subscription || !$stateMachine->can(SubscriptionTransitions::TRANSITION_EXEMPT)) {
             throw new NotFoundHttpException('Subscription not found.');
         }
 
@@ -87,7 +85,7 @@ class UserController extends ResourceController
 
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $stateMachine->apply('exempt');
+            $stateMachine->apply(SubscriptionTransitions::TRANSITION_EXEMPT);
             $em = $this->getManager();
             $em->persist($subscription);
             $em->flush();
@@ -131,7 +129,7 @@ class UserController extends ResourceController
             ->find($request->attributes->get('subscriptionId'))
         ;
         $stateMachine = $this->get('sm.factory')->get($subscription);
-        if (null === $subscription || !$stateMachine->can('unexempt')) {
+        if (null === $subscription || !$stateMachine->can(SubscriptionTransitions::TRANSITION_UNEXEMPT)) {
             throw new NotFoundHttpException('Subscription not found.');
         }
 
@@ -176,7 +174,7 @@ class UserController extends ResourceController
 
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $stateMachine->apply('unexempt');
+            $stateMachine->apply(SubscriptionTransitions::TRANSITION_UNEXEMPT);
             $em = $this->getManager();
             $em->persist($subscription);
             $em->flush();
@@ -199,18 +197,20 @@ class UserController extends ResourceController
     }
 
     /**
-     * Payment action.
+     * Creates an order.
      *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function paymentAction(Request $request)
+    public function createOrderAction(Request $request)
     {
-        $context = $this->loadContext($request);
+        throw new NotFoundHttpException('Not yes implemented');
+
+        /*$context = $this->loadContext($request);
         $resourceName = $this->config->getResourceName();
 
         /** @var \Ekyna\Bundle\UserBundle\Model\UserInterface $user */
-        $user = $context->getResource($resourceName);
+        /*$user = $context->getResource($resourceName);
 
         $this->isGranted('EDIT', $user);
 
@@ -219,13 +219,7 @@ class UserController extends ResourceController
             $context->getIdentifiers(true)
         );
 
-        $payment = new Payment();
-        $payment->setDetails(array(
-            'done_redirect_path' => $this->generateUrl(
-                $this->config->getRoute('show'),
-                $context->getIdentifiers(true)
-            ),
-        ));
+        $data = array('subscriptions' => array());
 
         $options = array(
             'user' => $user,
@@ -243,54 +237,34 @@ class UserController extends ResourceController
             ),
         );
 
-        $form = $this->createForm('ekyna_subscription_payment', $payment, $options);
+        $form = $this->createForm('ekyna_subscription_create_order', $data, $options);
 
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $event = new PaymentEvent($payment);
-            $this->getDispatcher()->dispatch(PaymentEvents::PREPARE, $event);
-            if (null !== $response = $event->getResponse()) {
-                return $response;
+
+            /** @var \Ekyna\Component\Sale\Order\OrderInterface $order */
+            /*$order = $this->get('ekyna_order.order.repository')->createNew();
+            $order
+                ->setUser($user)
+                ->setInvoiceAddress($user->getAddresses()->first())
+            ;
+
+
+
+            $event = $this->get('ekyna_order.order.operator')->create($order);
+            $event->toFlashes($this->getFlashBag());
+            if (!$event->isPropagationStopped()) {
+                return $this->redirect($this->generateUrl('ekyna_order_order_admin_show', array(
+                    'orderId' => $order->getId()
+                )));
             }
         }
 
         return $this->render(
-            'EkynaSubscriptionBundle:Admin/User:subscription_payment.html.twig',
+            'EkynaSubscriptionBundle:Admin/User:subscription_create_order.html.twig',
             $context->getTemplateVars(array(
                 'form' => $form->createView()
             ))
-        );
-    }
-
-    /**
-     * Payment transition action.
-     *
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    public function paymentTransitionAction(Request $request)
-    {
-        $context = $this->loadContext($request);
-        $resourceName = $this->config->getResourceName();
-
-        /** @var \Ekyna\Bundle\UserBundle\Model\UserInterface $user */
-        $user = $context->getResource($resourceName);
-
-        $this->isGranted('EDIT', $user);
-
-        /** @var \Ekyna\Bundle\SubscriptionBundle\Entity\Payment $payment */
-        $payment = $this->get('ekyna_subscription.payment.repository')->find(
-            $request->attributes->get('paymentId')
-        );
-        if (null === $payment) { // TODO check that the payment belongs to the user
-            throw new NotFoundHttpException('Payment not found');
-        }
-
-        $this->applyPaymentTransition($payment, $request->attributes->get('transition'));
-
-        return $this->redirect($this->generateUrl(
-            $this->config->getRoute('show'),
-            $context->getIdentifiers(true)
-        ));
+        );*/
     }
 }

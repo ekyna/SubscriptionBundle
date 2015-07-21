@@ -3,10 +3,10 @@
 namespace Ekyna\Bundle\SubscriptionBundle\Exception;
 
 /**
- * Class GenerationException
+ * Class OrderFeedFailureException
  * @package Ekyna\Bundle\SubscriptionBundle\Exception
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class GenerationException extends SubscriptionException
+class OrderFeedFailureException extends SubscriptionException
 {
 }

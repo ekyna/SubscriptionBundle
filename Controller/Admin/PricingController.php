@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\SubscriptionBundle\Controller\Admin;
 
+use Doctrine\ORM\Query;
 use Ekyna\Bundle\AdminBundle\Controller\ResourceController;
 use Ekyna\Bundle\CoreBundle\Exception\RedirectException;
 use Symfony\Component\Console;
@@ -22,9 +23,11 @@ class PricingController extends ResourceController
      */
     public function generateNotifyAction(Request $request)
     {
+        // TODO check permission
+
         $this->checkPricing();
 
-        $context = $this->loadContext($request);
+        $this->loadContext($request);
 
         $cancelPath = $this->generateUrl('ekyna_subscription_pricing_admin_list');
 
@@ -113,7 +116,13 @@ class PricingController extends ResourceController
      */
     private function checkPricing()
     {
-        $pricing = $this->getRepository()->findOneBy([]);
+        $qb = $this->getRepository()->createQueryBuilder('p');
+        $pricing = $qb
+            ->select('p.id')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getResult(Query::HYDRATE_SCALAR)
+        ;
         if (null === $pricing) {
             throw new RedirectException(
                 $this->generateUrl('ekyna_subscription_pricing_admin_list'),
@@ -137,7 +146,6 @@ class PricingController extends ResourceController
             $year = intval($p->getYear());
             $years[$year] = $year;
         }
-
         return $years;
     }
 }

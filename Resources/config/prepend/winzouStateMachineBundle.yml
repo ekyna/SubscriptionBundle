@@ -3,19 +3,23 @@ winzou_state_machine:
         class:         Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface
         property_path: state
         states:
+            new: ~
             pending: ~
-            paid:    ~
-            exempt:  ~
+            valid: ~
+            exempt: ~
         transitions:
-            pay:
-                from: [pending]
-                to:   paid
-            refund:
-                from: [paid]
+            lock:
+                from: [new]
                 to:   pending
-            exempt:
+            validate:
                 from: [pending]
+                to:   valid
+            unlock:
+                from: [pending, valid]
+                to:   new
+            exempt:
+                from: [new]
                 to:   exempt
             unexempt:
                 from: [exempt]
-                to:   pending
+                to:   new

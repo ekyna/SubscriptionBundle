@@ -11,9 +11,10 @@ use Ekyna\Bundle\CoreBundle\Model\AbstractConstants;
  */
 final class SubscriptionStates extends AbstractConstants
 {
-    const PENDING = 'pending';
-    const PAID    = 'paid';
-    const EXEMPT  = 'exempt';
+    const STATE_NEW     = 'new';
+    const STATE_PENDING = 'pending';
+    const STATE_VALID   = 'valid';
+    const STATE_EXEMPT  = 'exempt';
 
     /**
      * {@inheritdoc}
@@ -22,9 +23,10 @@ final class SubscriptionStates extends AbstractConstants
     {
         $prefix = 'ekyna_subscription.subscription.state.';
         return array(
-            self::PENDING => array($prefix.self::PENDING, 'warning'),
-            self::PAID    => array($prefix.self::PAID,    'success'),
-            self::EXEMPT  => array($prefix.self::EXEMPT,  'default'),
+            self::STATE_NEW     => array($prefix.self::STATE_NEW,     'default'),
+            self::STATE_PENDING => array($prefix.self::STATE_PENDING, 'warning'),
+            self::STATE_VALID   => array($prefix.self::STATE_VALID,   'success'),
+            self::STATE_EXEMPT  => array($prefix.self::STATE_EXEMPT,  'default'),
         );
     }
 
@@ -50,9 +52,10 @@ final class SubscriptionStates extends AbstractConstants
     {
         $prefix = 'subscription_state_';
         return array(
-            $prefix.self::PENDING => self::PENDING,
-            $prefix.self::PAID    => self::PAID,
-            $prefix.self::EXEMPT  => self::EXEMPT,
+            $prefix.self::STATE_NEW     => self::STATE_NEW,
+            $prefix.self::STATE_PENDING => self::STATE_PENDING,
+            $prefix.self::STATE_VALID   => self::STATE_VALID,
+            $prefix.self::STATE_EXEMPT  => self::STATE_EXEMPT,
         );
     }
 }

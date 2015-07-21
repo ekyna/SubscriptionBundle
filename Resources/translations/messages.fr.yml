@@ -32,21 +32,18 @@ ekyna_subscription:
             singular: Cotisation
             plural: Cotisations
         state:
+            new: Nouvelle
             pending: À régler
-            paid: À jour
+            valid: À jour
             exempt: Dispensé
         header:
             exempt: Dispenser de la cotisation <small>%year%</small>
             unexempt: Annuluer la dispense de cotisation <small>%year%</small>
-            payment: Créer un paiement
+            create_order: Créer une commande
         button:
             exempt: Dispenser
             unexempt: Annuler la dispense
-            payment: Créer un paiement
-    payment:
-        label:
-            singular: Paiement
-            plural: Paiements
+            create_order: Créer une commande
     generate_notify:
         field:
             years: Sélectionner les années
@@ -62,10 +59,6 @@ ekyna_subscription:
             payments: Mes réglements
             button:
                 payment: Régler mes cotisations
-        payment:
-            title: Régler mes cotisations
-            button:
-                validate: Procéder au paiement
         alert:
             no_pending_subscription: Aucune cotisation en attente de paiement trouvé.
             no_subscription: Aucune cotisation enregistrée.

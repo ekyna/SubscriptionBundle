@@ -17,7 +17,7 @@
     ],
     "require" : {
         "ekyna/admin-bundle": "0.3.*@dev",
-        "ekyna/payment-bundle" : "0.3.*@dev"
+        "ekyna/cart-bundle" : "0.3.*@dev"
     },
     "autoload" : {
         "psr-0" : {

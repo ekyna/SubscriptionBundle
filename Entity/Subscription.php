@@ -2,8 +2,6 @@
 
 namespace Ekyna\Bundle\SubscriptionBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\SubscriptionBundle\Model\PaymentInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\PriceInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
@@ -41,18 +39,13 @@ class Subscription implements SubscriptionInterface
      */
     protected $notifiedAt;
 
-    /**
-     * @var ArrayCollection|PaymentInterface[]
-     */
-    protected $payments;
-
 
     /**
      * Constructor.
      */
     public function __construct()
     {
-        $this->state = SubscriptionStates::PENDING;
+        $this->state = SubscriptionStates::STATE_NEW;
     }
 
     /**
@@ -139,45 +132,5 @@ class Subscription implements SubscriptionInterface
     public function getNotifiedAt()
     {
         return $this->notifiedAt;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasPayment(PaymentInterface $payment)
-    {
-        return $this->payments->contains($payment);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function addPayment(PaymentInterface $payment)
-    {
-        if (!$this->hasPayment($payment)) {
-            $this->payments->add($payment);
-        }
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function removePayment(PaymentInterface $payment)
-    {
-        if ($this->hasPayment($payment)) {
-            $this->payments->removeElement($payment);
-        }
-        return $this;
-    }
-
-    /**
-     * Returns the payments.
-     *
-     * @return ArrayCollection|PaymentInterface[]
-     */
-    public function getPayments()
-    {
-        return $this->payments;
     }
 }
