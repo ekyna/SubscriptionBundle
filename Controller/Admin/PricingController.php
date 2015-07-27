@@ -31,23 +31,12 @@ class PricingController extends ResourceController
 
         $cancelPath = $this->generateUrl('ekyna_subscription_pricing_admin_list');
 
-        $options = array(
-            'admin_mode' => true,
-            '_redirect_enabled' => true,
-            '_footer' => array(
-                'cancel_path' => $cancelPath,
-                'buttons' => array(
-                    'submit' => array(
-                        'theme' => 'primary',
-                        'icon' => 'ok',
-                        'label' => 'ekyna_core.button.validate',
-                    )
-                )
-            ),
-        );
-
+        // TODO Form type
         $form = $this
-            ->createFormBuilder(null, $options)
+            ->createFormBuilder(null, array(
+                'admin_mode' => true,
+                '_redirect_enabled' => true,
+            ))
             ->add('years', 'choice', array(
                 'label' => 'ekyna_subscription.generate_notify.field.years',
                 'choices' => $this->getYearChoices(),
@@ -63,6 +52,31 @@ class PricingController extends ResourceController
                 'required' => false,
                 'attr' => array('align_with_widget' => true),
             ))
+            ->add('actions', 'form_actions', [
+                'buttons' => [
+                    'validate' => [
+                        'type' => 'submit', 'options' => [
+                            'button_class' => 'primary',
+                            'label' => 'ekyna_core.button.validate',
+                            'attr' => [
+                                'icon' => 'ok',
+                            ],
+                        ],
+                    ],
+                    'cancel' => [
+                        'type' => 'button', 'options' => [
+                            'label' => 'ekyna_core.button.cancel',
+                            'button_class' => 'default',
+                            'as_link' => true,
+                            'attr' => [
+                                'class' => 'form-cancel-btn',
+                                'icon' => 'remove',
+                                'href' => $cancelPath,
+                            ],
+                        ],
+                    ],
+                ],
+            ])
             ->getForm()
         ;
 

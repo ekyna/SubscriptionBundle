@@ -49,29 +49,18 @@ class UserController extends ResourceController
             $context->getIdentifiers(true)
         );
 
-        $options = array(
-            'admin_mode' => true,
-            '_redirect_enabled' => true,
-            '_footer' => array(
-                'cancel_path' => $cancelPath,
-                'buttons' => array(
-                    'submit' => array(
-                        'theme' => 'primary',
-                        'icon' => 'ok',
-                        'label' => 'ekyna_core.button.validate',
-                    )
-                )
-            ),
-        );
-
         $message = sprintf(
             'Confirmer la dispense de cotisation %s (%s €) ?', // TODO translate
             $subscription->getPrice()->getPricing()->getYear(),
             number_format($subscription->getPrice()->getAmount(), 2, ',', '')
         );
 
+        // TODO Form type
         $form = $this
-            ->createFormBuilder(null, $options)
+            ->createFormBuilder(null, array(
+                'admin_mode' => true,
+                '_redirect_enabled' => true,
+            ))
             ->add('confirm', 'checkbox', array(
                 'label' => $message,
                 'attr' => array('align_with_widget' => true),
@@ -80,6 +69,31 @@ class UserController extends ResourceController
                     new Constraints\True(),
                 )
             ))
+            ->add('actions', 'form_actions', [
+                'buttons' => [
+                    'validate' => [
+                        'type' => 'submit', 'options' => [
+                            'button_class' => 'primary',
+                            'label' => 'ekyna_core.button.validate',
+                            'attr' => [
+                                'icon' => 'ok',
+                            ],
+                        ],
+                    ],
+                    'cancel' => [
+                        'type' => 'button', 'options' => [
+                            'label' => 'ekyna_core.button.cancel',
+                            'button_class' => 'default',
+                            'as_link' => true,
+                            'attr' => [
+                                'class' => 'form-cancel-btn',
+                                'icon' => 'remove',
+                                'href' => $cancelPath,
+                            ],
+                        ],
+                    ],
+                ],
+            ])
             ->getForm()
         ;
 
@@ -138,29 +152,18 @@ class UserController extends ResourceController
             $context->getIdentifiers(true)
         );
 
-        $options = array(
-            'admin_mode' => true,
-            '_redirect_enabled' => true,
-            '_footer' => array(
-                'cancel_path' => $cancelPath,
-                'buttons' => array(
-                    'submit' => array(
-                        'theme' => 'primary',
-                        'icon' => 'ok',
-                        'label' => 'ekyna_core.button.validate',
-                    )
-                )
-            ),
-        );
-
         $message = sprintf(
             'Confirmer l\'annulation de la dispense de cotisation %s (%s €) ?', // TODO translate
             $subscription->getPrice()->getPricing()->getYear(),
             number_format($subscription->getPrice()->getAmount(), 2, ',', '')
         );
 
+        // TODO Form type
         $form = $this
-            ->createFormBuilder(null, $options)
+            ->createFormBuilder(null, array(
+                'admin_mode' => true,
+                '_redirect_enabled' => true,
+            ))
             ->add('confirm', 'checkbox', array(
                 'label' => $message,
                 'attr' => array('align_with_widget' => true),
@@ -169,6 +172,31 @@ class UserController extends ResourceController
                     new Constraints\True(),
                 )
             ))
+            ->add('actions', 'form_actions', [
+                'buttons' => [
+                    'validate' => [
+                        'type' => 'submit', 'options' => [
+                            'button_class' => 'primary',
+                            'label' => 'ekyna_core.button.validate',
+                            'attr' => [
+                                'icon' => 'ok',
+                            ],
+                        ],
+                    ],
+                    'cancel' => [
+                        'type' => 'button', 'options' => [
+                            'label' => 'ekyna_core.button.cancel',
+                            'button_class' => 'default',
+                            'as_link' => true,
+                            'attr' => [
+                                'class' => 'form-cancel-btn',
+                                'icon' => 'remove',
+                                'href' => $cancelPath,
+                            ],
+                        ],
+                    ],
+                ],
+            ])
             ->getForm()
         ;
 
