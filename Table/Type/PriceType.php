@@ -31,7 +31,7 @@ class PriceType extends AbstractTableType
     /**
      * {@inheritdoc}
      */
-    public function buildTable(TableBuilderInterface $builder, array $options = array())
+    public function buildTable(TableBuilderInterface $builder, array $options)
     {
         
     }
