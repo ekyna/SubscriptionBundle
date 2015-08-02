@@ -46,7 +46,7 @@ class AccountLoader extends Loader
         // Base account
         if ($this->config['account']['enable']) {
 
-            $prefix = '/'.trim($this->config['account']['prefix'], '/').'/subscriptions';
+            $prefix = '/my-account/subscriptions';
 
             $resource = '@EkynaSubscriptionBundle/Resources/config/routing/front/account.yml';
             $type     = 'yaml';
