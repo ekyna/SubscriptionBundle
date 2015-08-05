@@ -37,10 +37,10 @@
     {% endfor %}
 </table>
 
-{#{% if create_order %}
+{% if create_order %}
 <p style="text-align: center; margin-bottom: 20px;">
     <a href="{{ path('ekyna_user_user_admin_subscription_create_order', {'userId': user.id}) }}" class="btn btn-primary">
         {{ 'ekyna_subscription.subscription.button.create_order'|trans }}
     </a>
 </p>
-{% endif %}#}
+{% endif %}

@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\SubscriptionBundle\Controller\Admin;
 
 use Ekyna\Bundle\AdminBundle\Controller\ResourceController;
+use Ekyna\Bundle\OrderBundle\Exception\OrderException;
 use Ekyna\Bundle\PaymentBundle\Model\PaymentTransitionTrait;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionTransitions;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,13 +50,11 @@ class UserController extends ResourceController
             $context->getIdentifiers(true)
         );
 
-        $message = sprintf(
-            'Confirmer la dispense de cotisation %s (%s €) ?', // TODO translate
-            $subscription->getPrice()->getPricing()->getYear(),
-            number_format($subscription->getPrice()->getAmount(), 2, ',', '')
-        );
+        $message = $this->getTranslator()->trans('ekyna_subscription.subscription.message.exempt_confirm', array(
+            '{{year}}' => $subscription->getPrice()->getPricing()->getYear(),
+            '{{amount}}' => number_format($subscription->getPrice()->getAmount(), 2, ',', ''), // TODO localized format
+        ));
 
-        // TODO Form type
         $form = $this
             ->createFormBuilder(null, array(
                 'admin_mode' => true,
@@ -152,13 +151,11 @@ class UserController extends ResourceController
             $context->getIdentifiers(true)
         );
 
-        $message = sprintf(
-            'Confirmer l\'annulation de la dispense de cotisation %s (%s €) ?', // TODO translate
-            $subscription->getPrice()->getPricing()->getYear(),
-            number_format($subscription->getPrice()->getAmount(), 2, ',', '')
-        );
+        $message = $this->getTranslator()->trans('ekyna_subscription.subscription.message.unexempt_confirm', array(
+            '{{year}}' => $subscription->getPrice()->getPricing()->getYear(),
+            '{{amount}}' => number_format($subscription->getPrice()->getAmount(), 2, ',', ''), // TODO localized format
+        ));
 
-        // TODO Form type
         $form = $this
             ->createFormBuilder(null, array(
                 'admin_mode' => true,
@@ -232,67 +229,102 @@ class UserController extends ResourceController
      */
     public function createOrderAction(Request $request)
     {
-        throw new NotFoundHttpException('Not yes implemented');
-
-        /*$context = $this->loadContext($request);
+        $context = $this->loadContext($request);
         $resourceName = $this->config->getResourceName();
 
         /** @var \Ekyna\Bundle\UserBundle\Model\UserInterface $user */
-        /*$user = $context->getResource($resourceName);
+        $user = $context->getResource($resourceName);
+
+        $cancelPath = $this->generateResourcePath($user);
+
+        // Check for addresses.
+        if (0 == $user->getAddresses()->count()) {
+            $this->addFlash('ekyna_subscription.subscription.message.create_address_before_order', 'warning');
+            return $this->redirect($cancelPath);
+        }
 
         $this->isGranted('EDIT', $user);
 
-        $cancelPath = $this->generateUrl(
-            $this->config->getRoute('show'),
-            $context->getIdentifiers(true)
-        );
-
-        $data = array('subscriptions' => array());
-
-        $options = array(
+        $form = $this->createForm('ekyna_subscription_create_order', null, array(
             'user' => $user,
             'admin_mode' => true,
             '_redirect_enabled' => true,
-            '_footer' => array(
-                'cancel_path' => $cancelPath,
-                'buttons' => array(
-                    'submit' => array(
-                        'theme' => 'primary',
-                        'icon' => 'ok',
+        ));
+        $form->add('actions', 'form_actions', [
+            'buttons' => [
+                'remove' => [
+                    'type' => 'submit', 'options' => [
+                        'button_class' => 'primary',
                         'label' => 'ekyna_core.button.validate',
-                    )
-                )
-            ),
-        );
-
-        $form = $this->createForm('ekyna_subscription_create_order', $data, $options);
+                        'attr' => [
+                            'icon' => 'ok',
+                        ],
+                    ],
+                ],
+                'cancel' => [
+                    'type' => 'button', 'options' => [
+                        'label' => 'ekyna_core.button.cancel',
+                        'button_class' => 'default',
+                        'as_link' => true,
+                        'attr' => [
+                            'icon' => 'remove',
+                            'href' => $cancelPath,
+                        ],
+                    ],
+                ],
+            ],
+        ]);
 
         $form->handleRequest($request);
         if ($form->isValid()) {
 
             /** @var \Ekyna\Component\Sale\Order\OrderInterface $order */
-            /*$order = $this->get('ekyna_order.order.repository')->createNew();
+            $order = $this->get('ekyna_order.order.repository')->createNew();
             $order
                 ->setUser($user)
                 ->setInvoiceAddress($user->getAddresses()->first())
             ;
 
-
-
-            $event = $this->get('ekyna_order.order.operator')->create($order);
-            $event->toFlashes($this->getFlashBag());
+            $operator = $this->get('ekyna_order.order.operator');
+            $event = $operator->create($order);
             if (!$event->isPropagationStopped()) {
+
+                // Add the selected subscriptions.
+                $orderHelper = $this->get('ekyna_order.order_helper');
+                $subscriptions = $form->get('subscriptions')->getData();
+                foreach ($subscriptions as $subscription) {
+                    try {
+                        $subscriptionEvent = $orderHelper->addSubject($order, $subscription);
+                        if (!$subscriptionEvent->isPropagationStopped()) {
+                            $event->addMessages($subscriptionEvent->getMessages());
+                        }
+                    } catch(OrderException $e) {
+                        // Removes the order as it failed.
+                        $this->get('ekyna_order.order.operator')->delete($order);
+                        $this->addFlash('ekyna_subscription.subscription.message.order_failure', 'danger');
+                        return $this->redirect($cancelPath);
+                    }
+                }
+
+                $event->toFlashes($this->getFlashBag());
+
                 return $this->redirect($this->generateUrl('ekyna_order_order_admin_show', array(
                     'orderId' => $order->getId()
                 )));
             }
+            $event->toFlashes($this->getFlashBag());
         }
+
+        $this->appendBreadcrumb(
+            'user-subscription-create-order',
+            'ekyna_subscription.subscription.button.create_order'
+        );
 
         return $this->render(
             'EkynaSubscriptionBundle:Admin/User:subscription_create_order.html.twig',
             $context->getTemplateVars(array(
                 'form' => $form->createView()
             ))
-        );*/
+        );
     }
 }

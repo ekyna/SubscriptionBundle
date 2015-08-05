@@ -12,7 +12,7 @@ winzou_state_machine:
                 from: [new]
                 to:   pending
             validate:
-                from: [pending]
+                from: [new, pending]
                 to:   valid
             unlock:
                 from: [pending, valid]

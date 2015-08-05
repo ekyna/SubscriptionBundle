@@ -44,6 +44,12 @@ ekyna_subscription:
             exempt: Dispenser
             unexempt: Annuler la dispense
             create_order: Créer une commande
+        message:
+            exempt_confirm: Confirmer la dispense de cotisation {{year}} ({{amount}} €) ?
+            unexempt_confirm: Confirmer l'annulation de la dispense de cotisation {{year}} ({{amount}} €) ?
+            create_address_before_order: >
+                Veuillez créer une adresse pour cet utilisateur avant de créer une commande.
+            order_failure: Echec de la création de la commande.
     generate_notify:
         field:
             years: Sélectionner les années

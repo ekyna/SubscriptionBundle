@@ -19,4 +19,4 @@ ekyna_user_user_admin_subscription_create_order:
     defaults: { _controller: "ekyna_subscription.subscription.user_controller:createOrderAction" }
     requirements:
         _method: GET|POST
-
+        userId: \d+
