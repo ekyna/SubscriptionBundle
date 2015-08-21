@@ -2,44 +2,34 @@
 
 namespace Ekyna\Bundle\SubscriptionBundle\Order;
 
-use Ekyna\Bundle\DemoBundle\Entity\Subscription;
-use Ekyna\Bundle\OrderBundle\Entity\OrderItem;
 use Ekyna\Bundle\OrderBundle\Exception\InvalidItemException;
 use Ekyna\Bundle\OrderBundle\Exception\InvalidSubjectException;
-use Ekyna\Bundle\OrderBundle\Provider\ItemProviderInterface;
+use Ekyna\Bundle\OrderBundle\Provider\AbstractItemProvider;
 use Ekyna\Bundle\SubscriptionBundle\Entity\SubscriptionRepository;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Component\Sale\Order\OrderItemInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Class OrderItemProvider
  * @package Ekyna\Bundle\SubscriptionBundle\Order
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class OrderItemProvider implements ItemProviderInterface
+class OrderItemProvider extends AbstractItemProvider
 {
     /**
      * @var SubscriptionRepository
      */
     protected $repository;
 
-    /**
-     * @var UrlGeneratorInterface
-     */
-    protected $urlGenerator;
-
 
     /**
      * Constructor.
      *
      * @param SubscriptionRepository $repository
-     * @param UrlGeneratorInterface $urlGenerator
      */
-    public function __construct(SubscriptionRepository $repository, UrlGeneratorInterface $urlGenerator)
+    public function __construct(SubscriptionRepository $repository)
     {
         $this->repository = $repository;
-        $this->urlGenerator = $urlGenerator;
     }
 
     /**
@@ -55,7 +45,7 @@ class OrderItemProvider implements ItemProviderInterface
 
         $year = $subject->getPrice()->getPricing()->getYear();
 
-        $item = new OrderItem(); // TODO container parameter
+        $item = $this->createNewOrderItem();
         $item
             ->setDesignation(sprintf('Cotisations pour l\'année %s', $year))
             ->setReference('SUBS-' . $year)
