@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvent;
 use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
 use Ekyna\Bundle\SubscriptionBundle\Exception\GenerationException;
+use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Bundle\SubscriptionBundle\Subscription\Provider\PriceProviderInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\PriceInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\PriceProviderSubjectInterface;
@@ -131,6 +132,18 @@ class Generator implements PriceProviderSubjectInterface
             ->setPrice($price)
         ;
 
+        return $this->createSubscription($subscription);
+    }
+
+    /**
+     * Creates (persists) the subscription.
+     *
+     * @param SubscriptionInterface $subscription
+     * @return SubscriptionInterface|null
+     * @throws GenerationException
+     */
+    public function createSubscription(SubscriptionInterface $subscription)
+    {
         $event = new SubscriptionEvent($subscription);
 
         $this->dispatcher->dispatch(SubscriptionEvents::PRE_GENERATE, $event);
