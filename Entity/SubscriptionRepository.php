@@ -58,7 +58,7 @@ class SubscriptionRepository extends EntityRepository
             ->join('s.price', 'price')
             ->join('price.pricing', 'pricing')
             ->andWhere($qb->expr()->eq('s.user', ':user'))
-            ->andWhere($qb->expr()->eq('s.year', ':year'))
+            ->andWhere($qb->expr()->eq('pricing.year', ':year'))
         ;
 
         return $qb
