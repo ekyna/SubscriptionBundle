@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\SubscriptionBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
+use Ekyna\Bundle\SubscriptionBundle\Util\Year;
 use Ekyna\Bundle\UserBundle\Model\UserInterface;
 
 /**
@@ -40,10 +41,39 @@ class SubscriptionRepository extends EntityRepository
     }
 
     /**
+     * Finds the subscription by user an year.
+     *
+     * @param UserInterface $user
+     * @return \Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface|null
+     */
+    public function findOneByUserAndYear(UserInterface $user, $year)
+    {
+        Year::validate($year);
+
+        $qb = $this->createQueryBuilder('s');
+
+        $parameters = array('user' => $user, 'year' => $year);
+
+        $qb
+            ->join('s.price', 'price')
+            ->join('price.pricing', 'pricing')
+            ->andWhere($qb->expr()->eq('s.user', ':user'))
+            ->andWhere($qb->expr()->eq('s.year', ':year'))
+        ;
+
+        return $qb
+            ->getQuery()
+            ->setMaxResults(1)
+            ->setParameters($parameters)
+            ->getOneOrNullResult()
+        ;
+    }
+
+    /**
      * Returns subscriptions which require a payment by user.
      *
      * @param UserInterface $user
-     * @return array
+     * @return \Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface[]
      */
     public function findByUserAndPaymentRequired(UserInterface $user)
     {

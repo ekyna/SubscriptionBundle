@@ -34,7 +34,7 @@
     <class name="Ekyna\Bundle\SubscriptionBundle\Entity\Subscription">
         <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
             <option name="fields">
-                <value>price</value>
+                <value>price</value> <!-- TODO should be the price.pricing.year -->
                 <value>user</value>
             </option>
             <option name="message">ekyna_subscription.subscription.duplicate</option>
