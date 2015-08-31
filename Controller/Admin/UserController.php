@@ -7,6 +7,8 @@ use Ekyna\Bundle\PaymentBundle\Event\PaymentEvent;
 use Ekyna\Bundle\PaymentBundle\Event\PaymentEvents;
 use Ekyna\Bundle\PaymentBundle\Model\PaymentTransitionTrait;
 use Ekyna\Bundle\SubscriptionBundle\Entity\Payment;
+use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvent;
+use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints;
@@ -90,6 +92,12 @@ class UserController extends ResourceController
             $stateMachine->apply('exempt');
             $em = $this->getManager();
             $em->persist($subscription);
+
+            $this->getDispatcher()->dispatch(
+                SubscriptionEvents::STATE_CHANGED,
+                new SubscriptionEvent($subscription)
+            );
+
             $em->flush();
 
             return $this->redirect($cancelPath);
@@ -179,6 +187,12 @@ class UserController extends ResourceController
             $stateMachine->apply('unexempt');
             $em = $this->getManager();
             $em->persist($subscription);
+
+            $this->getDispatcher()->dispatch(
+                SubscriptionEvents::STATE_CHANGED,
+                new SubscriptionEvent($subscription)
+            );
+
             $em->flush();
 
             return $this->redirect($cancelPath);

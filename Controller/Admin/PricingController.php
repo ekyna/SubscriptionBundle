@@ -2,10 +2,16 @@
 
 namespace Ekyna\Bundle\SubscriptionBundle\Controller\Admin;
 
+use Doctrine\ORM\QueryBuilder;
+use Ekyna\Bundle\AdminBundle\Controller\Context;
 use Ekyna\Bundle\AdminBundle\Controller\ResourceController;
 use Ekyna\Bundle\CoreBundle\Exception\RedirectException;
+use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvent;
+use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
+use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
 use Symfony\Component\Console;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Process\Process;
 
 /**
@@ -15,6 +21,77 @@ use Symfony\Component\Process\Process;
  */
 class PricingController extends ResourceController
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected function buildShowData(array &$data, Context $context)
+    {
+        $table = $this->getTableFactory()
+            ->createBuilder('ekyna_subscription_subscription', array(
+                'name'         => 'ekyna_subscription.subscription',
+                'customize_qb' => function (QueryBuilder $qb, $alias) use ($context) {
+                    $qb
+                        ->join($alias . '.price', 'price')
+                        ->join($alias . '.user', 'user')
+                        ->andWhere($qb->expr()->eq('price.pricing', ':pricing'))
+                        ->orderBy('user.email', 'ASC')
+                        ->setParameter('pricing', $context->getResource());
+                }
+            ))
+            ->getTable($context->getRequest())
+        ;
+
+        $data['subscriptions'] = $table->createView();
+
+        return null;
+    }
+
+    /**
+     * Toggle subscription exempt action.
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \SM\SMException
+     */
+    public function subscriptionToggleExemptAction(Request $request)
+    {
+        $context = $this->loadContext($request);
+        /** @var \Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface $subscription */
+        $subscription = $this
+            ->get('ekyna_subscription.subscription.repository')
+            ->find($request->attributes->get('subscriptionId'))
+        ;
+
+        if (null === $subscription) {
+            throw new NotFoundHttpException('Subscription not found');
+        }
+
+        $transition = 'exempt';
+        if ($subscription->getState() === SubscriptionStates::EXEMPT) {
+            $transition = 'unexempt';
+        }
+
+        $stateMachine = $this->get('sm.factory')->get($subscription);
+        if ($stateMachine->can($transition)) {
+            $stateMachine->apply($transition);
+            $em = $this->getManager();
+            $em->persist($subscription);
+            $this->getDispatcher()->dispatch(
+                SubscriptionEvents::STATE_CHANGED,
+                new SubscriptionEvent($subscription)
+            );
+            $em->flush();
+        }
+
+        $pricing = $context->getResource();
+
+        return $this->redirect(
+            $this->generateUrl('ekyna_subscription_pricing_admin_show', array(
+                'pricingId' => $pricing->getId()
+            ))
+        );
+    }
+
     /**
      * Generate and/or notify subscriptions action.
      *
@@ -29,14 +106,14 @@ class PricingController extends ResourceController
         $cancelPath = $this->generateUrl('ekyna_subscription_pricing_admin_list');
 
         $options = array(
-            'admin_mode' => true,
+            'admin_mode'        => true,
             '_redirect_enabled' => true,
-            '_footer' => array(
+            '_footer'           => array(
                 'cancel_path' => $cancelPath,
-                'buttons' => array(
+                'buttons'     => array(
                     'submit' => array(
                         'theme' => 'primary',
-                        'icon' => 'ok',
+                        'icon'  => 'ok',
                         'label' => 'ekyna_core.button.validate',
                     )
                 )
@@ -46,33 +123,32 @@ class PricingController extends ResourceController
         $form = $this
             ->createFormBuilder(null, $options)
             ->add('years', 'choice', array(
-                'label' => 'ekyna_subscription.generate_notify.field.years',
-                'choices' => $this->getYearChoices(),
+                'label'    => 'ekyna_subscription.generate_notify.field.years',
+                'choices'  => $this->getYearChoices(),
                 'multiple' => true,
             ))
             ->add('generate', 'checkbox', array(
-                'label' => 'ekyna_subscription.generate_notify.field.generate',
+                'label'    => 'ekyna_subscription.generate_notify.field.generate',
                 'required' => false,
-                'attr' => array('align_with_widget' => true),
+                'attr'     => array('align_with_widget' => true),
             ))
             ->add('notify', 'checkbox', array(
-                'label' => 'ekyna_subscription.generate_notify.field.notify',
+                'label'    => 'ekyna_subscription.generate_notify.field.notify',
                 'required' => false,
-                'attr' => array('align_with_widget' => true),
+                'attr'     => array('align_with_widget' => true),
             ))
-            ->getForm()
-        ;
+            ->getForm();
 
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $years    = (array) $form->get('years')->getData();
-            $generate = (bool)  $form->get('generate')->getData();
-            $notify   = (bool)  $form->get('notify')->getData();
+            $years = (array)$form->get('years')->getData();
+            $generate = (bool)$form->get('generate')->getData();
+            $notify = (bool)$form->get('notify')->getData();
 
             // TODO Flashes
             if ($generate) {
                 $notifyArg = $notify ? ' --notify' : '';
-                $env = ' --env='.$this->container->getParameter('kernel.environment');
+                $env = ' --env=' . $this->container->getParameter('kernel.environment');
                 $process = new Process(
                     'php app/console ekyna:subscription:generate ' . implode(' ', $years) . $notifyArg . $env,
                     dirname($this->container->getParameter('kernel.root_dir'))
@@ -84,7 +160,7 @@ class PricingController extends ResourceController
                     $this->addFlash('ekyna_subscription.generate_notify.message.notify', 'info');
                 }
             } elseif ($notify) {
-                $env = ' --env='.$this->container->getParameter('kernel.environment');
+                $env = ' --env=' . $this->container->getParameter('kernel.environment');
                 $process = new Process(
                     'php app/console ekyna:subscription:notify' . $env,
                     dirname($this->container->getParameter('kernel.root_dir'))

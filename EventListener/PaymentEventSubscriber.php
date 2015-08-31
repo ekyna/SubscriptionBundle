@@ -6,8 +6,11 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Ekyna\Bundle\PaymentBundle\Event\PaymentEvent;
 use Ekyna\Bundle\PaymentBundle\Event\PaymentEvents;
 use Ekyna\Bundle\SubscriptionBundle\Entity\Payment;
+use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvent;
+use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
 use Ekyna\Component\Sale\Payment\PaymentStates;
 use SM\Factory\FactoryInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -31,6 +34,11 @@ class PaymentEventSubscriber implements EventSubscriberInterface
     private $factory;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    /**
      * @var UrlGeneratorInterface
      */
     private $urlGenerator;
@@ -46,17 +54,20 @@ class PaymentEventSubscriber implements EventSubscriberInterface
      *
      * @param ObjectManager            $manager
      * @param FactoryInterface         $factory
+     * @param EventDispatcherInterface $dispatcher
      * @param UrlGeneratorInterface    $urlGenerator
      * @param SecurityContextInterface $securityContext
      */
     public function __construct(
         ObjectManager $manager,
         FactoryInterface $factory,
+        EventDispatcherInterface $dispatcher,
         UrlGeneratorInterface $urlGenerator,
         SecurityContextInterface $securityContext
     ) {
         $this->manager         = $manager;
         $this->factory         = $factory;
+        $this->dispatcher      = $dispatcher;
         $this->urlGenerator    = $urlGenerator;
         $this->securityContext = $securityContext;
     }
@@ -98,6 +109,11 @@ class PaymentEventSubscriber implements EventSubscriberInterface
                 if ($stateMachine->can('pay')) {
                     $stateMachine->apply('pay');
                     $this->manager->persist($subscription);
+
+                    $this->dispatcher->dispatch(
+                        SubscriptionEvents::STATE_CHANGED,
+                        new SubscriptionEvent($subscription)
+                    );
                 }
             }
         } elseif($payment->getState() === PaymentStates::STATE_REFUNDED) {
@@ -106,6 +122,11 @@ class PaymentEventSubscriber implements EventSubscriberInterface
                 if ($stateMachine->can('refund')) {
                     $stateMachine->apply('refund');
                     $this->manager->persist($subscription);
+
+                    $this->dispatcher->dispatch(
+                        SubscriptionEvents::STATE_CHANGED,
+                        new SubscriptionEvent($subscription)
+                    );
                 }
             }
         }

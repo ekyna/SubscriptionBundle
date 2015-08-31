@@ -48,4 +48,8 @@
         </div>
     </div>
 </div>
+<div class="sub-header">
+    <h2>{{ 'ekyna_subscription.subscription.header.list'|trans({'%year%': pricing.year})|raw }}</h2>
+</div>
+{{ ekyna_table_render(subscriptions) }}
 {% endblock %}
