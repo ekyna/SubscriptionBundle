@@ -6,11 +6,14 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Ekyna\Bundle\OrderBundle\Event\OrderEvent;
 use Ekyna\Bundle\OrderBundle\Event\OrderEvents;
 use Ekyna\Bundle\OrderBundle\Helper\ItemHelperInterface;
+use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvent;
+use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionTransitions;
 use Ekyna\Component\Sale\Order\OrderInterface;
 use Ekyna\Component\Sale\Order\OrderStates;
 use SM\Factory\FactoryInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -35,6 +38,11 @@ class OrderEventSubscriber implements EventSubscriberInterface
      */
     protected $factory;
 
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
 
     /**
      * Constructor.
@@ -42,12 +50,18 @@ class OrderEventSubscriber implements EventSubscriberInterface
      * @param ItemHelperInterface $itemHelper
      * @param ObjectManager       $manager
      * @param FactoryInterface    $factory
+     * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(ItemHelperInterface $itemHelper, ObjectManager $manager, FactoryInterface $factory)
-    {
+    public function __construct(
+        ItemHelperInterface      $itemHelper,
+        ObjectManager            $manager,
+        FactoryInterface         $factory,
+        EventDispatcherInterface $dispatcher
+    ) {
         $this->itemHelper = $itemHelper;
         $this->manager    = $manager;
         $this->factory    = $factory;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -84,7 +98,6 @@ class OrderEventSubscriber implements EventSubscriberInterface
         $subscriptions = array();
         foreach ($order->getItems() as $item) {
             if ($item->getSubjectType() === 'subscription') {
-                // TODO don't add exempt subscription ?
                 $subscriptions[] = $this->itemHelper->reverseTransform($item);
             }
         }
@@ -104,6 +117,11 @@ class OrderEventSubscriber implements EventSubscriberInterface
             if ($stateMachine->can($transition)) {
                 $stateMachine->apply($transition);
                 $this->manager->persist($subscription);
+
+                $this->dispatcher->dispatch(
+                    SubscriptionEvents::STATE_CHANGED,
+                    new SubscriptionEvent($subscription)
+                );
             }
         }
         $this->manager->flush();

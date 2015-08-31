@@ -44,6 +44,7 @@ class SubscriptionRepository extends EntityRepository
      * Finds the subscription by user an year.
      *
      * @param UserInterface $user
+     * @param string        $year
      * @return \Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface|null
      */
     public function findOneByUserAndYear(UserInterface $user, $year)
