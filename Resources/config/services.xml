@@ -21,6 +21,7 @@
             <argument id="ekyna_order.item_helper" type="service" />
             <argument id="doctrine.orm.entity_manager" type="service" />
             <argument id="sm.factory" type="service" />
+            <argument id="event_dispatcher" type="service" />
             <tag name="kernel.event_subscriber" />
         </service>
 
