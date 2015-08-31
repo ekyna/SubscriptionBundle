@@ -31,12 +31,15 @@ ekyna_subscription:
         label:
             singular: Cotisation
             plural: Cotisations
+        field:
+            notified_at: Appelé le
         state:
             new: Nouvelle
             pending: À régler
             valid: À jour
             exempt: Dispensé
         header:
+            list: Liste des cotisations <small>%year%</small>
             exempt: Dispenser de la cotisation <small>%year%</small>
             unexempt: Annuluer la dispense de cotisation <small>%year%</small>
             create_order: Créer une commande

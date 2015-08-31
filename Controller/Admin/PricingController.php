@@ -3,10 +3,17 @@
 namespace Ekyna\Bundle\SubscriptionBundle\Controller\Admin;
 
 use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
+use Ekyna\Bundle\AdminBundle\Controller\Context;
 use Ekyna\Bundle\AdminBundle\Controller\ResourceController;
 use Ekyna\Bundle\CoreBundle\Exception\RedirectException;
+use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvent;
+use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
+use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
+use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionTransitions;
 use Symfony\Component\Console;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Process\Process;
 
 /**
@@ -16,6 +23,75 @@ use Symfony\Component\Process\Process;
  */
 class PricingController extends ResourceController
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected function buildShowData(array &$data, Context $context)
+    {
+        $table = $this->getTableFactory()
+            ->createBuilder('ekyna_subscription_subscription', array(
+                'name' => 'ekyna_subscription.subscription',
+                'customize_qb' => function(QueryBuilder $qb, $alias) use ($context) {
+                    $qb
+                        ->join($alias.'.price', 'price')
+                        ->join($alias.'.user', 'user')
+                        ->andWhere($qb->expr()->eq('price.pricing', ':pricing'))
+                        ->orderBy('user.email', 'ASC')
+                        ->setParameter('pricing', $context->getResource())
+                    ;
+                }
+            ))
+            ->getTable($context->getRequest());
+
+        $data['subscriptions'] = $table->createView();
+
+        return null;
+    }
+
+    /**
+     * Toggle subscription exempt action.
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \SM\SMException
+     */
+    public function subscriptionToggleExemptAction(Request $request)
+    {
+        $context = $this->loadContext($request);
+
+        /** @var \Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface $subscription */
+        $subscription = $this
+            ->get('ekyna_subscription.subscription.repository')
+            ->find($request->attributes->get('subscriptionId'))
+        ;
+        if (null === $subscription) {
+            throw new NotFoundHttpException('Subscription not found');
+        }
+
+        $transition = SubscriptionTransitions::TRANSITION_EXEMPT;
+        if ($subscription->getState() === SubscriptionStates::STATE_EXEMPT) {
+            $transition = SubscriptionTransitions::TRANSITION_UNEXEMPT;
+        }
+
+        $stateMachine = $this->get('sm.factory')->get($subscription);
+        if ($stateMachine->can($transition)) {
+            $stateMachine->apply($transition);
+            $em = $this->getManager();
+            $em->persist($subscription);
+
+            $this->getDispatcher()->dispatch(
+                SubscriptionEvents::STATE_CHANGED,
+                new SubscriptionEvent($subscription)
+            );
+
+            $em->flush();
+        }
+
+        return $this->redirect(
+            $this->generateResourcePath($context->getResource())
+        );
+    }
+
     /**
      * Generate and/or notify subscriptions action.
      *

@@ -8,6 +8,8 @@
         <parameter key="ekyna_subscription.price.class">Ekyna\Bundle\SubscriptionBundle\Entity\GroupPrice</parameter>
         <parameter key="ekyna_subscription.subscription.class">Ekyna\Bundle\SubscriptionBundle\Entity\Subscription</parameter>
 
+        <parameter key="ekyna_subscription.subscription.table_type">Ekyna\Bundle\SubscriptionBundle\Table\Type\SubscriptionType</parameter>
+
         <parameter key="ekyna_subscription.price.form_type.class">Ekyna\Bundle\SubscriptionBundle\Form\Type\PriceType</parameter>
         <parameter key="ekyna_subscription.create_order.form_type.class">Ekyna\Bundle\SubscriptionBundle\Form\Type\CreateOrderType</parameter>
     </parameters>
@@ -19,6 +21,7 @@
             <argument id="ekyna_order.item_helper" type="service" />
             <argument id="doctrine.orm.entity_manager" type="service" />
             <argument id="sm.factory" type="service" />
+            <argument id="event_dispatcher" type="service" />
             <tag name="kernel.event_subscriber" />
         </service>
 
@@ -41,6 +44,12 @@
         <service id="ekyna_subscription.create_order.form_type" class="%ekyna_subscription.create_order.form_type.class%">
             <argument>%ekyna_subscription.subscription.class%</argument>
             <tag name="form.type" alias="ekyna_subscription_create_order" />
+        </service>
+
+        <!-- Table types -->
+        <service id="ekyna_subscription.subscription.table_type" class="%ekyna_subscription.subscription.table_type%">
+            <argument>%ekyna_subscription.subscription.class%</argument>
+            <tag name="table.type" alias="ekyna_subscription_subscription" />
         </service>
 
         <!-- Providers -->

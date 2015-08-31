@@ -158,9 +158,10 @@ class Generator implements PriceProviderSubjectInterface
         }
 
         $this->em->persist($subscription);
-        $this->em->flush();
 
         $this->dispatcher->dispatch(SubscriptionEvents::POST_GENERATE, $event);
+
+        $this->em->flush();
 
         return $subscription;
     }

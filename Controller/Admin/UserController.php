@@ -5,6 +5,8 @@ namespace Ekyna\Bundle\SubscriptionBundle\Controller\Admin;
 use Ekyna\Bundle\AdminBundle\Controller\ResourceController;
 use Ekyna\Bundle\OrderBundle\Exception\OrderException;
 use Ekyna\Bundle\PaymentBundle\Model\PaymentTransitionTrait;
+use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvent;
+use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionTransitions;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -101,6 +103,12 @@ class UserController extends ResourceController
             $stateMachine->apply(SubscriptionTransitions::TRANSITION_EXEMPT);
             $em = $this->getManager();
             $em->persist($subscription);
+
+            $this->getDispatcher()->dispatch(
+                SubscriptionEvents::STATE_CHANGED,
+                new SubscriptionEvent($subscription)
+            );
+
             $em->flush();
 
             return $this->redirect($cancelPath);
@@ -202,6 +210,12 @@ class UserController extends ResourceController
             $stateMachine->apply(SubscriptionTransitions::TRANSITION_UNEXEMPT);
             $em = $this->getManager();
             $em->persist($subscription);
+
+            $this->getDispatcher()->dispatch(
+                SubscriptionEvents::STATE_CHANGED,
+                new SubscriptionEvent($subscription)
+            );
+
             $em->flush();
 
             return $this->redirect($cancelPath);
