@@ -76,11 +76,12 @@ class PricingController extends ResourceController
             $stateMachine->apply($transition);
             $em = $this->getManager();
             $em->persist($subscription);
+            $em->flush();
+
             $this->getDispatcher()->dispatch(
                 SubscriptionEvents::STATE_CHANGED,
                 new SubscriptionEvent($subscription)
             );
-            $em->flush();
         }
 
         $pricing = $context->getResource();

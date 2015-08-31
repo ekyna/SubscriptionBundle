@@ -103,17 +103,15 @@ class PaymentEventSubscriber implements EventSubscriberInterface
             return;
         }
 
+        $changedSubscription = [];
+
         if (in_array($payment->getState(), array(PaymentStates::STATE_AUTHORIZED, PaymentStates::STATE_COMPLETED))) {
             foreach ($payment->getSubscriptions() as $subscription) {
                 $stateMachine = $this->factory->get($subscription);
                 if ($stateMachine->can('pay')) {
                     $stateMachine->apply('pay');
                     $this->manager->persist($subscription);
-
-                    $this->dispatcher->dispatch(
-                        SubscriptionEvents::STATE_CHANGED,
-                        new SubscriptionEvent($subscription)
-                    );
+                    $changedSubscription[] = $subscription;
                 }
             }
         } elseif($payment->getState() === PaymentStates::STATE_REFUNDED) {
@@ -122,16 +120,19 @@ class PaymentEventSubscriber implements EventSubscriberInterface
                 if ($stateMachine->can('refund')) {
                     $stateMachine->apply('refund');
                     $this->manager->persist($subscription);
-
-                    $this->dispatcher->dispatch(
-                        SubscriptionEvents::STATE_CHANGED,
-                        new SubscriptionEvent($subscription)
-                    );
+                    $changedSubscription[] = $subscription;
                 }
             }
         }
 
         $this->manager->flush();
+
+        foreach ($changedSubscription as $subscription) {
+            $this->dispatcher->dispatch(
+                SubscriptionEvents::STATE_CHANGED,
+                new SubscriptionEvent($subscription)
+            );
+        }
     }
 
     /**

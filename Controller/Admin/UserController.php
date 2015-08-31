@@ -92,13 +92,12 @@ class UserController extends ResourceController
             $stateMachine->apply('exempt');
             $em = $this->getManager();
             $em->persist($subscription);
+            $em->flush();
 
             $this->getDispatcher()->dispatch(
                 SubscriptionEvents::STATE_CHANGED,
                 new SubscriptionEvent($subscription)
             );
-
-            $em->flush();
 
             return $this->redirect($cancelPath);
         }
@@ -187,13 +186,12 @@ class UserController extends ResourceController
             $stateMachine->apply('unexempt');
             $em = $this->getManager();
             $em->persist($subscription);
+            $em->flush();
 
             $this->getDispatcher()->dispatch(
                 SubscriptionEvents::STATE_CHANGED,
                 new SubscriptionEvent($subscription)
             );
-
-            $em->flush();
 
             return $this->redirect($cancelPath);
         }
