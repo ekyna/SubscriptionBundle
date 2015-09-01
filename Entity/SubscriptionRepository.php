@@ -91,8 +91,10 @@ class SubscriptionRepository extends EntityRepository
             ->join('s.price', 'price')
             ->join('price.pricing', 'pricing')
             ->andWhere($qb->expr()->eq('s.user', ':user'))
+            ->andWhere($qb->expr()->neq('s.state', ':state'))
             ->addOrderBy('pricing.year', 'DESC')
             ->setParameter('user', $user)
+            ->setParameter('state', SubscriptionStates::EXEMPT)
         ;
 
         if (!empty($processingSubscriptions)) {
