@@ -28,22 +28,13 @@ class PricingController extends ResourceController
      */
     protected function buildShowData(array &$data, Context $context)
     {
-        $table = $this->getTableFactory()
-            ->createBuilder('ekyna_subscription_subscription', array(
-                'name' => 'ekyna_subscription.subscription',
-                'customize_qb' => function(QueryBuilder $qb, $alias) use ($context) {
-                    $qb
-                        ->join($alias.'.price', 'price')
-                        ->join($alias.'.user', 'user')
-                        ->andWhere($qb->expr()->eq('price.pricing', ':pricing'))
-                        ->orderBy('user.email', 'ASC')
-                        ->setParameter('pricing', $context->getResource())
-                    ;
-                }
-            ))
-            ->getTable($context->getRequest());
+        /** @var \Ekyna\Bundle\SubscriptionBundle\Model\PricingInterface $pricing */
+        $pricing = $context->getResource();
 
-        $data['subscriptions'] = $table->createView();
+        $data['subscriptions'] = $this
+            ->get('ekyna_subscription.subscription.repository')
+            ->findByPricing($pricing)
+        ;
 
         return null;
     }
@@ -79,12 +70,12 @@ class PricingController extends ResourceController
             $em = $this->getManager();
             $em->persist($subscription);
 
+            $em->flush();
+
             $this->getDispatcher()->dispatch(
                 SubscriptionEvents::STATE_CHANGED,
                 new SubscriptionEvent($subscription)
             );
-
-            $em->flush();
         }
 
         return $this->redirect(

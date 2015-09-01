@@ -43,8 +43,8 @@ ekyna_subscription_pricing_admin_remove:
         _method: GET|POST
         pricingId: \d+
 
-ekyna_subscription_pricing_admin_subscription_exempt:
-    path: /{pricingId}/subscription/{subscriptionId}/toggle-exempt
+ekyna_subscription_pricing_admin_subscription_toggle_exempt:
+    path: /{pricingId}/subscriptions/{subscriptionId}/toggle-exempt
     defaults: { _controller: "ekyna_subscription.pricing.controller:subscriptionToggleExemptAction" }
     requirements:
         _method: GET
