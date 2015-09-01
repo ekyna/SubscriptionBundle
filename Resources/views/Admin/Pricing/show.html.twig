@@ -55,6 +55,7 @@
 </div>
 <table class="table table-striped">
     <tr>
+        <th>{{ 'ekyna_user.user.label.singular'|trans }}</th>
         <th>{{ 'ekyna_subscription.pricing.field.year'|trans }}</th>
         <th>{{ 'ekyna_subscription.price.field.amount'|trans }}</th>
         <th>{{ 'ekyna_core.field.status'|trans }}</th>
@@ -62,6 +63,11 @@
     </tr>
     {% for subscription in subscriptions %}
         <tr>
+            <td>
+                <a href="{{ path('ekyna_user_user_admin_show', {'userId': subscription.user.id}) }}">
+                    {{ subscription.user.lastName ~ ' ' ~ subscription.user.firstName ~ ' (' ~ subscription.user.email ~ ')' }}
+                </a>
+            </td>
             <td>{{ subscription.price.pricing.year }}</td>
             <td>{{ ((subscription.price.amount|localizednumber()) ~ '&nbsp;€')|raw }}</td>
             <td>{{ render_subscription_state(subscription) }}</td>
