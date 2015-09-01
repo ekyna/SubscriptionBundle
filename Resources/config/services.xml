@@ -12,8 +12,6 @@
         <parameter key="ekyna_subscription.price.form_type.class">Ekyna\Bundle\SubscriptionBundle\Form\Type\PriceType</parameter>
         <parameter key="ekyna_subscription.payment.form_type.class">Ekyna\Bundle\SubscriptionBundle\Form\Type\PaymentType</parameter>
 
-        <parameter key="ekyna_subscription.subscription.table_type">Ekyna\Bundle\SubscriptionBundle\Table\Type\SubscriptionType</parameter>
-
         <parameter key="ekyna_subscription.payum.action.paypal.capture_payment_using_express_checkout.class">Ekyna\Bundle\SubscriptionBundle\Payum\Action\Paypal\CapturePaymentUsingExpressCheckoutAction</parameter>
     </parameters>
 
@@ -60,12 +58,6 @@
             <argument>%ekyna_subscription.payment.class%</argument>
             <argument>%ekyna_subscription.subscription.class%</argument>
             <tag name="form.type" alias="ekyna_subscription_payment" />
-        </service>
-
-        <!-- Table types -->
-        <service id="ekyna_subscription.subscription.table_type" class="%ekyna_subscription.subscription.table_type%">
-            <argument>%ekyna_subscription.subscription.class%</argument>
-            <tag name="table.type" alias="ekyna_subscription_subscription" />
         </service>
 
         <!-- Providers -->

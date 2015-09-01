@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\SubscriptionBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Ekyna\Bundle\SubscriptionBundle\Model\PricingInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
 use Ekyna\Bundle\UserBundle\Model\UserInterface;
 use Ekyna\Component\Sale\Payment\PaymentStates;
@@ -14,6 +15,33 @@ use Ekyna\Component\Sale\Payment\PaymentStates;
  */
 class SubscriptionRepository extends EntityRepository
 {
+    /**
+     * Finds subscriptions by pricing.
+     *
+     * @param PricingInterface $pricing
+     * @return \Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface[]
+     */
+    public function findByPricing(PricingInterface $pricing)
+    {
+        $qb = $this->createQueryBuilder('s');
+
+        $parameters = array('pricing' => $pricing);
+
+        $qb
+            ->join('s.user', 'user')
+            ->join('s.price', 'price')
+            ->andWhere($qb->expr()->eq('price.pricing', ':pricing'))
+            ->addOrderBy('user.lastName', 'ASC')
+            ->addOrderBy('user.firstName', 'ASC')
+        ;
+
+        return $qb
+            ->getQuery()
+            ->setParameters($parameters)
+            ->getResult()
+        ;
+    }
+
     /**
      * Finds subscriptions by user.
      *

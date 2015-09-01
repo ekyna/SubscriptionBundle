@@ -46,6 +46,9 @@ ekyna_subscription:
             exempt: Dispenser
             unexempt: Annuler la dispense
             payment: Créer un paiement
+        confirm:
+            exempt: Confirmer la dispense de cotisation %year% (%amount% €) ?
+            unexempt: Confirmer l'annulation de la dispense de cotisation %year% (%amount% €) ?
     payment:
         label:
             singular: Paiement

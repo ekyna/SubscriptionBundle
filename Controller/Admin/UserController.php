@@ -68,11 +68,10 @@ class UserController extends ResourceController
             ),
         );
 
-        $message = sprintf(
-            'Confirmer la dispense de cotisation %s (%s €) ?', // TODO translate
-            $subscription->getPrice()->getPricing()->getYear(),
-            number_format($subscription->getPrice()->getAmount(), 2, ',', '')
-        );
+        $message = $this->getTranslator()->trans('ekyna_subscription.subscription.confirm.exempt', array(
+            '%year%' => $subscription->getPrice()->getPricing()->getYear(),
+            '%amount%' => number_format($subscription->getPrice()->getAmount(), 2, ',', ''),
+        ));
 
         $form = $this
             ->createFormBuilder(null, $options)
@@ -162,11 +161,10 @@ class UserController extends ResourceController
             ),
         );
 
-        $message = sprintf(
-            'Confirmer l\'annulation de la dispense de cotisation %s (%s €) ?', // TODO translate
-            $subscription->getPrice()->getPricing()->getYear(),
-            number_format($subscription->getPrice()->getAmount(), 2, ',', '')
-        );
+        $message = $this->getTranslator()->trans('ekyna_subscription.subscription.confirm.unexempt', array(
+            '%year%' => $subscription->getPrice()->getPricing()->getYear(),
+            '%amount%' => number_format($subscription->getPrice()->getAmount(), 2, ',', ''),
+        ));
 
         $form = $this
             ->createFormBuilder(null, $options)
