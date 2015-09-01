@@ -52,7 +52,7 @@ class UserController extends ResourceController
             $context->getIdentifiers(true)
         );
 
-        $message = $this->getTranslator()->trans('ekyna_subscription.subscription.message.exempt_confirm', array(
+        $message = $this->getTranslator()->trans('ekyna_subscription.subscription.confirm.exempt.full', array(
             '{{year}}' => $subscription->getPrice()->getPricing()->getYear(),
             '{{amount}}' => number_format($subscription->getPrice()->getAmount(), 2, ',', ''), // TODO localized format
         ));
@@ -103,13 +103,12 @@ class UserController extends ResourceController
             $stateMachine->apply(SubscriptionTransitions::TRANSITION_EXEMPT);
             $em = $this->getManager();
             $em->persist($subscription);
+            $em->flush();
 
             $this->getDispatcher()->dispatch(
                 SubscriptionEvents::STATE_CHANGED,
                 new SubscriptionEvent($subscription)
             );
-
-            $em->flush();
 
             return $this->redirect($cancelPath);
         }
@@ -159,7 +158,7 @@ class UserController extends ResourceController
             $context->getIdentifiers(true)
         );
 
-        $message = $this->getTranslator()->trans('ekyna_subscription.subscription.message.unexempt_confirm', array(
+        $message = $this->getTranslator()->trans('ekyna_subscription.subscription.confirm.unexempt.full', array(
             '{{year}}' => $subscription->getPrice()->getPricing()->getYear(),
             '{{amount}}' => number_format($subscription->getPrice()->getAmount(), 2, ',', ''), // TODO localized format
         ));
@@ -210,13 +209,12 @@ class UserController extends ResourceController
             $stateMachine->apply(SubscriptionTransitions::TRANSITION_UNEXEMPT);
             $em = $this->getManager();
             $em->persist($subscription);
+            $em->flush();
 
             $this->getDispatcher()->dispatch(
                 SubscriptionEvents::STATE_CHANGED,
                 new SubscriptionEvent($subscription)
             );
-
-            $em->flush();
 
             return $this->redirect($cancelPath);
         }

@@ -112,19 +112,25 @@ class OrderEventSubscriber implements EventSubscriberInterface
      */
     protected function applyTransition(array $subscriptions, $transition)
     {
+        $subscriptionsStateChanged = [];
+
         foreach ($subscriptions as $subscription) {
             $stateMachine = $this->factory->get($subscription);
             if ($stateMachine->can($transition)) {
                 $stateMachine->apply($transition);
                 $this->manager->persist($subscription);
-
-                $this->dispatcher->dispatch(
-                    SubscriptionEvents::STATE_CHANGED,
-                    new SubscriptionEvent($subscription)
-                );
+                $subscriptionsStateChanged[] = $subscription;
             }
         }
+
         $this->manager->flush();
+
+        foreach ($subscriptionsStateChanged as $subscription) {
+            $this->dispatcher->dispatch(
+                SubscriptionEvents::STATE_CHANGED,
+                new SubscriptionEvent($subscription)
+            );
+        }
     }
 
     /**

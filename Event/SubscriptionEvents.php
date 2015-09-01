@@ -10,7 +10,7 @@ namespace Ekyna\Bundle\SubscriptionBundle\Event;
 final class SubscriptionEvents
 {
     const PRE_GENERATE  = 'ekyna_subscription.subscription.pre_generate';
-    const POST_GENERATE = 'ekyna_subscription.subscription.pre_generate';
+    const POST_GENERATE = 'ekyna_subscription.subscription.post_generate';
 
     const STATE_CHANGED = 'ekyna_subscription.subscription.state_changed';
 }
