@@ -20,11 +20,10 @@
         "ekyna/cart-bundle" : "0.3.*@dev"
     },
     "autoload" : {
-        "psr-0" : {
-            "Ekyna\\Bundle\\SubscriptionBundle" : ""
+        "psr-4" : {
+            "Ekyna\\Bundle\\SubscriptionBundle\\" : ""
         }
     },
-    "target-dir" : "Ekyna/Bundle/SubscriptionBundle",
     "extra" : {
         "branch-alias" : {
             "dev-master" : "0.3.x-dev"
