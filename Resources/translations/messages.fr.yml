@@ -34,8 +34,8 @@ ekyna_subscription:
         field:
             notified_at: Appelé le
         state:
-            new: Nouvelle
-            pending: À régler
+            new: À régler
+            pending: En attente
             valid: À jour
             exempt: Dispensé
         header:
