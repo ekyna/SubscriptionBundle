@@ -50,7 +50,7 @@ ekyna_subscription:
         message:
             create_address_before_order: >
                 Veuillez créer une adresse pour cet utilisateur avant de créer une commande.
-            order_failure: Echec de la création de la commande.
+            order_failure: Échec de la création de la commande.
         confirm:
             exempt:
                 short: Confirmer la dispense ?

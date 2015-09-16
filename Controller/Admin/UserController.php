@@ -242,11 +242,9 @@ class UserController extends ResourceController
     public function createOrderAction(Request $request)
     {
         $context = $this->loadContext($request);
-        $resourceName = $this->config->getResourceName();
 
         /** @var \Ekyna\Bundle\UserBundle\Model\UserInterface $user */
-        $user = $context->getResource($resourceName);
-
+        $user = $context->getResource();
         $cancelPath = $this->generateResourcePath($user);
 
         // Check for addresses.
@@ -297,6 +295,8 @@ class UserController extends ResourceController
                 ->setInvoiceAddress($user->getAddresses()->first())
             ;
 
+            // TODO validate order ?
+
             $operator = $this->get('ekyna_order.order.operator');
             $event = $operator->create($order);
             if (!$event->isPropagationStopped()) {
@@ -306,6 +306,7 @@ class UserController extends ResourceController
                 $subscriptions = $form->get('subscriptions')->getData();
                 foreach ($subscriptions as $subscription) {
                     try {
+                        /** @var \Ekyna\Bundle\OrderBundle\Event\OrderItemEvent $subscriptionEvent */
                         $subscriptionEvent = $orderHelper->addSubject($order, $subscription);
                         if (!$subscriptionEvent->isPropagationStopped()) {
                             $event->addMessages($subscriptionEvent->getMessages());
