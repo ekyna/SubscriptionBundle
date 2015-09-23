@@ -52,24 +52,24 @@ class UserController extends ResourceController
             $context->getIdentifiers(true)
         );
 
-        $message = $this->getTranslator()->trans('ekyna_subscription.subscription.confirm.exempt.full', array(
+        $message = $this->getTranslator()->trans('ekyna_subscription.subscription.confirm.exempt.full', [
             '{{year}}' => $subscription->getPrice()->getPricing()->getYear(),
             '{{amount}}' => number_format($subscription->getPrice()->getAmount(), 2, ',', ''), // TODO localized format
-        ));
+        ]);
 
         $form = $this
-            ->createFormBuilder(null, array(
+            ->createFormBuilder(null, [
                 'admin_mode' => true,
                 '_redirect_enabled' => true,
-            ))
-            ->add('confirm', 'checkbox', array(
+            ])
+            ->add('confirm', 'checkbox', [
                 'label' => $message,
-                'attr' => array('align_with_widget' => true),
+                'attr' => ['align_with_widget' => true],
                 'required' => true,
-                'constraints' => array(
+                'constraints' => [
                     new Constraints\True(),
-                )
-            ))
+                ]
+            ])
             ->add('actions', 'form_actions', [
                 'buttons' => [
                     'validate' => [
@@ -120,10 +120,10 @@ class UserController extends ResourceController
 
         return $this->render(
             'EkynaSubscriptionBundle:Admin/User:subscription_exempt.html.twig',
-            $context->getTemplateVars(array(
+            $context->getTemplateVars([
                 'subscription' => $subscription,
                 'form' => $form->createView()
-            ))
+            ])
         );
     }
 
@@ -158,24 +158,24 @@ class UserController extends ResourceController
             $context->getIdentifiers(true)
         );
 
-        $message = $this->getTranslator()->trans('ekyna_subscription.subscription.confirm.unexempt.full', array(
+        $message = $this->getTranslator()->trans('ekyna_subscription.subscription.confirm.unexempt.full', [
             '{{year}}' => $subscription->getPrice()->getPricing()->getYear(),
             '{{amount}}' => number_format($subscription->getPrice()->getAmount(), 2, ',', ''), // TODO localized format
-        ));
+        ]);
 
         $form = $this
-            ->createFormBuilder(null, array(
+            ->createFormBuilder(null, [
                 'admin_mode' => true,
                 '_redirect_enabled' => true,
-            ))
-            ->add('confirm', 'checkbox', array(
+            ])
+            ->add('confirm', 'checkbox', [
                 'label' => $message,
-                'attr' => array('align_with_widget' => true),
+                'attr' => ['align_with_widget' => true],
                 'required' => true,
-                'constraints' => array(
+                'constraints' => [
                     new Constraints\True(),
-                )
-            ))
+                ]
+            ])
             ->add('actions', 'form_actions', [
                 'buttons' => [
                     'validate' => [
@@ -226,10 +226,10 @@ class UserController extends ResourceController
 
         return $this->render(
             'EkynaSubscriptionBundle:Admin/User:subscription_unexempt.html.twig',
-            $context->getTemplateVars(array(
+            $context->getTemplateVars([
                 'subscription' => $subscription,
                 'form' => $form->createView()
-            ))
+            ])
         );
     }
 
@@ -255,11 +255,11 @@ class UserController extends ResourceController
 
         $this->isGranted('EDIT', $user);
 
-        $form = $this->createForm('ekyna_subscription_create_order', null, array(
+        $form = $this->createForm('ekyna_subscription_create_order', null, [
             'user' => $user,
             'admin_mode' => true,
             '_redirect_enabled' => true,
-        ));
+        ]);
         $form->add('actions', 'form_actions', [
             'buttons' => [
                 'remove' => [
@@ -321,9 +321,9 @@ class UserController extends ResourceController
 
                 $event->toFlashes($this->getFlashBag());
 
-                return $this->redirect($this->generateUrl('ekyna_order_order_admin_show', array(
+                return $this->redirect($this->generateUrl('ekyna_order_order_admin_show', [
                     'orderId' => $order->getId()
-                )));
+                ]));
             }
             $event->toFlashes($this->getFlashBag());
         }
@@ -335,9 +335,9 @@ class UserController extends ResourceController
 
         return $this->render(
             'EkynaSubscriptionBundle:Admin/User:subscription_create_order.html.twig',
-            $context->getTemplateVars(array(
+            $context->getTemplateVars([
                 'form' => $form->createView()
-            ))
+            ])
         );
     }
 }

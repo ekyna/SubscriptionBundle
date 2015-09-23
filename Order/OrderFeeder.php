@@ -34,8 +34,9 @@ class OrderFeeder
     /**
      * Constructor.
      *
-     * @param OrderHelperInterface $orderHelper
+     * @param OrderHelperInterface   $orderHelper
      * @param SubscriptionRepository $repository
+     * @param bool                   $debug
      */
     public function __construct(OrderHelperInterface $orderHelper, SubscriptionRepository $repository, $debug)
     {

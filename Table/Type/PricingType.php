@@ -18,35 +18,35 @@ class PricingType extends ResourceTableType
     public function buildTable(TableBuilderInterface $builder, array $options)
     {
         $builder
-            ->addColumn('year', 'anchor', array(
+            ->addColumn('year', 'anchor', [
                 'label' => 'ekyna_subscription.pricing.field.year',
                 'sortable' => true,
                 'route_name' => 'ekyna_subscription_pricing_admin_show',
-                'route_parameters_map' => array('pricingId' => 'id'),
-            ))
-            ->addColumn('actions', 'admin_actions', array(
-                'buttons' => array(
-                    array(
+                'route_parameters_map' => ['pricingId' => 'id'],
+            ])
+            ->addColumn('actions', 'admin_actions', [
+                'buttons' => [
+                    [
                         'label' => 'ekyna_core.button.edit',
                         'icon' => 'pencil',
                         'class' => 'warning',
                         'route_name' => 'ekyna_subscription_pricing_admin_edit',
-                        'route_parameters_map' => array('pricingId' => 'id'),
+                        'route_parameters_map' => ['pricingId' => 'id'],
                         'permission' => 'edit',
-                    ),
-                    array(
+                    ],
+                    [
                         'label' => 'ekyna_core.button.remove',
                         'icon' => 'trash',
                         'class' => 'danger',
                         'route_name' => 'ekyna_subscription_pricing_admin_remove',
-                        'route_parameters_map' => array('pricingId' => 'id'),
+                        'route_parameters_map' => ['pricingId' => 'id'],
                         'permission' => 'delete',
-                    ),
-                ),
-            ))
-            ->addFilter('year', 'text', array(
+                    ],
+                ],
+            ])
+            ->addFilter('year', 'text', [
                 'label' => 'ekyna_subscription.pricing.field.year',
-            ))
+            ])
         ;
     }
 

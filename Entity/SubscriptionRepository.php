@@ -25,7 +25,7 @@ class SubscriptionRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('s');
 
-        $parameters = array('pricing' => $pricing);
+        $parameters = ['pricing' => $pricing];
 
         $qb
             ->join('s.user', 'user')
@@ -52,7 +52,7 @@ class SubscriptionRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('s');
 
-        $parameters = array('user' => $user);
+        $parameters = ['user' => $user];
 
         $qb
             ->join('s.price', 'price')
@@ -81,7 +81,7 @@ class SubscriptionRepository extends EntityRepository
 
         $qb = $this->createQueryBuilder('s');
 
-        $parameters = array('user' => $user, 'year' => $year);
+        $parameters = ['user' => $user, 'year' => $year];
 
         $qb
             ->join('s.price', 'price')

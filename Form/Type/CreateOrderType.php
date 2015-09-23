@@ -6,7 +6,7 @@ use Ekyna\Bundle\SubscriptionBundle\Entity\SubscriptionRepository;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class CreateOrderType
@@ -37,7 +37,7 @@ class CreateOrderType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('subscriptions', 'entity', array(
+            ->add('subscriptions', 'entity', [
                 'label' => 'ekyna_subscription.subscription.label.plural',
                 'class' => $this->subscriptionClass,
                 'multiple' => true,
@@ -48,29 +48,27 @@ class CreateOrderType extends AbstractType
                     return $qb
                         ->andWhere($qb->expr()->eq('s.user', ':user'))
                         ->andWhere($qb->expr()->eq('s.state', ':state'))
-                        ->setParameters(array(
+                        ->setParameters([
                             'user'  => $options['user'],
                             'state' => SubscriptionStates::STATE_NEW,
-                        ))
+                        ])
                     ;
                 },
-            ))
+            ])
         ;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
-            ->setDefaults(array(
+            ->setDefaults([
                 'user'  => null,
-            ))
-            ->setRequired(array('user'))
-            ->setAllowedTypes(array(
-                'user' => 'Ekyna\Bundle\UserBundle\Model\UserInterface',
-            ))
+            ])
+            ->setRequired(['user'])
+            ->setAllowedTypes('user', 'Ekyna\Bundle\UserBundle\Model\UserInterface')
         ;
     }
 

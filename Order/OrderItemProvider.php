@@ -52,9 +52,9 @@ class OrderItemProvider extends AbstractItemProvider
             ->setPrice($subject->getPrice()->getAmount())
             ->setWeight(0)
             ->setSubjectType($this->getName())
-            ->setSubjectData(array(
+            ->setSubjectData([
                 'id' => $subject->getId()
-            ))
+            ])
             ->setSubject($subject)
         ;
 
@@ -85,8 +85,8 @@ class OrderItemProvider extends AbstractItemProvider
             throw new InvalidItemException('Unsupported order item.');
         }
 
-        $options = array();
-        if (in_array($property, array('quantity', 'price', 'reference', 'weight', 'tax'))) {
+        $options = [];
+        if (in_array($property, ['quantity', 'price', 'reference', 'weight', 'tax'])) {
             $options['disabled'] = true;
         }
         return $options;
@@ -118,9 +118,9 @@ class OrderItemProvider extends AbstractItemProvider
             throw new InvalidSubjectException('Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface');
         }
 
-        return $this->urlGenerator->generate('ekyna_user_user_admin_show', array(
+        return $this->urlGenerator->generate('ekyna_user_user_admin_show', [
             'userId' => $subscription->getUser()->getId(),
-        ));
+        ]);
     }
 
     /**

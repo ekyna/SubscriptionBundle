@@ -3,7 +3,6 @@
 namespace Ekyna\Bundle\SubscriptionBundle\Controller\Admin;
 
 use Doctrine\ORM\Query;
-use Doctrine\ORM\QueryBuilder;
 use Ekyna\Bundle\AdminBundle\Controller\Context;
 use Ekyna\Bundle\AdminBundle\Controller\ResourceController;
 use Ekyna\Bundle\CoreBundle\Exception\RedirectException;
@@ -86,6 +85,7 @@ class PricingController extends ResourceController
     /**
      * Generate and/or notify subscriptions action.
      *
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function generateNotifyAction(Request $request)
@@ -100,25 +100,25 @@ class PricingController extends ResourceController
 
         // TODO Form type
         $form = $this
-            ->createFormBuilder(null, array(
+            ->createFormBuilder(null, [
                 'admin_mode' => true,
                 '_redirect_enabled' => true,
-            ))
-            ->add('years', 'choice', array(
+            ])
+            ->add('years', 'choice', [
                 'label' => 'ekyna_subscription.generate_notify.field.years',
                 'choices' => $this->getYearChoices(),
                 'multiple' => true,
-            ))
-            ->add('generate', 'checkbox', array(
+            ])
+            ->add('generate', 'checkbox', [
                 'label' => 'ekyna_subscription.generate_notify.field.generate',
                 'required' => false,
-                'attr' => array('align_with_widget' => true),
-            ))
-            ->add('notify', 'checkbox', array(
+                'attr' => ['align_with_widget' => true],
+            ])
+            ->add('notify', 'checkbox', [
                 'label' => 'ekyna_subscription.generate_notify.field.notify',
                 'required' => false,
-                'attr' => array('align_with_widget' => true),
-            ))
+                'attr' => ['align_with_widget' => true],
+            ])
             ->add('actions', 'form_actions', [
                 'buttons' => [
                     'validate' => [
@@ -185,9 +185,9 @@ class PricingController extends ResourceController
             'ekyna_subscription.pricing.button.generate_notify'
         );
 
-        return $this->render('EkynaSubscriptionBundle:Admin/Pricing:generate-notify.html.twig', array(
+        return $this->render('EkynaSubscriptionBundle:Admin/Pricing:generate-notify.html.twig', [
             'form' => $form->createView(),
-        ));
+        ]);
     }
 
     /**

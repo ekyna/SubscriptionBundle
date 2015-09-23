@@ -22,12 +22,12 @@ final class SubscriptionStates extends AbstractConstants
     static public function getConfig()
     {
         $prefix = 'ekyna_subscription.subscription.state.';
-        return array(
-            self::STATE_NEW     => array($prefix.self::STATE_NEW,     'default'),
-            self::STATE_PENDING => array($prefix.self::STATE_PENDING, 'warning'),
-            self::STATE_VALID   => array($prefix.self::STATE_VALID,   'success'),
-            self::STATE_EXEMPT  => array($prefix.self::STATE_EXEMPT,  'default'),
-        );
+        return [
+            self::STATE_NEW     => [$prefix.self::STATE_NEW,     'default'],
+            self::STATE_PENDING => [$prefix.self::STATE_PENDING, 'warning'],
+            self::STATE_VALID   => [$prefix.self::STATE_VALID,   'success'],
+            self::STATE_EXEMPT  => [$prefix.self::STATE_EXEMPT,  'default'],
+        ];
     }
 
     /**
@@ -51,11 +51,11 @@ final class SubscriptionStates extends AbstractConstants
     static public function getGlobals()
     {
         $prefix = 'subscription_state_';
-        return array(
+        return [
             $prefix.self::STATE_NEW     => self::STATE_NEW,
             $prefix.self::STATE_PENDING => self::STATE_PENDING,
             $prefix.self::STATE_VALID   => self::STATE_VALID,
             $prefix.self::STATE_EXEMPT  => self::STATE_EXEMPT,
-        );
+        ];
     }
 }

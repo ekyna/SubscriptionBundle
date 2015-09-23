@@ -4,7 +4,6 @@ namespace Ekyna\Bundle\SubscriptionBundle\Controller;
 
 use Ekyna\Bundle\CoreBundle\Controller\Controller;
 use Ekyna\Bundle\SubscriptionBundle\Exception\SubscriptionException;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class AccountController
@@ -28,10 +27,10 @@ class AccountController extends Controller
 
         $paymentButton = $subscriptionRepository->userHasPaymentRequiredSubscriptions($user);
 
-        return $this->render('EkynaSubscriptionBundle:Account:index.html.twig', array(
+        return $this->render('EkynaSubscriptionBundle:Account:index.html.twig', [
             'subscriptions'          => $subscriptions,
             'display_payment_button' => $paymentButton,
-        ));
+        ]);
     }
 
     /**

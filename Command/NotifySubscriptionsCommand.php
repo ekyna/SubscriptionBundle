@@ -4,7 +4,6 @@ namespace Ekyna\Bundle\SubscriptionBundle\Command;
 
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
-use Ekyna\Component\Sale\Payment\PaymentStates;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

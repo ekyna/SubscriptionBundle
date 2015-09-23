@@ -52,11 +52,11 @@ class SubscriptionExtension extends AbstractExtension
      */
     public function getAccountMenuEntries()
     {
-        return array('subscription' => array(
+        return ['subscription' => [
             'label' => 'ekyna_subscription.account.menu',
             'route' => 'ekyna_subscription_account_index',
             'position' => 10,
-        ));
+        ]];
     }
 
     /**

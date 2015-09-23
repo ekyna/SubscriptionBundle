@@ -1,9 +1,8 @@
 ekyna_subscription_account_index:
-    pattern: ""
+    path: ""
     defaults:
         _controller: EkynaSubscriptionBundle:Account:index
-    requirements:
-        _method: GET
+    methods: [GET]
     options:
         _cms:
             name: "Mes cotisations"
@@ -13,11 +12,10 @@ ekyna_subscription_account_index:
                 index: false
 
 ekyna_subscription_account_payment:
-    pattern: /payment
+    path: /payment
     defaults:
         _controller: EkynaSubscriptionBundle:Account:payment
-    requirements:
-        _method: GET|POST
+    methods: [GET|POST]
     options:
         _cms:
             name: "Régler mes cotisations"

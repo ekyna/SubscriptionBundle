@@ -28,13 +28,13 @@ class PricingPass implements CompilerPassInterface
         // Pricing repository
         $container
             ->getDefinition('ekyna_subscription.pricing.repository')
-            ->addMethodCall('setPriceProvider', array($providerDef))
+            ->addMethodCall('setPriceProvider', [$providerDef])
         ;
 
         // Subscription generator
         $container
             ->getDefinition('ekyna_subscription.subscription.generator')
-            ->addMethodCall('setPriceProvider', array($providerDef))
+            ->addMethodCall('setPriceProvider', [$providerDef])
         ;
     }
 }

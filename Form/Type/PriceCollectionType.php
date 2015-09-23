@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\SubscriptionBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class PriceCollectionType
@@ -15,12 +15,12 @@ class PriceCollectionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'label' => 'ekyna_subscription.pricing.field.prices',
             'type' => 'ekyna_subscription_price',
-        ));
+        ]);
     }
 
     /**

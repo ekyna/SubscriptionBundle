@@ -42,10 +42,10 @@ class SubscriptionExtension extends \Twig_Extension
      */
     public function getFunctions()
     {
-        return array(
-            new \Twig_SimpleFunction('render_subscription_state',  array($this, 'renderSubscriptionState'), array('is_safe' => array('html'))),
-            new \Twig_SimpleFunction('get_subscription_state',  array($this, 'getSubscriptionState'), array('is_safe' => array('html'))),
-        );
+        return [
+            new \Twig_SimpleFunction('render_subscription_state',  [$this, 'renderSubscriptionState'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('get_subscription_state',  [$this, 'getSubscriptionState'], ['is_safe' => ['html']]),
+        ];
     }
 
     /**

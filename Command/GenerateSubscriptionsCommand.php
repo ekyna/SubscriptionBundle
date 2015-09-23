@@ -24,7 +24,7 @@ class GenerateSubscriptionsCommand extends ContainerAwareCommand
         $this
             ->setName('ekyna:subscription:generate')
             ->setDescription('Generates users subscriptions.')
-            ->addArgument('years', InputArgument::IS_ARRAY|InputArgument::OPTIONAL, 'The years for which subscriptions must be generated.', array(date('Y')))
+            ->addArgument('years', InputArgument::IS_ARRAY|InputArgument::OPTIONAL, 'The years for which subscriptions must be generated.', [date('Y')])
             ->addOption('notify', null, InputOption::VALUE_NONE, 'Whether to notify the user after subscription generation or not.')
             ->setHelp(<<<EOT
 The <info>ekyna:subscription:generate</info> generates subscriptions for the given years:
@@ -59,10 +59,10 @@ EOT
 
         if ($input->getOption('notify')) {
             $command = $this->getApplication()->find('ekyna:subscription:notify');
-            $i = new ArrayInput(array(
+            $i = new ArrayInput([
                 'command' => 'ekyna:subscription:notify',
                 '--env'   => $input->getOption('env'),
-            ));
+            ]);
             $command->run($i, $output);
         }
 

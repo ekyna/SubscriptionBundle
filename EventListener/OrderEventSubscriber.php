@@ -78,7 +78,7 @@ class OrderEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (in_array($order->getState(), array(OrderStates::STATE_ACCEPTED, OrderStates::STATE_COMPLETED))) {
+        if (in_array($order->getState(), [OrderStates::STATE_ACCEPTED, OrderStates::STATE_COMPLETED])) {
             $this->applyTransition($subscriptions, SubscriptionTransitions::TRANSITION_VALIDATE);
         } else if ($order->getState() === OrderStates::STATE_PENDING) {
             $this->applyTransition($subscriptions, SubscriptionTransitions::TRANSITION_LOCK);
@@ -95,7 +95,7 @@ class OrderEventSubscriber implements EventSubscriberInterface
      */
     protected function getSubscriptions(OrderInterface $order)
     {
-        $subscriptions = array();
+        $subscriptions = [];
         foreach ($order->getItems() as $item) {
             if ($item->getSubjectType() === 'subscription') {
                 $subscriptions[] = $this->itemHelper->reverseTransform($item);
@@ -138,8 +138,8 @@ class OrderEventSubscriber implements EventSubscriberInterface
      */
     static public function getSubscribedEvents()
     {
-        return array(
-            OrderEvents::STATE_CHANGE => array('onPostStateChange', -1024)
-        );
+        return [
+            OrderEvents::STATE_CHANGE => ['onPostStateChange', -1024]
+        ];
     }
 }

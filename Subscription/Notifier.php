@@ -105,10 +105,10 @@ class Notifier
         $fromEmail = $this->settings->getParameter('notification.from_email');
         $fromName = $this->settings->getParameter('notification.from_name');
 
-        $content = $this->templating->render($this->config['templates']['call_user_for_payment'], array(
+        $content = $this->templating->render($this->config['templates']['call_user_for_payment'], [
             'user' => $user,
             'subscriptions' => $subscriptions,
-        ));
+        ]);
 
         $message = \Swift_Message::newInstance();
         $message

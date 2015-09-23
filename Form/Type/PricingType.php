@@ -18,9 +18,9 @@ class PricingType extends ResourceFormType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('year', 'text', array(
+            ->add('year', 'text', [
                 'label' => 'ekyna_subscription.pricing.field.year',
-            ))
+            ])
             ->add('prices', 'ekyna_subscription_price_collection')
         ;
     }
