@@ -16,8 +16,8 @@
         "MIT"
     ],
     "require" : {
-        "ekyna/admin-bundle": "0.3.*@dev",
-        "ekyna/cart-bundle" : "0.3.*@dev"
+        "ekyna/admin-bundle": "0.3.x-dev",
+        "ekyna/cart-bundle" : "0.3.x-dev"
     },
     "autoload" : {
         "psr-4" : {
