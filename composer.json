@@ -16,8 +16,8 @@
         "MIT"
     ],
     "require" : {
-        "ekyna/admin-bundle": "0.4.x-dev",
-        "ekyna/cart-bundle" : "0.4.x-dev"
+        "ekyna/admin-bundle": "1.0.x-dev",
+        "ekyna/cart-bundle" : "1.0.x-dev"
     },
     "autoload" : {
         "psr-4" : {
@@ -26,7 +26,7 @@
     },
     "extra" : {
         "branch-alias" : {
-            "dev-master" : "0.4.x-dev"
+            "dev-master" : "1.0.x-dev"
         }
     }
 }
