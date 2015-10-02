@@ -153,7 +153,6 @@ class PricingController extends ResourceController
             $generate = (bool)  $form->get('generate')->getData();
             $notify   = (bool)  $form->get('notify')->getData();
 
-            // TODO Flashes
             if ($generate) {
                 $notifyArg = $notify ? ' --notify' : '';
                 $env = ' --env='.$this->container->getParameter('kernel.environment');
