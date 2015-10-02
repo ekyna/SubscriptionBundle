@@ -40,39 +40,46 @@ class SubscriptionExtension extends \Twig_Extension
     /**
      * {@inheritdoc}
      */
-    public function getFunctions()
+    public function getFilters()
     {
         return [
-            new \Twig_SimpleFunction('render_subscription_state',  [$this, 'renderSubscriptionState'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('get_subscription_state',  [$this, 'getSubscriptionState'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFilter('subscription_state_label', [$this, 'getSubscriptionStateLabel'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFilter('subscription_state_badge', [$this, 'getSubscriptionStateBadge'], ['is_safe' => ['html']]),
         ];
     }
 
     /**
-     * Renders the subscription state.
+     * Returns the subscription state translated label.
      *
-     * @param SubscriptionInterface $subscription
+     * @param mixed $subscriptionOrState
      * @return string
      */
-    public function renderSubscriptionState(SubscriptionInterface $subscription)
+    public function getSubscriptionStateLabel($subscriptionOrState)
     {
-        $state = $subscription->getState();
-        return sprintf(
-            '<span class="label label-%s">%s</span>',
-            SubscriptionStates::getTheme($state),
-            $this->translator->trans(SubscriptionStates::getLabel($state))
-        );
+        $state = $subscriptionOrState instanceof SubscriptionInterface
+            ? $subscriptionOrState->getState()
+            : $subscriptionOrState;
+
+        return $this->translator->trans(SubscriptionStates::getLabel($state));
     }
 
     /**
-     * Returns the subscription state.
+     * Renders the subscription state badge.
      *
-     * @param SubscriptionInterface $subscription
+     * @param mixed $subscriptionOrState
      * @return string
      */
-    public function getSubscriptionState(SubscriptionInterface $subscription)
+    public function getSubscriptionStateBadge($subscriptionOrState)
     {
-        return $this->translator->trans(SubscriptionStates::getLabel($subscription->getState()));
+        $state = $subscriptionOrState instanceof SubscriptionInterface
+            ? $subscriptionOrState->getState()
+            : $subscriptionOrState;
+
+        return sprintf(
+            '<span class="label label-%s">%s</span>',
+            SubscriptionStates::getTheme($state),
+            $this->getSubscriptionStateLabel($subscriptionOrState)
+        );
     }
 
     /**

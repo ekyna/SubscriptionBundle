@@ -23,6 +23,10 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->integerNode('notification_interval')
+                    ->defaultValue(30*6)
+                    ->cannotBeEmpty()
+                ->end()
                 ->scalarNode('price_provider')
                     ->defaultValue('ekyna_subscription.subscription.group_price_provider')
                     ->cannotBeEmpty()
