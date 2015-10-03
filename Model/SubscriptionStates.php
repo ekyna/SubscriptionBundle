@@ -23,7 +23,7 @@ final class SubscriptionStates extends AbstractConstants
     {
         $prefix = 'ekyna_subscription.subscription.state.';
         return [
-            self::STATE_NEW     => [$prefix.self::STATE_NEW,     'default'],
+            self::STATE_NEW     => [$prefix.self::STATE_NEW,     'danger'],
             self::STATE_PENDING => [$prefix.self::STATE_PENDING, 'warning'],
             self::STATE_VALID   => [$prefix.self::STATE_VALID,   'success'],
             self::STATE_EXEMPT  => [$prefix.self::STATE_EXEMPT,  'default'],
