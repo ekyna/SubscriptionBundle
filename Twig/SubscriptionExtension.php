@@ -86,7 +86,7 @@ class SubscriptionExtension extends \Twig_Extension
         return sprintf(
             '<span class="label label-%s">%s</span>',
             SubscriptionStates::getTheme($state),
-            $this->getSubscriptionStateLabel($subscriptionOrState)
+            $this->getSubscriptionStateLabel($state)
         );
     }
 
