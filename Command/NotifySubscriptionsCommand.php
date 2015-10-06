@@ -21,7 +21,7 @@ SELECT s, u
 FROM %s s
 JOIN s.user u
 WHERE s.state = :state
-  AND s.notifiedAt < :date
+  AND (s.notifiedAt IS NULL OR s.notifiedAt < :date)
 GROUP BY u.id
 DQL;
 
