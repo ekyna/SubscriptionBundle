@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\SubscriptionBundle\Subscription;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvent;
 use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
 use Ekyna\Bundle\SubscriptionBundle\Exception\GenerationException;
@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class Generator implements PriceProviderSubjectInterface
 {
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $em;
 
@@ -56,14 +56,14 @@ class Generator implements PriceProviderSubjectInterface
     /**
      * Constructor.
      *
-     * @param EntityManager            $em
+     * @param EntityManagerInterface   $em
      * @param EventDispatcherInterface $dispatcher
      * @param ValidatorInterface       $validator
      * @param string                   $userClass
      * @param string                   $subscriptionClass
      */
     public function __construct(
-        EntityManager $em,
+        EntityManagerInterface $em,
         EventDispatcherInterface $dispatcher,
         ValidatorInterface $validator,
         $userClass,
@@ -158,10 +158,11 @@ class Generator implements PriceProviderSubjectInterface
         }
 
         $this->em->persist($subscription);
+        /** @noinspection PhpMethodParametersCountMismatchInspection */
+        $this->em->flush($subscription);
 
         $this->dispatcher->dispatch(SubscriptionEvents::POST_GENERATE, $event);
 
-        $this->em->flush();
 
         return $subscription;
     }
