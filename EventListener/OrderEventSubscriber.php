@@ -78,9 +78,9 @@ class OrderEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (in_array($order->getState(), array(OrderStates::STATE_ACCEPTED, OrderStates::STATE_COMPLETED))) {
+        if (in_array($order->getState(), array(OrderStates::STATE_COMPLETED))) {
             $this->applyTransition($subscriptions, SubscriptionTransitions::TRANSITION_VALIDATE);
-        } else if ($order->getState() === OrderStates::STATE_PENDING) {
+        } else if ($order->getState() === OrderStates::STATE_ACCEPTED) {
             $this->applyTransition($subscriptions, SubscriptionTransitions::TRANSITION_LOCK);
         } else {
             $this->applyTransition($subscriptions, SubscriptionTransitions::TRANSITION_UNLOCK);
