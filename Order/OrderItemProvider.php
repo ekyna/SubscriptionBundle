@@ -47,7 +47,7 @@ class OrderItemProvider extends AbstractItemProvider
 
         $item = $this->createNewOrderItem();
         $item
-            ->setDesignation(sprintf('Cotisations pour l\'année %s', $year))
+            ->setDesignation(sprintf('Cotisation pour l\'année %s', $year)) // TODO translation
             ->setReference('SUBS-' . $year)
             ->setPrice($subject->getPrice()->getAmount())
             ->setWeight(0)
