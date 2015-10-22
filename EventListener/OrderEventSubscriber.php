@@ -10,6 +10,7 @@ use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvent;
 use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionTransitions;
+use Ekyna\Bundle\SubscriptionBundle\Order\OrderItemProvider;
 use Ekyna\Component\Sale\Order\OrderInterface;
 use Ekyna\Component\Sale\Order\OrderStates;
 use SM\Factory\FactoryInterface;
@@ -97,7 +98,7 @@ class OrderEventSubscriber implements EventSubscriberInterface
     {
         $subscriptions = array();
         foreach ($order->getItems() as $item) {
-            if ($item->getSubjectType() === 'subscription') {
+            if ($item->getSubjectType() === OrderItemProvider::TYPE) {
                 $subscriptions[] = $this->itemHelper->reverseTransform($item);
             }
         }
@@ -139,7 +140,7 @@ class OrderEventSubscriber implements EventSubscriberInterface
     static public function getSubscribedEvents()
     {
         return array(
-            OrderEvents::STATE_CHANGE => array('onPostStateChange', -1024)
+            OrderEvents::STATE_CHANGE => array('onPostStateChange', -768)
         );
     }
 }
