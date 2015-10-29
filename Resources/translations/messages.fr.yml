@@ -76,8 +76,10 @@ ekyna_subscription:
         alert:
             no_pending_subscription: Aucune cotisation en attente de paiement trouvé.
             no_subscription: Aucune cotisation enregistrée.
+    order:
+        designation: Cotisation pour l'année {{year}}
     email:
-        call_user_for_payment:
+        user_call_for_payment:
             subject: Appel à cotisation
             message: >
                 <p>Bonjour %identity%,</p>

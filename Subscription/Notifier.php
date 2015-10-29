@@ -114,16 +114,16 @@ class Notifier
         $fromEmail = $this->settings->getParameter('notification.from_email');
         $fromName = $this->settings->getParameter('notification.from_name');
 
-        $content = $this->templating->render($this->config['templates']['call_user_for_payment'], [
+        $content = $this->templating->render($this->config['templates']['user_call_for_payment'], array(
             'user' => $user,
             'subscriptions' => $subscriptions,
-        ]);
+        ));
 
         $message = \Swift_Message::newInstance();
         $message
             ->setFrom($fromEmail, $fromName)
             ->setTo($user->getEmail(), (string) $user)
-            ->setSubject($this->translator->trans('ekyna_subscription.email.call_user_for_payment.subject'))
+            ->setSubject($this->translator->trans('ekyna_subscription.email.user_call_for_payment.subject'))
             ->setBody($content, 'text/html')
         ;
 
