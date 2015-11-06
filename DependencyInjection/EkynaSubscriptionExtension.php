@@ -22,7 +22,10 @@ class EkynaSubscriptionExtension extends AbstractExtension
 
         $container->setParameter('ekyna_subscription.subscription.price_provider', $config['price_provider']);
 
-        $exposedConfig = ['templates' => $config['templates']];
+        $exposedConfig = [
+            'interval'  => $config['notification_interval'],
+            'templates' => $config['templates']
+        ];
         $container->setParameter('ekyna_subscription.config', $exposedConfig);
     }
 

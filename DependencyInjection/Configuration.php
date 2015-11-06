@@ -23,6 +23,10 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->integerNode('notification_interval')
+                    ->defaultValue(30*6)
+                    ->cannotBeEmpty()
+                ->end()
                 ->scalarNode('price_provider')
                     ->defaultValue('ekyna_subscription.subscription.group_price_provider')
                     ->cannotBeEmpty()
@@ -30,8 +34,8 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('templates')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('call_user_for_payment')
-                            ->defaultValue('EkynaSubscriptionBundle:Email:call_user_for_payment.html.twig')
+                        ->scalarNode('user_call_for_payment')
+                            ->defaultValue('EkynaSubscriptionBundle:Email:user_call_for_payment.html.twig')
                             ->cannotBeEmpty()
                         ->end()
                     ->end()

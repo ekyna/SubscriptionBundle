@@ -11,7 +11,7 @@
     <tr>
         <td>{{ subscription.price.pricing.year }}</td>
         <td>{{ ((subscription.price.amount|localizednumber()) ~ '&nbsp;€')|raw }}</td>
-        <td>{{ render_subscription_state(subscription) }}</td>
+        <td>{{ subscription|subscription_state_badge|raw }}</td>
         <td>
             {% if sm_can(subscription, 'exempt') %}
             <a href="{{ path('ekyna_user_user_admin_subscription_exempt', {'userId': user.id, 'subscriptionId': subscription.id}) }}"

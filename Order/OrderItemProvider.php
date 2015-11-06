@@ -8,6 +8,7 @@ use Ekyna\Bundle\OrderBundle\Provider\AbstractItemProvider;
 use Ekyna\Bundle\SubscriptionBundle\Entity\SubscriptionRepository;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Component\Sale\Order\OrderItemInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class OrderItemProvider
@@ -16,10 +17,17 @@ use Ekyna\Component\Sale\Order\OrderItemInterface;
  */
 class OrderItemProvider extends AbstractItemProvider
 {
+    const TYPE = 'subscription';
+
     /**
      * @var SubscriptionRepository
      */
     protected $repository;
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
 
 
     /**
@@ -27,9 +35,10 @@ class OrderItemProvider extends AbstractItemProvider
      *
      * @param SubscriptionRepository $repository
      */
-    public function __construct(SubscriptionRepository $repository)
+    public function __construct(SubscriptionRepository $repository, TranslatorInterface $translator)
     {
         $this->repository = $repository;
+        $this->translator = $translator;
     }
 
     /**
@@ -47,7 +56,10 @@ class OrderItemProvider extends AbstractItemProvider
 
         $item = $this->createNewOrderItem();
         $item
-            ->setDesignation(sprintf('Cotisations pour l\'année %s', $year))
+            ->setDesignation($this->translator->trans(
+                'ekyna_subscription.order.designation',
+                array('{{year}}' => $year)
+            ))
             ->setReference('SUBS-' . $year)
             ->setPrice($subject->getPrice()->getAmount())
             ->setWeight(0)
@@ -148,6 +160,6 @@ class OrderItemProvider extends AbstractItemProvider
      */
     public function getName()
     {
-        return 'subscription';
+        return self::TYPE;
     }
 }

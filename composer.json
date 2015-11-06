@@ -16,17 +16,12 @@
         "MIT"
     ],
     "require" : {
-        "ekyna/admin-bundle": "1.0.x-dev",
-        "ekyna/cart-bundle" : "1.0.x-dev"
+        "ekyna/admin-bundle": "dev-master",
+        "ekyna/cart-bundle" : "dev-master"
     },
     "autoload" : {
         "psr-4" : {
             "Ekyna\\Bundle\\SubscriptionBundle\\" : ""
-        }
-    },
-    "extra" : {
-        "branch-alias" : {
-            "dev-master" : "1.0.x-dev"
         }
     }
 }

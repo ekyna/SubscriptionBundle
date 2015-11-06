@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\SubscriptionBundle\Subscription;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Ekyna\Bundle\SettingBundle\Manager\SettingsManagerInterface;
+use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Bundle\UserBundle\Model\UserInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Templating\EngineInterface;
@@ -89,7 +90,7 @@ class Notifier
      * Sends the "call user for payment" email.
      *
      * @param UserInterface $user
-     * @return bool
+     * @return int
      */
     public function sendCallUserForPayment(UserInterface $user)
     {
@@ -98,23 +99,31 @@ class Notifier
             ->getSubscriptionRepository()
             ->findByUserAndPaymentRequired($user)
         ;
+        $now = new \DateTime();
+        $interval = $this->config['interval'];
+        $subscriptions = array_filter($subscriptions, function(SubscriptionInterface $s) use ($now, $interval) {
+            if (null === $s->getNotifiedAt()) {
+                return true;
+            }
+            return $s->getNotifiedAt()->diff($now, true)->days >= $interval;
+        });
         if (empty($subscriptions)) {
-            return true;
+            return 0;
         }
 
         $fromEmail = $this->settings->getParameter('notification.from_email');
         $fromName = $this->settings->getParameter('notification.from_name');
 
-        $content = $this->templating->render($this->config['templates']['call_user_for_payment'], [
+        $content = $this->templating->render($this->config['templates']['user_call_for_payment'], array(
             'user' => $user,
             'subscriptions' => $subscriptions,
-        ]);
+        ));
 
         $message = \Swift_Message::newInstance();
         $message
             ->setFrom($fromEmail, $fromName)
             ->setTo($user->getEmail(), (string) $user)
-            ->setSubject($this->translator->trans('ekyna_subscription.email.call_user_for_payment.subject'))
+            ->setSubject($this->translator->trans('ekyna_subscription.email.user_call_for_payment.subject'))
             ->setBody($content, 'text/html')
         ;
 
@@ -125,10 +134,10 @@ class Notifier
             }
             $this->em->flush();
 
-            return true;
+            return 1;
         }
 
-        return false;
+        return 0;
     }
 
     /**

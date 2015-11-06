@@ -83,6 +83,7 @@
         <!-- Order item provider -->
         <service id="ekyna_subscription.order.order_item_provider" class="Ekyna\Bundle\SubscriptionBundle\Order\OrderItemProvider">
             <argument id="ekyna_subscription.subscription.repository" type="service" />
+            <argument id="translator" type="service" />
             <tag name="ekyna_order.item_provider" />
         </service>
 

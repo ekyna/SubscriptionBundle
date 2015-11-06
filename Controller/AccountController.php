@@ -48,7 +48,7 @@ class AccountController extends Controller
         try {
             $this->get('ekyna_subscription.order.order_feeder')->feed($cart, $user);
         } catch(SubscriptionException $e) {
-            $this->addFlash('Error lors de la création de votre bon de commande.');
+            $this->addFlash('ekyna_subscription.subscription.message.order_failure');
             return $this->redirect($redirectPath);
         }
 

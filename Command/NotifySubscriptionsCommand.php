@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\SubscriptionBundle\Command;
 
+use Doctrine\DBAL\Types\Type;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -13,14 +14,14 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package Ekyna\Bundle\SubscriptionBundle\Command
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class NotifySubscriptionsCommand  extends ContainerAwareCommand
+class NotifySubscriptionsCommand extends ContainerAwareCommand
 {
     const USERS_WITH_SUBSCRIPTION_PAYMENT_REQUIRED_DQL = <<<DQL
 SELECT s, u
 FROM %s s
 JOIN s.user u
-WHERE s.state = %s
-    AND s.notifiedAt IS NULL
+WHERE s.state = :state
+  AND (s.notifiedAt IS NULL OR s.notifiedAt < :date)
 GROUP BY u.id
 DQL;
 
@@ -52,8 +53,8 @@ EOT
 
         $count = 0;
         foreach ($users as $user) {
-            if ($notifier->sendCallUserForPayment($user)) {
-                $count++;
+            if (0 < $sent = $notifier->sendCallUserForPayment($user)) {
+                $count += $sent;
             }
         }
 
@@ -68,20 +69,22 @@ EOT
     protected function findUsersWithSubscriptionPaymentRequired()
     {
         $subscriptionClass = $this->getContainer()->getParameter('ekyna_subscription.subscription.class');
-        $subscriptionState = sprintf("'%s'", SubscriptionStates::STATE_NEW);
 
-        $query = $this
+        $dql = sprintf(self::USERS_WITH_SUBSCRIPTION_PAYMENT_REQUIRED_DQL, $subscriptionClass);
+
+        $interval = $this->getContainer()->getParameter('ekyna_subscription.config')['interval'];
+
+        $date = new \DateTime();
+        $date->modify(sprintf('-%d days', $interval));
+
+        $results = $this
             ->getContainer()
-            ->get('doctrine.orm.default_entity_manager')->createQuery(
-                sprintf(
-                    self::USERS_WITH_SUBSCRIPTION_PAYMENT_REQUIRED_DQL,
-                    $subscriptionClass,
-                    $subscriptionState
-                )
-            )
+            ->get('doctrine.orm.default_entity_manager')
+            ->createQuery($dql)
+            ->setParameter('state', SubscriptionStates::STATE_NEW)
+            ->setParameter('date', $date, Type::DATETIME)
+            ->getResult()
         ;
-
-        $results = $query->getResult();
 
         return array_map(function($s) {
             /** @var SubscriptionInterface $s */

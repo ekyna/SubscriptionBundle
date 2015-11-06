@@ -14,7 +14,7 @@
     <tr>
         <td>{{ subscription.price.pricing.year }}</td>
         <td>{{ ((subscription.price.amount|localizednumber()) ~ '&nbsp;€')|raw }}</td>
-        <td>{{ render_subscription_state(subscription) }}</td>
+        <td>{{ subscription|subscription_state_badge|raw }}</td>
     </tr>
     {% else %}
     <tr>
