@@ -13,6 +13,7 @@
         <parameter key="ekyna_subscription.payment.form_type.class">Ekyna\Bundle\SubscriptionBundle\Form\Type\PaymentType</parameter>
 
         <parameter key="ekyna_subscription.payum.action.paypal.capture_payment_using_express_checkout.class">Ekyna\Bundle\SubscriptionBundle\Payum\Action\Paypal\CapturePaymentUsingExpressCheckoutAction</parameter>
+        <parameter key="ekyna_subscription.payum.action.using_atos.capture_payment_using_express_checkout.class">Ekyna\Bundle\SubscriptionBundle\Payum\Action\AtosSips\CapturePaymentUsingAtosSipsAction</parameter>
     </parameters>
 
     <services>
@@ -27,9 +28,14 @@
             <tag name="kernel.event_subscriber" />
         </service>
 
-        <!-- PayPal -->
-        <service id="ekyna_subscription.payum.action.paypal.capture_payment_using_express_checkout" class="%ekyna_subscription.payum.action.paypal.capture_payment_using_express_checkout.class%">
+        <!-- Payum -->
+        <service id="ekyna_subscription.payum.action.paypal.capture_payment_using_express_checkout"
+                 class="%ekyna_subscription.payum.action.paypal.capture_payment_using_express_checkout.class%">
             <tag name="payum.action" factory="paypal_express_checkout_nvp" />
+        </service>
+        <service id="ekyna_subscription.payum.action.using_atos.capture_payment_using_atos_sips"
+                 class="%ekyna_subscription.payum.action.using_atos.capture_payment_using_express_checkout.class%">
+            <tag name="payum.action" factory="atos_sips" />
         </service>
 
         <!-- Entity repositories -->

@@ -60,7 +60,7 @@
     {% for payment in payments %}
         <tr>
             <td>{{ payment.createdAt|localizeddate('full', 'short') }}</td>
-            <td>{{ ((payment.amount|localizednumber()) ~ '&nbsp;€')|raw }}</td>
+            <td>{{ ((payment.getAmount()|localizednumber()) ~ '&nbsp;€')|raw }}</td>
             <td>{{ payment.method.paymentName }}</td>
             <td>{{ render_payment_state(payment) }}</td>
             <td class="actions">{{ render_payment_actions(

@@ -1,6 +1,6 @@
 {
     "name" : "ekyna/subscription-bundle",
-    "description" : "Various utilities",
+    "description" : "Subscription management",
     "type" : "symfony-bundle",
     "authors" : [{
             "name" : "Etienne Dauvergne",
@@ -17,17 +17,12 @@
     ],
     "require" : {
         "ekyna/admin-bundle": "0.1.*@dev",
-        "ekyna/payment-bundle" : "0.2.*@dev"
+        "ekyna/payment-bundle" : "0.2.x-dev"
     },
     "autoload" : {
         "psr-0" : {
             "Ekyna\\Bundle\\SubscriptionBundle" : ""
         }
     },
-    "target-dir" : "Ekyna/Bundle/SubscriptionBundle",
-    "extra" : {
-        "branch-alias" : {
-            "dev-master" : "0.1.x-dev"
-        }
-    }
+    "target-dir" : "Ekyna/Bundle/SubscriptionBundle"
 }
