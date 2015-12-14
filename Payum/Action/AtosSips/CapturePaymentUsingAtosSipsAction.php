@@ -34,8 +34,14 @@ class CapturePaymentUsingAtosSipsAction extends AbstractCapturePaymentAction
 
         $details['order_id'] = uniqid().'-'.$payment->getId();
 
-        /*$details['customer_id'] = $payment->getClientId();
-        $details['customer_email'] = $payment->getClientEmail();*/
+        /** @var \Ekyna\Bundle\SubscriptionBundle\Entity\Subscription $subscription */
+        $subscription = $payment->getSubscriptions()->first();
+        $user = $subscription->getUser();
+
+        $details['customer_id'] = $user->getId();
+        $details['customer_email'] = $user->getEmail();
+        $details['customer_name'] = $user->getLastName();
+        $details['customer_firstname'] = $user->getFirstName();
 
         $payment->setDetails($details);
     }
