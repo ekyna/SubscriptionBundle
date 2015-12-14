@@ -16,7 +16,7 @@
         "MIT"
     ],
     "require" : {
-        "ekyna/admin-bundle": "0.1.*@dev",
+        "ekyna/admin-bundle": "0.2.x-dev",
         "ekyna/payment-bundle" : "0.2.x-dev"
     },
     "autoload" : {
