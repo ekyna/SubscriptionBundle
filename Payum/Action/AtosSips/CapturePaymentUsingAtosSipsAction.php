@@ -32,16 +32,21 @@ class CapturePaymentUsingAtosSipsAction extends AbstractCapturePaymentAction
         // TODO Check
         $details['amount'] = abs($payment->getAmount() * 100);
 
-        $details['order_id'] = uniqid().'-'.$payment->getId();
-
         /** @var \Ekyna\Bundle\SubscriptionBundle\Entity\Subscription $subscription */
         $subscription = $payment->getSubscriptions()->first();
         $user = $subscription->getUser();
 
+        $customerName = $user->getLastName() . ' ' . $user->getFirstName();
+        if (32 < strlen($customerName)) {
+            $customerName = substr($customerName, 0, 32);
+        }
+
         $details['customer_id'] = $user->getId();
-        $details['customer_email'] = $user->getEmail();
-        $details['customer_name'] = $user->getLastName();
-        $details['customer_firstname'] = $user->getFirstName();
+        $details['order_id']    = $customerName;
+
+//        $details['customer_email'] = $user->getEmail();
+//        $details['customer_name'] = $user->getLastName();
+//        $details['customer_firstname'] = $user->getFirstName();
 
         $payment->setDetails($details);
     }
