@@ -17,7 +17,7 @@
         <!-- Event subscribers -->
         <service id="ekyna_subscription.order_event_subscriber" class="Ekyna\Bundle\SubscriptionBundle\EventListener\OrderEventSubscriber">
             <argument id="ekyna_order.item_helper" type="service" />
-            <argument id="doctrine.orm.entity_manager" type="service" />
+            <argument id="doctrine.orm.default_entity_manager" type="service" />
             <argument id="sm.factory" type="service" />
             <argument id="event_dispatcher" type="service" />
             <tag name="kernel.event_subscriber" />
@@ -25,9 +25,8 @@
 
         <!-- Entity repositories -->
         <service id="ekyna_subscription.subscription.repository"
-                 class="Ekyna\Bundle\SubscriptionBundle\Entity\SubscriptionRepository"
-                 factory-service="doctrine.orm.entity_manager"
-                 factory-method="getRepository">
+                 class="Ekyna\Bundle\SubscriptionBundle\Entity\SubscriptionRepository">
+            <factory service="doctrine.orm.default_entity_manager" method="getRepository" />
             <argument>%ekyna_subscription.subscription.class%</argument>
         </service>
 

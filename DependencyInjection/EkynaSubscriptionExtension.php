@@ -40,9 +40,7 @@ class EkynaSubscriptionExtension extends AbstractExtension
 
         if (array_key_exists('TwigBundle', $bundles)) {
             $container->prependExtensionConfig('twig', [
-                'form' => ['resources' => [
-                    'EkynaSubscriptionBundle:Form:form_div_layout.html.twig'
-                ]],
+                'form_themes' => ['EkynaSubscriptionBundle:Form:form_div_layout.html.twig'],
             ]);
         }
         if (array_key_exists('AsseticBundle', $bundles)) {

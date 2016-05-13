@@ -25,7 +25,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->integerNode('notification_interval')
                     ->defaultValue(30*6)
-                    ->cannotBeEmpty()
+                    ->min(0)
                 ->end()
                 ->scalarNode('price_provider')
                     ->defaultValue('ekyna_subscription.subscription.group_price_provider')
