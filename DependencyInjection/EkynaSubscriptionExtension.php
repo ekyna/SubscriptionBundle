@@ -1,52 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\SubscriptionBundle\DependencyInjection;
 
-use Ekyna\Bundle\AdminBundle\DependencyInjection\AbstractExtension;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
 /**
  * Class EkynaSubscriptionExtension
  * @package Ekyna\Bundle\SubscriptionBundle\DependencyInjection
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class EkynaSubscriptionExtension extends AbstractExtension
+class EkynaSubscriptionExtension extends Extension
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
-        $config = $this->configure($configs, 'ekyna_subscription', new Configuration(), $container);
+        //$config = $this->processConfiguration(new Configuration(), $configs);
 
-        $container->setParameter('ekyna_subscription.subscription.price_provider', $config['price_provider']);
-
-        $exposedConfig = [
-            'interval'  => $config['notification_interval'],
-            'templates' => $config['templates']
-        ];
-        $container->setParameter('ekyna_subscription.config', $exposedConfig);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function prepend(ContainerBuilder $container)
-    {
-        parent::prepend($container);
-
-        $bundles = $container->getParameter('kernel.bundles');
-
-        if (array_key_exists('TwigBundle', $bundles)) {
-            $container->prependExtensionConfig('twig', [
-                'form_themes' => ['EkynaSubscriptionBundle:Form:form_div_layout.html.twig'],
-            ]);
-        }
-        if (array_key_exists('AsseticBundle', $bundles)) {
-            $container->prependExtensionConfig('assetic', [
-                'bundles' => ['EkynaSubscriptionBundle']
-            ]);
-        }
+        $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->load('services.php');
     }
 }

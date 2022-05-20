@@ -1,0 +1,44 @@
+{% extends '@EkynaAdmin/Entity/Crud/read.html.twig' %}
+
+{% block actions %}
+    {{ admin_resource_btn(context.config.id, 'Ekyna\\Bundle\\AdminBundle\\Action\\ListAction') }}
+{% endblock %}
+
+{% block main_actions -%}
+    {{- admin_resource_btn(resource, 'Ekyna\\Bundle\\SubscriptionBundle\\Action\\Subscription\\CancelAction') -}}
+    {{ parent() }}
+{%- endblock main_actions %}
+
+{% block main_tabs -%}
+    {{ parent() }}
+    <li>
+        <a href="#{{ resource_name }}-graph" id="toggle-graph" data-toggle="tab">
+            Graph
+        </a>
+    </li>
+{% endblock main_tabs -%}
+
+{% block main_contents -%}
+    <div class="tab-pane active" id="{{ resource_name }}-general">
+        {{ show_row(subscription.plan, 'resource') }}
+        {{ show_row(subscription.customer, 'resource') }}
+        {{ show_row(subscription.state, 'text', {
+            'label': 'field.status'|trans({}, 'EkynaUi')
+        }) }}
+    </div>
+    <div class="tab-pane" id="{{ resource_name }}-graph">
+        {{ render_subscription_svg(subscription) }}
+    </div>
+{%- endblock main_contents %}
+
+{% block post_main -%}
+    <div class="sub-header">
+        <h2>{{ 'renewal.header.list'|trans({}, 'EkynaSubscription')|raw }}</h2>
+    </div>
+    <div class="actions">
+        {{ admin_resource_btn('ekyna_subscription.renewal', 'Ekyna\\Bundle\\SubscriptionBundle\\Action\\Renewal\\CreateAction') }}
+    </div>
+    {{ ekyna_table_render(admin_resource_table('ekyna_subscription.renewal', {
+        'source': subscription.renewals.toArray()
+    })) }}
+{%- endblock post_main %}

@@ -1,80 +1,47 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\SubscriptionBundle\Model;
 
-use Ekyna\Bundle\UserBundle\Model\UserInterface;
+use DateTimeInterface;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Selectable;
+use Ekyna\Component\Commerce\Customer\Model\CustomerInterface;
+use Ekyna\Component\Resource\Model\ResourceInterface;
+use Ekyna\Component\Resource\Model\TimestampableInterface;
 
 /**
  * Interface SubscriptionInterface
  * @package Ekyna\Bundle\SubscriptionBundle\Model
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-interface SubscriptionInterface
+interface SubscriptionInterface extends ResourceInterface, TimestampableInterface
 {
-    /**
-     * Returns the id.
-     *
-     * @return int
-     */
-    public function getId();
+    public function getPlan(): ?PlanInterface;
+
+    public function setPlan(?PlanInterface $plan): SubscriptionInterface;
+
+    public function getCustomer(): ?CustomerInterface;
+
+    public function setCustomer(?CustomerInterface $customer): SubscriptionInterface;
+
+    public function getState(): string;
+
+    public function setState(string $state): SubscriptionInterface;
+
+    public function getExpiresAt(): ?DateTimeInterface;
+
+    public function setExpiresAt(?DateTimeInterface $date): SubscriptionInterface;
 
     /**
-     * Sets the user.
-     *
-     * @param UserInterface $user
-     * @return SubscriptionInterface|$this
+     * @return Collection<RenewalInterface>|Selectable<RenewalInterface>
      */
-    public function setUser(UserInterface $user);
+    public function getRenewals(): Collection;
 
-    /**
-     * Returns the user.
-     *
-     * @return UserInterface
-     */
-    public function getUser();
+    public function hasRenewal(RenewalInterface $renewal): bool;
 
-    /**
-     * Sets the price.
-     *
-     * @param PriceInterface $price
-     * @return SubscriptionInterface|$this
-     */
-    public function setPrice(PriceInterface $price);
+    public function addRenewal(RenewalInterface $renewal): SubscriptionInterface;
 
-    /**
-     * Returns the price.
-     *
-     * @return PriceInterface
-     */
-    public function getPrice();
-
-    /**
-     * Sets the state.
-     *
-     * @param string $state
-     * @return SubscriptionInterface|$this
-     */
-    public function setState($state);
-
-    /**
-     * Returns the state.
-     *
-     * @return string
-     */
-    public function getState();
-
-    /**
-     * Sets the notifiedAt.
-     *
-     * @param \DateTime $notifiedAt
-     * @return SubscriptionInterface|$this
-     */
-    public function setNotifiedAt(\DateTime $notifiedAt = null);
-
-    /**
-     * Returns the notifiedAt.
-     *
-     * @return \DateTime
-     */
-    public function getNotifiedAt();
+    public function removeRenewal(RenewalInterface $renewal): SubscriptionInterface;
 }

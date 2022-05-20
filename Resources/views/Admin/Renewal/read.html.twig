@@ -1,0 +1,40 @@
+{% extends '@EkynaAdmin/Entity/Crud/read.html.twig' %}
+
+{% block actions %}{% endblock %}
+
+{% block main_contents -%}
+    <div class="tab-pane active" id="{{ resource_name }}-general">
+        {{ show_row(renewal.subscription, 'resource') }}
+        <div class="row">
+            <div class="col-md-6">
+                {{ show_row(renewal.startsAt, 'datetime', {
+                    'label': t('field.start_date', {}, 'EkynaUi'),
+                    'time': false,
+                    'label_col': 4
+                }) }}
+            </div>
+            <div class="col-md-6">
+                {{ show_row(renewal.endsAt, 'datetime', {
+                    'label': t('field.end_date', {}, 'EkynaUi'),
+                    'time': false,
+                    'label_col': 4
+                }) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                {{ show_row(renewal.count, 'number', {
+                    'label': t('field.quantity', {}, 'EkynaUi'),
+                    'label_col': 4
+                }) }}
+            </div>
+            <div class="col-md-6">
+                {{ show_row(renewal.paid, 'boolean', {
+                    'label': t('renewal.field.paid', {}, 'EkynaSubscription'),
+                    'label_col': 4,
+                    'color': true
+                }) }}
+            </div>
+        </div>
+    </div>
+{%- endblock main_contents %}

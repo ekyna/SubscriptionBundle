@@ -1,6 +1,0 @@
-ekyna_subscription:
-    pricing:
-        invalid_year: Veuillez saisir une année valide.
-        duplicate_year: Cette année a déjà été saisie.
-    subscription:
-        already_exists: Une cotisation éxiste déjà pour cet utilisateur et cette année.

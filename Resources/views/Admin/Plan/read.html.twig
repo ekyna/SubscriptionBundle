@@ -1,0 +1,26 @@
+{% extends '@EkynaAdmin/Entity/Crud/read.html.twig' %}
+
+{% block actions %}{% endblock %}
+
+{% block main_contents -%}
+    <div class="tab-pane active" id="{{ resource_name }}-general">
+        {{ show_row(plan.designation, 'text', {
+            'label': t('field.designation', {}, 'EkynaUi'),
+        }) }}
+        {{ show_row(plan.product, 'resource') }}
+        <div class="row">
+            <div class="col-md-6">
+                {{ show_row(plan.initialDuration, 'number', {
+                    'label': t('plan.field.initial_duration', {}, 'EkynaSubscription'),
+                    'label_col': 4
+                }) }}
+            </div>
+            <div class="col-md-6">
+                {{ show_row(plan.renewalDuration, 'number', {
+                    'label': t('plan.field.renewal_duration', {}, 'EkynaSubscription'),
+                    'label_col': 4
+                }) }}
+            </div>
+        </div>
+    </div>
+{%- endblock main_contents %}

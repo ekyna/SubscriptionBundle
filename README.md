@@ -1,13 +1,10 @@
 SubscriptionBundle
 ==========
 
-Membership subscription management.
+Subscription management.
 
-## Instation
+## Installation
 TODO
 
 ## Configuration
 TODO
-
-## TODOs
-- Deny pricing edition if there is linked subscription.

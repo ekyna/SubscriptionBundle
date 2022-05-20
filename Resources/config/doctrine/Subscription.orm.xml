@@ -2,36 +2,53 @@
 <doctrine-mapping
         xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping"
         xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                             http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
     <mapped-superclass
             name="Ekyna\Bundle\SubscriptionBundle\Entity\Subscription"
-            repository-class="Ekyna\Bundle\SubscriptionBundle\Entity\SubscriptionRepository"
-            table="subs_subscription">
-
-        <indexes>
-            <index columns="state" name="state_idx" />
-        </indexes>
+            table="subscription_subscription">
 
         <unique-constraints>
-            <unique-constraint columns="user_id,price_id" name="unique_subscription" />
+            <unique-constraint columns="plan_id,customer_id" name="unique_subscription_subscription"/>
         </unique-constraints>
 
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO"/>
         </id>
 
-        <field name="state" type="string" column="state" length="16" />
-        <field name="notifiedAt" type="datetime" column="notified_at" nullable="true" />
+        <field name="state" column="state" type="string" length="16"/>
+        <field name="expiresAt" column="expiresAt" type="date" nullable="true"/>
 
-        <many-to-one target-entity="Ekyna\Bundle\UserBundle\Model\UserInterface" field="user">
-            <join-column name="user_id" referenced-column-name="id" on-delete="CASCADE" />
+        <field name="createdAt" column="created_at" type="datetime">
+            <gedmo:timestampable on="create" />
+        </field>
+        <field name="updatedAt" column="updated_at" type="datetime" nullable="true">
+            <gedmo:timestampable on="update" />
+        </field>
+
+        <many-to-one target-entity="Ekyna\Bundle\SubscriptionBundle\Model\PlanInterface"
+                     field="plan">
+            <join-column name="plan_id" referenced-column-name="id" on-delete="RESTRICT" nullable="false"/>
         </many-to-one>
 
-        <many-to-one target-entity="Ekyna\Bundle\SubscriptionBundle\Model\PriceInterface" field="price">
-            <join-column name="price_id" referenced-column-name="id" on-delete="RESTRICT" />
+        <many-to-one target-entity="Ekyna\Component\Commerce\Customer\Model\CustomerInterface"
+                     field="customer">
+            <join-column name="customer_id" referenced-column-name="id" on-delete="CASCADE" nullable="false"/>
         </many-to-one>
+
+        <one-to-many target-entity="Ekyna\Bundle\SubscriptionBundle\Entity\Renewal"
+                     field="renewals" mapped-by="subscription" orphan-removal="true">
+            <order-by>
+                <order-by-field name="startsAt" direction="ASC"/>
+                <order-by-field name="endsAt" direction="ASC"/>
+                <order-by-field name="id" direction="ASC"/>
+            </order-by>
+            <cascade>
+                <cascade-all/>
+            </cascade>
+        </one-to-many>
 
     </mapped-superclass>
 

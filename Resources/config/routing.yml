@@ -1,7 +1,0 @@
-ekyna_subscription_admin:
-    resource: "routing/admin.yml"
-    prefix:   /admin/user
-
-ekyna_subscription:
-    resource: .
-    type: subscription

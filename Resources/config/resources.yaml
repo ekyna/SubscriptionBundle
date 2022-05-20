@@ -1,0 +1,60 @@
+namespaces:
+    ekyna_subscription:
+        label: label
+        trans_domain: EkynaSubscription
+        prefix: /subscription
+
+resources:
+    ekyna_subscription:
+        plan:
+            driver: doctrine/orm
+            entity:
+                interface: Ekyna\Bundle\SubscriptionBundle\Model\PlanInterface
+                class: Ekyna\Bundle\SubscriptionBundle\Entity\Plan
+            repository:
+                class: Ekyna\Bundle\SubscriptionBundle\Repository\PlanRepository
+            form: Ekyna\Bundle\SubscriptionBundle\Form\Type\PlanType
+            table: Ekyna\Bundle\SubscriptionBundle\Table\Type\PlanType
+            trans_domain: EkynaSubscription
+            actions:
+                admin_crud:
+                    form: '@EkynaSubscription/Admin/Plan/_form.html.twig'
+                    read: '@EkynaSubscription/Admin/Plan/read.html.twig'
+
+        subscription:
+            driver: doctrine/orm
+            entity:
+                interface: Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface
+                class: Ekyna\Bundle\SubscriptionBundle\Entity\Subscription
+            repository:
+                class: Ekyna\Bundle\SubscriptionBundle\Repository\SubscriptionRepository
+            form: Ekyna\Bundle\SubscriptionBundle\Form\Type\SubscriptionType
+            table: Ekyna\Bundle\SubscriptionBundle\Table\Type\SubscriptionType
+            trans_domain: EkynaSubscription
+            actions:
+                admin_crud:
+                    form: '@EkynaSubscription/Admin/Subscription/_form.html.twig'
+                    read: '@EkynaSubscription/Admin/Subscription/read.html.twig'
+                Ekyna\Bundle\SubscriptionBundle\Action\Subscription\CancelAction: ~
+
+        renewal:
+            driver: doctrine/orm
+            entity:
+                interface: Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface
+                class: Ekyna\Bundle\SubscriptionBundle\Entity\Renewal
+            factory:
+                interface: Ekyna\Bundle\SubscriptionBundle\Factory\RenewalFactoryInterface
+                class: Ekyna\Bundle\SubscriptionBundle\Factory\RenewalFactory
+            repository:
+                interface: Ekyna\Bundle\SubscriptionBundle\Repository\RenewalRepositoryInterface
+                class: Ekyna\Bundle\SubscriptionBundle\Repository\RenewalRepository
+            form: Ekyna\Bundle\SubscriptionBundle\Form\Type\RenewalType
+            table: Ekyna\Bundle\SubscriptionBundle\Table\Type\RenewalType
+            parent: ekyna_subscription.subscription
+            trans_domain: EkynaSubscription
+            actions:
+                admin_crud:
+                    create: false
+                    list: false
+                    templates: '@EkynaSubscription/Admin/Renewal'
+                Ekyna\Bundle\SubscriptionBundle\Action\Renewal\CreateAction: ~

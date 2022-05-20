@@ -1,0 +1,54 @@
+label: Abonnements
+
+plan:
+    label:
+        singular: Abonnement
+        plural: Abonnements
+    header:
+        list: Abonnements <small>Liste des abonnements</small>
+        show: Détail de l'abonnement <small>%name%</small>
+        new: Créer un nouvel abonnement
+        edit: Modifier l'abonnement <small>%name%</small>
+        remove: Supprimer l'abonnement <small>%name%</small>
+    field:
+        initial_duration: Durée initiale
+        renewal_duration: Durée renouvellement
+    alert:
+        empty_list: Aucun tarif configuré
+
+subscription:
+    label:
+        singular: Souscription
+        plural: Souscriptions
+    header:
+        list: Souscriptions <small>Liste des souscriptions</small>
+        show: Détail de la Souscription <small>%name%</small>
+        new: Créer une nouvelle souscription
+        edit: Modifier la souscription <small>%name%</small>
+        remove: Supprimer la souscription <small>%name%</small>
+        cancel: Annuler la souscription <small>%name%</small>
+    state:
+        new: Nouveau
+        pending: En attente
+        renewed: Renouvellée
+        expired: Expirée
+        cancelled: Annulée
+    message:
+        cancel_confirm: Êtes-vous sûr de vouloir annuler cette souscription ?
+
+renewal:
+    label:
+        singular: Renouvellement
+        plural: Renouvellements
+    header:
+        list: Renouvellements <small>Liste des renouvellements</small>
+        show: Détail du renouvellement <small>%name%</small>
+        new: Créer un nouveau renouvellement
+        edit: Modifier le renouvellement <small>%name%</small>
+        remove: Supprimer le renouvellement <small>%name%</small>
+    field:
+        paid: Réglé
+        needs_review: À reviser
+    message:
+        order_creation: Une commande de renouvellement sera automatiquement créée, et vous serez redirigé vers celle-ci.
+        pending_subscription: Un renouvellement est déjà en attente de réglement.

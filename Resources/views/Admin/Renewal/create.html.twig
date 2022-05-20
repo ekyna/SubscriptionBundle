@@ -1,0 +1,15 @@
+{% extends '@EkynaAdmin/Entity/Crud/create.html.twig' %}
+
+{% block actions %}{% endblock %}
+
+{% block main %}
+    <div class="alert alert-info">
+        <p>{{ 'renewal.message.order_creation'|trans({}, 'EkynaSubscription') }}</p>
+    </div>
+    {% if renewal.subscription.state == 'pending' %}
+        <div class="alert alert-warning">
+            <p>{{ 'renewal.message.pending_subscription'|trans({}, 'EkynaSubscription') }}</p>
+        </div>
+    {% endif %}
+    {{ parent() }}
+{% endblock main %}

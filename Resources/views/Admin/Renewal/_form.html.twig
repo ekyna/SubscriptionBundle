@@ -1,0 +1,30 @@
+{% extends '@EkynaAdmin/Entity/Crud/_form_default.html.twig' %}
+
+{% block main_contents -%}
+    <div class="tab-pane active" id="{{ resource_name }}-general">
+        {{ form_row(form.subscription) }}
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_row(form.startsAt, {'label_col': 4, 'widget_col': 8}) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(form.endsAt, {'label_col': 4, 'widget_col': 8}) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_row(form.count, {'label_col': 4, 'widget_col': 8}) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(form.paid, {'label_col': 4, 'widget_col': 8}) }}
+            </div>
+        </div>
+        {% if form.needsReview is defined -%}
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_row(form.needsReview, {'label_col': 4, 'widget_col': 8}) }}
+            </div>
+        </div>
+        {%- endif %}
+    </div>
+{%- endblock main_contents %}

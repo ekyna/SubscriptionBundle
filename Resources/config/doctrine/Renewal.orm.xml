@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping
+        xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                            http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <mapped-superclass
+            name="Ekyna\Bundle\SubscriptionBundle\Entity\Renewal"
+            table="subscription_renewal">
+
+        <unique-constraints>
+            <unique-constraint columns="subscription_id,order_item_id" name="unique_subscription_renewal" />
+        </unique-constraints>
+
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+
+        <field name="startsAt" column="starts_at" type="datetime" nullable="false"/>
+        <field name="endsAt" column="ends_at" type="datetime" nullable="false"/>
+        <field name="count" column="count" type="smallint" nullable="false"/>
+        <field name="paid" column="paid" type="boolean"/>
+        <field name="needsReview" column="needs_review" type="boolean"/>
+        <field name="createdAt" column="created_at" type="datetime" nullable="false"/>
+
+        <many-to-one target-entity="Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface"
+                     field="subscription" inversed-by="renewals">
+            <join-column name="subscription_id" referenced-column-name="id" on-delete="RESTRICT" nullable="false" />
+        </many-to-one>
+
+        <many-to-one target-entity="Ekyna\Component\Commerce\Order\Model\OrderItemInterface"
+                     field="orderItem">
+            <join-column name="order_item_id" referenced-column-name="id" on-delete="CASCADE" nullable="false" />
+        </many-to-one>
+
+    </mapped-superclass>
+
+</doctrine-mapping>

@@ -1,7 +1,0 @@
-ekyna_subscription_pricing_admin:
-    resource: "admin/pricing.yml"
-    prefix:   /pricings
-
-ekyna_subscription_user_admin:
-    resource: "admin/user.yml"
-    prefix:   /users

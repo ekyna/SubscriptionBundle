@@ -1,39 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\SubscriptionBundle;
 
 use Ekyna\Bundle\SubscriptionBundle\DependencyInjection\Compiler\AdminMenuPass;
-use Ekyna\Bundle\CoreBundle\AbstractBundle;
-use Ekyna\Bundle\SubscriptionBundle\DependencyInjection\Compiler\PricingPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * Class EkynaSubscriptionBundle
  * @package Ekyna\Bundle\SubscriptionBundle
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class EkynaSubscriptionBundle extends AbstractBundle
+class EkynaSubscriptionBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
-        parent::build($container);
-
         $container->addCompilerPass(new AdminMenuPass());
-        $container->addCompilerPass(new PricingPass());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getModelInterfaces()
-    {
-        return [
-            'Ekyna\Bundle\SubscriptionBundle\Model\PricingInterface'      => 'ekyna_subscription.pricing.class',
-            'Ekyna\Bundle\SubscriptionBundle\Model\PriceInterface'        => 'ekyna_subscription.price.class',
-            'Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface' => 'ekyna_subscription.subscription.class',
-        ];
     }
 }

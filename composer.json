@@ -1,27 +1,27 @@
 {
-    "name" : "ekyna/subscription-bundle",
-    "description" : "Various utilities",
-    "type" : "symfony-bundle",
-    "authors" : [{
-            "name" : "Etienne Dauvergne",
-            "homepage" : "http://ekyna.com"
+    "name": "ekyna/subscription-bundle",
+    "description": "e-commerce subscription management",
+    "type": "symfony-bundle",
+    "authors": [
+        {
+            "name": "Etienne Dauvergne",
+            "homepage": "https://ekyna.com"
         }
     ],
-    "keywords" : [
-        "symfony2",
+    "keywords": [
+        "symfony",
+        "commerce subscription",
         "bundle"
     ],
-    "homepage" : "https://github.com/ekyna/SubscriptionBundle",
-    "license" : [
-        "MIT"
-    ],
-    "require" : {
-        "ekyna/admin-bundle": "0.5.x-dev",
-        "ekyna/cart-bundle" : "0.5.x-dev"
+    "homepage": "https://github.com/ekyna/SubscriptionBundle",
+    "license": "MIT",
+    "require": {
+        "ekyna/product-bundle": "0.8.x-dev",
+        "symfony/messenger": "^5.0"
     },
-    "autoload" : {
-        "psr-4" : {
-            "Ekyna\\Bundle\\SubscriptionBundle\\" : ""
+    "autoload": {
+        "psr-4": {
+            "Ekyna\\Bundle\\SubscriptionBundle\\": ""
         }
     }
 }

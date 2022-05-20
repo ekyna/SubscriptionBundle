@@ -1,40 +1,53 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\SubscriptionBundle\DependencyInjection\Compiler;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Ekyna\Bundle\AdminBundle\Service\Menu\PoolHelper;
+use Ekyna\Bundle\SubscriptionBundle\Model\PlanInterface;
+use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Class AdminMenuPass
  * @package Ekyna\Bundle\SubscriptionBundle\DependencyInjection\Compiler
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class AdminMenuPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    private const NAME = 'subscription';
+
+    public const  GROUP = [
+        'name'     => self::NAME,
+        'label'    => 'label',
+        'domain'   => 'EkynaSubscription',
+        'icon'     => 'calendar',
+        'position' => 15,
+    ];
+
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition('ekyna_admin.menu.pool')) {
             return;
         }
 
-        $pool = $container->getDefinition('ekyna_admin.menu.pool');
+        $helper = new PoolHelper(
+            $container->getDefinition('ekyna_admin.menu.pool')
+        );
 
-        $pool->addMethodCall('createGroup', [[
-            'name'     => 'users',
-            'label'    => 'ekyna_user.user.label.plural',
-            'icon'     => 'users',
-            'position' => 99,
-        ]]);
-        $pool->addMethodCall('createEntry', ['users', [
-            'name'     => 'pricing',
-            'route'    => 'ekyna_subscription_pricing_admin_home',
-            'label'    => 'ekyna_subscription.label',
-            'resource' => 'ekyna_subscription_pricing',
-            'position' => 10,
-        ]]);
+        $helper
+            ->addGroup(self::GROUP)
+            ->addEntry([
+                'name'     => 'plan',
+                'resource' => PlanInterface::class,
+                'position' => 1,
+            ])
+            ->addEntry([
+                'name'     => 'subscription',
+                'resource' => SubscriptionInterface::class,
+                'position' => 2,
+            ]);
     }
 }

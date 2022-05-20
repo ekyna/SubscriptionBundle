@@ -1,61 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\SubscriptionBundle\Model;
 
-use Ekyna\Bundle\CoreBundle\Model\AbstractConstants;
+use Ekyna\Bundle\ResourceBundle\Model\AbstractConstants;
 
 /**
  * Class SubscriptionStates
  * @package Ekyna\Bundle\SubscriptionBundle\Model
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 final class SubscriptionStates extends AbstractConstants
 {
-    const STATE_NEW     = 'new';
-    const STATE_PENDING = 'pending';
-    const STATE_VALID   = 'valid';
-    const STATE_EXEMPT  = 'exempt';
+    public const STATE_NEW       = 'new';
+    public const STATE_PENDING   = 'pending';
+    public const STATE_RENEWED   = 'renewed';
+    public const STATE_EXPIRED   = 'expired';
+    public const STATE_CANCELLED = 'cancelled';
 
-    /**
-     * {@inheritdoc}
-     */
-    static public function getConfig()
+    public static function getConfig(): array
     {
-        $prefix = 'ekyna_subscription.subscription.state.';
+        $prefix = 'subscription.state.';
+
         return [
-            self::STATE_NEW     => [$prefix.self::STATE_NEW,     'danger'],
-            self::STATE_PENDING => [$prefix.self::STATE_PENDING, 'warning'],
-            self::STATE_VALID   => [$prefix.self::STATE_VALID,   'success'],
-            self::STATE_EXEMPT  => [$prefix.self::STATE_EXEMPT,  'default'],
+            self::STATE_NEW       => [$prefix . self::STATE_NEW, 'danger'],
+            self::STATE_PENDING   => [$prefix . self::STATE_PENDING, 'warning'],
+            self::STATE_RENEWED   => [$prefix . self::STATE_RENEWED, 'success'],
+            self::STATE_EXPIRED   => [$prefix . self::STATE_EXPIRED, 'danger'],
+            self::STATE_CANCELLED => [$prefix . self::STATE_CANCELLED, 'default'],
         ];
     }
 
-    /**
-     * Returns the theme for the given state.
-     *
-     * @param string $state
-     * @return string
-     */
-    static public function getTheme($state)
+    public static function getTranslationDomain(): ?string
     {
-        static::isValid($state, true);
-
-        return static::getConfig()[$state][1];
-    }
-
-    /**
-     * Returns the twig globals.
-     *
-     * @return array
-     */
-    static public function getGlobals()
-    {
-        $prefix = 'subscription_state_';
-        return [
-            $prefix.self::STATE_NEW     => self::STATE_NEW,
-            $prefix.self::STATE_PENDING => self::STATE_PENDING,
-            $prefix.self::STATE_VALID   => self::STATE_VALID,
-            $prefix.self::STATE_EXEMPT  => self::STATE_EXEMPT,
-        ];
+        return 'EkynaSubscription';
     }
 }
