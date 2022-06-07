@@ -14,13 +14,19 @@ use Ekyna\Component\Resource\Doctrine\ORM\Repository\ResourceRepository;
  */
 class PlanRepository extends ResourceRepository implements PlanRepositoryInterface
 {
+    private ?array $planIdentifiers = null;
+
     public function getIdentifiers(): array
     {
+        if (null !== $this->planIdentifiers) {
+            return $this->planIdentifiers;
+        }
+
         $qb = $this->createQueryBuilder('p');
 
-        return $qb
+        return $this->planIdentifiers = $qb
             ->select('p.id')
             ->getQuery()
-            ->getResult(IdHydrator::class);
+            ->getResult(IdHydrator::NAME);
     }
 }
