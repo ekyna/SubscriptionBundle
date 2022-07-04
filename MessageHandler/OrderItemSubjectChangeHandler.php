@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\SubscriptionBundle\MessageHandler;
 
-use Ekyna\Component\Commerce\Order\Message\OrderItemSubjectChange;
+use Ekyna\Bundle\SubscriptionBundle\Message\OrderItemSubjectChange;
 
 /**
  * Class OrderItemSubjectChangeHandler

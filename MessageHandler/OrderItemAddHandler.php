@@ -6,9 +6,9 @@ namespace Ekyna\Bundle\SubscriptionBundle\MessageHandler;
 
 use Ekyna\Bundle\CommerceBundle\Model\OrderInterface;
 use Ekyna\Bundle\ProductBundle\Service\Commerce\ProductProvider;
+use Ekyna\Bundle\SubscriptionBundle\Message\OrderItemAdd;
 use Ekyna\Bundle\SubscriptionBundle\Repository\PlanRepositoryInterface;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionGenerator;
-use Ekyna\Component\Commerce\Order\Message\OrderItemAdd;
 use Ekyna\Component\Commerce\Order\Model\OrderItemInterface;
 use Ekyna\Component\Resource\Manager\ResourceManagerInterface;
 use Ekyna\Component\Resource\Repository\ResourceRepositoryInterface;

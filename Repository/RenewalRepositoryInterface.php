@@ -11,6 +11,8 @@ use Ekyna\Component\Resource\Repository\ResourceRepositoryInterface;
  * Interface RenewalRepositoryInterface
  * @package Ekyna\Bundle\SubscriptionBundle\Repository
  * @author  Étienne Dauvergne <contact@ekyna.com>
+ *
+ * @implements ResourceRepositoryInterface<RenewalInterface>
  */
 interface RenewalRepositoryInterface extends ResourceRepositoryInterface
 {

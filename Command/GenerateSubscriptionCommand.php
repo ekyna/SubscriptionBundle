@@ -10,9 +10,7 @@ use Ekyna\Bundle\CommerceBundle\Model\OrderInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionGenerator;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionUtils;
-use Ekyna\Component\Commerce\Order\Model\OrderStates;
 use Ekyna\Component\Commerce\Order\Repository\OrderRepositoryInterface;
-use Ekyna\Component\Commerce\Payment\Model\PaymentStates;
 use Ekyna\Component\Resource\Manager\ResourceManagerInterface;
 use Exception;
 use Symfony\Component\Console\Command\Command;
@@ -71,7 +69,9 @@ class GenerateSubscriptionCommand extends Command
         $this->input = $input;
         $this->output = $output;
 
-        //$this->generator->setOnCreateRenewal([$this, 'onRenewalCreate']);
+        /*if (!$input->getOption('no-debug')) {
+            $this->generator->setOnCreateRenewal([$this, 'onRenewalCreate']);
+        }*/
 
         if (0 < $id = (int)$input->getOption('id')) {
             $order = $this->repository->find($id);
@@ -172,7 +172,7 @@ class GenerateSubscriptionCommand extends Command
             return $this->query;
         }
 
-        $statesToParameter = function (array $states) : string {
+        $statesToParameter = function (array $states): string {
             return '(' . implode(', ', array_map(fn(string $val): string => "'$val'", $states)) . ')';
         };
 

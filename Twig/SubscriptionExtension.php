@@ -31,7 +31,6 @@ class SubscriptionExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-
             new TwigFilter(
                 'subscription_state_label',
                 [ConstantsHelper::class, 'renderSubscriptionStateLabel']

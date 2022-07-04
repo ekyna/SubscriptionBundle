@@ -14,6 +14,8 @@ use Ekyna\Component\Resource\Repository\ResourceRepositoryInterface;
  * Interface SubscriptionRepositoryInterface
  * @package Ekyna\Bundle\SubscriptionBundle\Repository
  * @author  Étienne Dauvergne <contact@ekyna.com>
+ *
+ * @implements ResourceRepositoryInterface<SubscriptionInterface>
  */
 interface SubscriptionRepositoryInterface extends ResourceRepositoryInterface
 {

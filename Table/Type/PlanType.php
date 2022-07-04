@@ -6,6 +6,8 @@ namespace Ekyna\Bundle\SubscriptionBundle\Table\Type;
 
 use Ekyna\Bundle\AdminBundle\Action\DeleteAction;
 use Ekyna\Bundle\AdminBundle\Action\UpdateAction;
+use Ekyna\Bundle\AdminBundle\Table\Type\Column\ResourceType;
+use Ekyna\Bundle\ProductBundle\Model\ProductInterface;
 use Ekyna\Bundle\ResourceBundle\Table\Type\AbstractResourceType;
 use Ekyna\Bundle\TableBundle\Extension\Type as BType;
 use Ekyna\Component\Table\Extension\Core\Type as CType;
@@ -27,6 +29,10 @@ class PlanType extends AbstractResourceType
                 'label'    => t('field.name', [], 'EkynaUi'),
                 'position' => 10,
             ])
+            ->addColumn('product', ResourceType::class, [
+                'resource' => ProductInterface::class,
+                'position' => 20,
+            ])
             ->addColumn('actions', BType\Column\ActionsType::class, [
                 'resource' => $this->dataClass,
                 'actions'  => [
@@ -37,7 +43,6 @@ class PlanType extends AbstractResourceType
             ->addFilter('designation', CType\Filter\TextType::class, [
                 'label'    => t('field.title', [], 'EkynaUi'),
                 'position' => 10,
-            ])
-        ;
+            ]);
     }
 }

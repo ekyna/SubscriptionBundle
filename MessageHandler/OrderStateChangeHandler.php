@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\SubscriptionBundle\MessageHandler;
 
+use Ekyna\Bundle\SubscriptionBundle\Message\OrderStateChange;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionGenerator;
-use Ekyna\Component\Commerce\Order\Message\OrderStateChange;
 use Ekyna\Component\Commerce\Order\Repository\OrderRepositoryInterface;
 use Ekyna\Component\Resource\Manager\ResourceManagerInterface;
 

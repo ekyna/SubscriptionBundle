@@ -22,7 +22,7 @@
     <div class="tab-pane active" id="{{ resource_name }}-general">
         {{ show_row(subscription.plan, 'resource') }}
         {{ show_row(subscription.customer, 'resource') }}
-        {{ show_row(subscription.state, 'text', {
+        {{ show_row(subscription|subscription_state_badge, 'text', {
             'label': 'field.status'|trans({}, 'EkynaUi')
         }) }}
     </div>

@@ -10,6 +10,8 @@ use Ekyna\Bundle\SubscriptionBundle\Command\GenerateSubscriptionCommand;
 use Ekyna\Bundle\SubscriptionBundle\Command\WatchSubscriptionCommand;
 use Ekyna\Bundle\SubscriptionBundle\Event\RenewalEvents;
 use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
+use Ekyna\Bundle\SubscriptionBundle\EventListener\OrderItemListener;
+use Ekyna\Bundle\SubscriptionBundle\EventListener\OrderListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\ReadCustomerEventListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\ReadOrderEventListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\RenewalListener;
@@ -26,6 +28,8 @@ use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionRenderer;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionStateResolver;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionUpdater;
 use Ekyna\Bundle\SubscriptionBundle\Twig\SubscriptionExtension;
+use Ekyna\Component\Commerce\Order\Event\OrderEvents;
+use Ekyna\Component\Commerce\Order\Event\OrderItemEvents;
 
 return static function (ContainerConfigurator $container) {
     $container
@@ -126,7 +130,7 @@ return static function (ContainerConfigurator $container) {
             ])
             ->tag('console.command')
 
-        // Subscription listener
+        // Subscription (resource) event listener
         ->set('ekyna_subscription.listener.subscription', SubscriptionListener::class)
             ->args([
                 service('ekyna_subscription.updater.subscription'),
@@ -141,7 +145,29 @@ return static function (ContainerConfigurator $container) {
                 'method' => 'onRenewalChange',
             ])
 
-        // Renewal listener
+        // Order (resource) event listener
+        ->set('ekyna_subscription.listener.order', OrderListener::class)
+            ->call('setPersistenceHelper', [service('ekyna_resource.orm.persistence_helper')])
+            ->call('setMessageQueue', [service('ekyna_resource.queue.message')])
+            ->tag('resource.event_listener', [
+                'event'  => OrderEvents::STATE_CHANGE,
+                'method' => 'onStateChange',
+            ])
+
+        // Order item (resource) event listener
+        ->set('ekyna_subscription.listener.order_item', OrderItemListener::class)
+            ->call('setPersistenceHelper', [service('ekyna_resource.orm.persistence_helper')])
+            ->call('setMessageQueue', [service('ekyna_resource.queue.message')])
+            ->tag('resource.event_listener', [
+                'event'  => OrderItemEvents::INSERT,
+                'method' => 'onInsert',
+            ])
+            ->tag('resource.event_listener', [
+                'event'  => OrderItemEvents::UPDATE,
+                'method' => 'onUpdate',
+            ])
+
+        // Renewal (resource) event listener
         ->set('ekyna_subscription.listener.renewal', RenewalListener::class)
             ->args([
                 service('ekyna_resource.orm.persistence_helper'),

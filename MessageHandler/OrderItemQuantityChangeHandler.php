@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\SubscriptionBundle\MessageHandler;
 
+use Ekyna\Bundle\SubscriptionBundle\Message\OrderItemQuantityChange;
 use Ekyna\Bundle\SubscriptionBundle\Repository\RenewalRepositoryInterface;
-use Ekyna\Component\Commerce\Order\Message\OrderItemQuantityChange;
 use Ekyna\Component\Resource\Manager\ResourceManagerInterface;
 
 /**

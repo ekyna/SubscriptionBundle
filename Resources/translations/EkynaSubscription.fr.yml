@@ -34,7 +34,7 @@ subscription:
         expired: Expirée
         cancelled: Annulée
     message:
-        cancel_confirm: Êtes-vous sûr de vouloir annuler cette souscription ?
+        cancel_confirm: Êtes-vous sûr(e) de vouloir annuler cette souscription ?
 
 renewal:
     label:
@@ -50,5 +50,5 @@ renewal:
         paid: Réglé
         needs_review: À reviser
     message:
-        order_creation: Une commande de renouvellement sera automatiquement créée, et vous serez redirigé vers celle-ci.
+        order_creation: Une commande de renouvellement sera automatiquement créée, et vous serez redirigé(e) vers celle-ci.
         pending_subscription: Un renouvellement est déjà en attente de réglement.
