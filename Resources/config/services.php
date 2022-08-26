@@ -191,6 +191,8 @@ return static function (ContainerConfigurator $container) {
             ->args([
                 service('ekyna_resource.orm.persistence_helper'),
                 service('ekyna_subscription.updater.renewal'),
+                service('ekyna_commerce.factory.formatter'),
+                service('translator'),
             ])
             ->tag('resource.event_listener', [
                 'event'  => RenewalEvents::INSERT,
