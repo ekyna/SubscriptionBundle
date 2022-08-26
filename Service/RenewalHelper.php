@@ -7,6 +7,7 @@ namespace Ekyna\Bundle\SubscriptionBundle\Service;
 use Decimal\Decimal;
 use Ekyna\Bundle\CommerceBundle\Service\SaleItemHelper;
 use Ekyna\Bundle\SubscriptionBundle\Exception\LogicException;
+use Ekyna\Bundle\SubscriptionBundle\Factory\SubscriptionFactoryInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
 use Ekyna\Component\Commerce\Common\Factory\SaleFactoryInterface;
 use Ekyna\Component\Commerce\Common\Helper\FactoryHelperInterface;
@@ -20,18 +21,12 @@ use Ekyna\Component\Commerce\Order\Model\OrderItemInterface;
  */
 class RenewalHelper
 {
-    private SaleFactoryInterface   $orderFactory;
-    private FactoryHelperInterface $factoryHelper;
-    private SaleItemHelper         $saleItemHelper;
-
     public function __construct(
-        SaleFactoryInterface   $orderFactory,
-        FactoryHelperInterface $factoryHelper,
-        SaleItemHelper         $saleItemHelper
+        private readonly SubscriptionFactoryInterface $subscriptionFactory,
+        private readonly SaleFactoryInterface   $orderFactory,
+        private readonly FactoryHelperInterface $factoryHelper,
+        private readonly SaleItemHelper         $saleItemHelper
     ) {
-        $this->orderFactory = $orderFactory;
-        $this->factoryHelper = $factoryHelper;
-        $this->saleItemHelper = $saleItemHelper;
     }
 
     public function renew(RenewalInterface $renewal): OrderInterface
@@ -44,17 +39,33 @@ class RenewalHelper
             throw new LogicException('Renewal subscription is not set');
         }
 
+        if (null === $customer = $subscription->getCustomer()) {
+            throw new LogicException('Subscription customer is not set');
+        }
+
+        if (null === $plan = $subscription->getPlan()) {
+            throw new LogicException('Subscription plan is not set');
+        }
+
+        if (null === $product = $plan->getProduct()) {
+            throw new LogicException('Plan product is not set');
+        }
+
+        if (null !== $forward = $plan->getForwardPlan()) {
+            $subscription = $this->subscriptionFactory->createWithCustomerAndPlan($customer, $forward);
+
+            $renewal->setSubscription($subscription);
+        }
+
         /** @var OrderInterface $order */
-        $order = $this->orderFactory->createWithCustomer($subscription->getCustomer());
+        $order = $this->orderFactory->createWithCustomer($customer);
 
         /** @var OrderItemInterface $item */
         $item = $this->factoryHelper->createItemForSale($order);
         $order->addItem($item);
         $renewal->setOrderItem($item);
 
-        $subject = $subscription->getPlan()->getProduct();
-
-        $this->saleItemHelper->initialize($item, $subject);
+        $this->saleItemHelper->initialize($item, $product);
 
         $item->setQuantity(new Decimal($renewal->getCount()));
 

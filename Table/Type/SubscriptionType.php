@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\SubscriptionBundle\Table\Type;
 
-use Ekyna\Bundle\AdminBundle\Action\DeleteAction;
-use Ekyna\Bundle\AdminBundle\Action\UpdateAction;
 use Ekyna\Bundle\AdminBundle\Table\Type\Column\ConstantChoiceType;
 use Ekyna\Bundle\AdminBundle\Table\Type\Column\ResourceType as ResourceColumn;
 use Ekyna\Bundle\CommerceBundle\Table\Filter\CustomerType;
@@ -35,9 +33,9 @@ class SubscriptionType extends AbstractResourceType
                 'property_path' => false,
             ])
             ->addColumn('state', ConstantChoiceType::class, [
-                'label'    => t('field.status', [], 'EkynaUi'),
-                'class'    => SubscriptionStates::class,
-                'theme'    => true,
+                'label' => t('field.status', [], 'EkynaUi'),
+                'class' => SubscriptionStates::class,
+                'theme' => true,
             ])
             ->addColumn('customer', ResourceColumn::class, [
                 'resource' => CustomerInterface::class,
@@ -47,10 +45,6 @@ class SubscriptionType extends AbstractResourceType
             ])
             ->addColumn('actions', BType\Column\ActionsType::class, [
                 'resource' => $this->dataClass,
-                'actions'  => [
-                    UpdateAction::class,
-                    DeleteAction::class,
-                ],
             ])
             ->addFilter('customer', CustomerType::class)
             ->addFilter('plan', ResourceFilter::class, [

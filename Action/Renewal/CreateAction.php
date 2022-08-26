@@ -7,7 +7,6 @@ namespace Ekyna\Bundle\SubscriptionBundle\Action\Renewal;
 use Ekyna\Bundle\AdminBundle\Action\CreateAction as BaseAction;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
 use Ekyna\Bundle\SubscriptionBundle\Service\RenewalHelper;
-use Ekyna\Component\Commerce\Order\Model\OrderInterface;
 use Ekyna\Component\Resource\Event\ResourceEventInterface;
 use Ekyna\Component\Resource\Exception\UnexpectedTypeException;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,33 +20,38 @@ use function array_replace_recursive;
  */
 class CreateAction extends BaseAction
 {
-    private RenewalHelper $renewalHelper;
-
-    private ?OrderInterface $order = null;
-
-    public function __construct(RenewalHelper $renewalHelper)
-    {
-        $this->renewalHelper = $renewalHelper;
+    public function __construct(
+        private readonly RenewalHelper $renewalHelper,
+    ) {
     }
 
     protected function doPersist(): ResourceEventInterface
     {
         $resource = $this->context->getResource();
-
         if (!$resource instanceof RenewalInterface) {
             throw new UnexpectedTypeException($resource, RenewalInterface::class);
         }
 
-        $this->order = $this->renewalHelper->renew($resource);
+        $order = $this->renewalHelper->renew($resource);
 
-        $this->getManager($this->order)->persist($this->order);
+        $subscription = $resource->getSubscription();
+        if (null === $resource->getSubscription()->getId()) {
+            $this->getManager($subscription)->persist($subscription);
+        }
+
+        $this->getManager($order)->persist($order);
 
         return $this->getManager()->save($resource);
     }
 
     protected function onPostPersist(): ?Response
     {
-        return $this->redirect($this->generateResourcePath($this->order));
+        $resource = $this->context->getResource();
+        if (!$resource instanceof RenewalInterface) {
+            throw new UnexpectedTypeException($resource, RenewalInterface::class);
+        }
+
+        return $this->redirect($this->generateResourcePath($resource->getOrder()));
     }
 
     public static function configureAction(): array

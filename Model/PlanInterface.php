@@ -44,6 +44,16 @@ interface PlanInterface extends ResourceInterface
     public function setRenewalDuration(int $duration): PlanInterface;
 
     /**
+     * Returns the plan that should be used to renew.
+     */
+    public function getForwardPlan(): ?PlanInterface;
+
+    /**
+     * Sets the plan that should be used to renew.
+     */
+    public function setForwardPlan(?PlanInterface $forwardPlan): PlanInterface;
+
+    /**
      * Returns the date when subscription should be renewed.
      */
     public function getAnniversary(): ?DateTimeInterface;

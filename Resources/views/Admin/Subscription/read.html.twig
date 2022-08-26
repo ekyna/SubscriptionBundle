@@ -27,7 +27,7 @@
         }) }}
     </div>
     <div class="tab-pane" id="{{ resource_name }}-graph">
-        {{ render_subscription_svg(subscription) }}
+        {{ subscription_graph([subscription]) }}
     </div>
 {%- endblock main_contents %}
 

@@ -20,6 +20,7 @@ class Plan extends AbstractResource implements PlanInterface
     protected ?ProductInterface $product         = null;
     protected int               $initialDuration = 12;
     protected int               $renewalDuration = 12;
+    protected ?PlanInterface    $forwardPlan     = null;
 
     public function __toString(): string
     {
@@ -70,6 +71,18 @@ class Plan extends AbstractResource implements PlanInterface
     public function setRenewalDuration(int $duration): PlanInterface
     {
         $this->renewalDuration = $duration;
+
+        return $this;
+    }
+
+    public function getForwardPlan(): ?PlanInterface
+    {
+        return $this->forwardPlan;
+    }
+
+    public function setForwardPlan(?PlanInterface $forwardPlan): PlanInterface
+    {
+        $this->forwardPlan = $forwardPlan;
 
         return $this;
     }

@@ -141,9 +141,6 @@ class OrderItemListener
 
         $helper = new QuantityChangeHelper($this->persistenceHelper);
         $quantities = $helper->getTotalQuantityChangeSet($item);
-        if (empty($quantities)) {
-            $quantities = array_fill(0, 2, $item->getTotalQuantity());
-        }
 
         $message = new OrderItemSubjectChange($item->getId(), $quantities[0]->toFixed(5), $quantities[1]->toFixed(5));
         $message->setFromSubject($providers[0], $identifiers[0]);
@@ -156,10 +153,6 @@ class OrderItemListener
     {
         $helper = new QuantityChangeHelper($this->persistenceHelper);
         $quantities = $helper->getTotalQuantityChangeSet($item);
-
-        if (empty($quantities)) {
-            throw new LogicException('Unchanged order item quantities.');
-        }
 
         $message = new OrderItemQuantityChange($item->getId(), $quantities[0]->toFixed(5), $quantities[1]->toFixed(5));
 

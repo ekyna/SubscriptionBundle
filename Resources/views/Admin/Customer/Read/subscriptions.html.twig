@@ -1,3 +1,14 @@
 <div class="table-responsive">
     {% include '@EkynaSubscription/Admin/subscriptions.html.twig' %}
 </div>
+<hr>
+{{ form_start(subscribe_form, {'attr': {'class': 'form form-horizontal'}}) }}
+<div class="row">
+    <div class="col-sm-10">
+        {{ form_row(subscribe_form.plan) }}
+    </div>
+    <div class="col-sm-2">
+        <button class="btn btn-primary">Souscrire</button>
+    </div>
+</div>
+{{ form_end(subscribe_form) }}

@@ -1,3 +1,6 @@
+{% if subscriptions is not empty -%}
+{{ subscription_graph(subscriptions) }}
+{%- endif %}
 <table class="table table-striped table-hover table-alt-head">
     <thead>
     <tr>
@@ -31,6 +34,7 @@
                         <th>{{ 'field.end_date'|trans({}, 'EkynaUi') }}</th>
                         <th>{{ 'field.quantity'|trans({}, 'EkynaUi') }}</th>
                         <th>{{ 'renewal.field.paid'|trans({}, 'EkynaSubscription') }}</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -51,6 +55,18 @@
                                 {%- else -%}
                                     <span class="label label-danger">{{ 'value.no'|trans({}, 'EkynaUi') }}</span>
                                 {%- endif %}
+                            </td>
+                            <td>
+                                {{ admin_resource_btn(renewal, 'Ekyna\\Bundle\\AdminBundle\\Action\\UpdateAction', {
+                                    'size': 'xs',
+                                    'label': ''
+                                }) }}
+                                {% if renewal.orderItem is null %}
+                                {{ admin_resource_btn(renewal, 'Ekyna\\Bundle\\AdminBundle\\Action\\DeleteAction', {
+                                    'size': 'xs',
+                                    'label': ''
+                                }) }}
+                                {% endif %}
                             </td>
                         </tr>
                     {%- endfor %}

@@ -10,10 +10,7 @@ use Ekyna\Bundle\SubscriptionBundle\Exception\LogicException;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Component\Commerce\Common\Util\DateUtil;
-use Ekyna\Component\Resource\Model\DateRange;
-use Generator;
 
-use function array_fill;
 use function array_filter;
 use function uasort;
 
@@ -74,126 +71,18 @@ final class SubscriptionUtils
             throw new LogicException('Renewal subscription is not set.');
         }
 
-        $renewals = self::getRenewals($subscription, $renewal);
+        $renewals = self::filterRenewals($subscription, $renewal);
 
         $test = fn(RenewalInterface $r): bool => DateUtil::equals($r->getEndsAt(), $renewal->getEndsAt());
 
         return array_filter($renewals, $test);
     }
 
-    /**
-     * Finds the renewal's siblings (ie renewal linked to the same order).
-     *
-     * @param RenewalInterface $renewal
-     * @param int|null         $limit
-     *
-     * @return Generator<RenewalInterface>
-     *
-     * @deprecated
-     */
-    public static function findSiblings(RenewalInterface $renewal, int $limit = null): Generator
-    {
-        if (null === $subscription = $renewal->getSubscription()) {
-            throw new LogicException('Renewal subscription is not set.');
-        }
-
-        if (null === $order = $renewal->getOrder()) {
-            return null;
-        }
-
-        $found = 0;
-        foreach ($subscription->getRenewals() as $r) {
-            if ($renewal === $r) {
-                continue;
-            }
-
-            if ($order !== $r->getOrder()) {
-                continue;
-            }
-
-            yield $r;
-
-            $found++;
-            if ((null !== $limit) && ($limit <= $found)) {
-                break;
-            }
-        }
-    }
-
-    /**
-     * @deprecated
-     */
-    public static function sortRenewalsOld(
-        SubscriptionInterface $subscription,
-        RenewalInterface      $ignore = null,
-        bool                  $paid = true
-    ): array {
-        if ($subscription->getRenewals()->isEmpty()) {
-            return [];
-        }
-
-        /** @var array<RenewalInterface> $renewals */
-        $renewals = $subscription->getRenewals()->toArray();
-
-        if ($ignore) {
-            $renewals = array_filter($renewals, fn(RenewalInterface $r): bool => $r !== $ignore);
-        }
-        if ($paid) {
-            $renewals = array_filter($renewals, fn(RenewalInterface $r): bool => $r->isPaid());
-        }
-
-        if (empty($renewals)) {
-            return [];
-        }
-
-        // Sort by date desc
-        uasort($renewals, function (RenewalInterface $a, RenewalInterface $b) {
-            $aDate = $a->getStartsAt();
-            $bDate = $b->getStartsAt();
-
-            if (DateUtil::equals($aDate, $bDate)) {
-                $aDate = $a->getEndsAt();
-                $bDate = $b->getEndsAt();
-            }
-
-            return $bDate->getTimestamp() <=> $aDate->getTimestamp();
-        });
-
-        return $renewals;
-    }
-
-    /**
-     * @deprecated
-     */
-    public static function latestRenewal(
-        SubscriptionInterface $subscription,
-        RenewalInterface      $ignore = null,
-        bool                  $paid = true
-    ): ?RenewalInterface {
-        $renewals = self::sortRenewals($subscription, $ignore, $paid);
-
-        if (empty($renewals)) {
-            return null;
-        }
-
-        if ($ignore && ($order = $ignore->getOrder())) {
-            foreach ($renewals as $renewal) {
-                if ($order === $renewal->getOrder()) {
-                    continue;
-                }
-
-                return $renewal;
-            }
-        }
-
-        return reset($renewals);
-    }
-
     public static function findLatest(
         SubscriptionInterface $subscription,
         ?RenewalInterface     $ignore = null
     ): ?RenewalInterface {
-        $renewals = self::sortRenewals($subscription, $ignore);
+        $renewals = self::getRenewals($subscription, $ignore);
 
         if (empty($renewals)) {
             return null;
@@ -209,7 +98,7 @@ final class SubscriptionUtils
     ): ?RenewalInterface {
         $date = $date ?: new DateTime();
 
-        $renewals = self::sortRenewals($subscription, $ignore);
+        $renewals = self::getRenewals($subscription, $ignore);
 
         foreach ($renewals as $renewal) {
             if ($date < $renewal->getStartsAt()) {
@@ -227,40 +116,32 @@ final class SubscriptionUtils
     }
 
     /**
-     * @deprecated
+     * @return array<RenewalInterface>
      */
-    public static function findActiveInRange(
+    public static function getRenewals(
         SubscriptionInterface $subscription,
-        DateRange             $range,
-        ?RenewalInterface     $ignore = null
-    ): ?RenewalInterface {
-        $renewals = self::sortRenewals($subscription, $ignore, false);
-
-        foreach ($renewals as $renewal) {
-            if ($range->getEnd() < $renewal->getStartsAt()) {
-                continue;
-            }
-
-            if ($range->getStart() > $renewal->getEndsAt()) {
-                continue;
-            }
-
-            return $renewal;
-        }
-
-        return null;
-    }
-
-    public static function sortRenewals(
-        SubscriptionInterface $subscription,
-        ?RenewalInterface     $ignore = null,
+        RenewalInterface      $ignore = null,
         bool                  $descendant = true
     ): array {
         if ($subscription->getRenewals()->isEmpty()) {
             return [];
         }
 
-        $renewals = self::getRenewals($subscription, $ignore);
+        $renewals = self::filterRenewals($subscription, $ignore);
+
+        return self::sortRenewals($renewals, $descendant);
+    }
+
+    /**
+     * @param array<RenewalInterface> $renewals
+     *
+     * @return array<RenewalInterface>
+     */
+    public static function sortRenewals(array $renewals, bool $descendant = true): array
+    {
+        if (empty($renewals)) {
+            return [];
+        }
 
         if ($descendant) {
             $callback = function (RenewalInterface $a, RenewalInterface $b) {
@@ -279,8 +160,10 @@ final class SubscriptionUtils
 
     /**
      * @return array<RenewalInterface>
+     *
+     * @return array<RenewalInterface>
      */
-    private static function getRenewals(SubscriptionInterface $subscription, ?RenewalInterface $ignore = null): array
+    public static function filterRenewals(SubscriptionInterface $subscription, RenewalInterface $ignore = null): array
     {
         if ($subscription->getRenewals()->isEmpty()) {
             return [];

@@ -13,7 +13,9 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+use function is_null;
 use function Symfony\Component\Translation\t;
 
 /**
@@ -23,6 +25,10 @@ use function Symfony\Component\Translation\t;
  */
 class RenewalType extends AbstractResourceType
 {
+    public function __construct(private readonly AuthorizationCheckerInterface $authorizationChecker)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -43,7 +49,8 @@ class RenewalType extends AbstractResourceType
             $renewal = $event->getData();
             $form = $event->getForm();
 
-            $disabled = null !== $renewal->getOrderItem();
+            $disabled = !is_null($renewal->getOrderItem())
+                && !$this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN');
 
             $form
                 ->add('startsAt', DateType::class, [
@@ -59,15 +66,19 @@ class RenewalType extends AbstractResourceType
                     'disabled' => $disabled,
                 ]);
 
-            if ($renewal->isNeedsReview()) {
-                $form->add('paid', CheckboxType::class, [
+            if (!$renewal->isNeedsReview()) {
+                return;
+            }
+
+            $form
+                ->remove('paid')
+                ->add('paid', CheckboxType::class, [
                     'label'    => t('renewal.field.needs_review', [], 'EkynaSubscription'),
                     'required' => false,
                     'attr'     => [
                         'align_with_widget' => true,
                     ],
                 ]);
-            }
         });
     }
 }

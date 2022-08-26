@@ -26,6 +26,9 @@ resources:
             entity:
                 interface: Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface
                 class: Ekyna\Bundle\SubscriptionBundle\Entity\Subscription
+            factory:
+                interface: Ekyna\Bundle\SubscriptionBundle\Factory\SubscriptionFactoryInterface
+                class: Ekyna\Bundle\SubscriptionBundle\Factory\SubscriptionFactory
             repository:
                 class: Ekyna\Bundle\SubscriptionBundle\Repository\SubscriptionRepository
             form: Ekyna\Bundle\SubscriptionBundle\Form\Type\SubscriptionType
@@ -33,9 +36,9 @@ resources:
             trans_domain: EkynaSubscription
             actions:
                 admin_crud:
-                    form: '@EkynaSubscription/Admin/Subscription/_form.html.twig'
-                    read: '@EkynaSubscription/Admin/Subscription/read.html.twig'
+                    templates: '@EkynaSubscription/Admin/Subscription'
                 Ekyna\Bundle\SubscriptionBundle\Action\Subscription\CancelAction: ~
+                Ekyna\Bundle\SubscriptionBundle\Action\Subscription\CreateAction: ~
 
         renewal:
             driver: doctrine/orm

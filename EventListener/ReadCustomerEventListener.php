@@ -7,6 +7,7 @@ namespace Ekyna\Bundle\SubscriptionBundle\EventListener;
 use Ekyna\Bundle\AdminBundle\Event\ReadResourceEvent;
 use Ekyna\Bundle\AdminBundle\Show\Tab;
 use Ekyna\Bundle\SubscriptionBundle\Repository\SubscriptionRepositoryInterface;
+use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionHelper;
 use Ekyna\Component\Commerce\Customer\Model\CustomerInterface;
 use Ekyna\Component\Resource\Exception\UnexpectedTypeException;
 
@@ -19,11 +20,10 @@ use function Symfony\Component\Translation\t;
  */
 class ReadCustomerEventListener
 {
-    private SubscriptionRepositoryInterface $subscriptionRepository;
-
-    public function __construct(SubscriptionRepositoryInterface $subscriptionRepository)
-    {
-        $this->subscriptionRepository = $subscriptionRepository;
+    public function __construct(
+        private readonly SubscriptionRepositoryInterface $subscriptionRepository,
+        private readonly SubscriptionHelper              $subscriptionHelper,
+    ) {
     }
 
     public function __invoke(ReadResourceEvent $event): void
@@ -38,9 +38,7 @@ class ReadCustomerEventListener
             'customer' => $customer,
         ]);
 
-        if (empty($subscriptions)) {
-            return;
-        }
+        $subscribeForm = $this->subscriptionHelper->getSubscribeForm($customer);
 
         $event->addTab(Tab::create(
             'subscriptions',
@@ -48,6 +46,7 @@ class ReadCustomerEventListener
             '@EkynaSubscription/Admin/Customer/Read/subscriptions.html.twig',
             [
                 'subscriptions' => $subscriptions,
+                'subscribe_form' => $subscribeForm->createView(),
             ]
         ));
     }

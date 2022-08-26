@@ -10,13 +10,13 @@ use Ekyna\Bundle\AdminBundle\Action\ReadAction;
 use Ekyna\Bundle\AdminBundle\Action\SummaryAction;
 use Ekyna\Bundle\ResourceBundle\Helper\ResourceHelper;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
+use Ekyna\Component\Resource\Exception\UnexpectedTypeException;
 use OzdemirBurak\Iris\Color\Hsl;
 
 use function array_filter;
 use function array_replace_recursive;
 use function count;
 use function floor;
-use function in_array;
 use function sprintf;
 use function usort;
 
@@ -29,20 +29,27 @@ use const PHP_EOL;
  */
 class SubscriptionRenderer
 {
-    private ResourceHelper $resourceHelper;
-
-    public function __construct(ResourceHelper $resourceHelper)
+    public function __construct(private readonly ResourceHelper $resourceHelper)
     {
-        $this->resourceHelper = $resourceHelper;
     }
 
-    public function renderSvgGraph(SubscriptionInterface $subscription, array $options = []): string
+    public function renderSvgGraph(array $subscriptions, array $options = []): string
     {
-        $renewals = SubscriptionUtils::sortRenewals($subscription, null, false);
+        $renewals = [];
+
+        foreach ($subscriptions as $subscription) {
+            if (!$subscription instanceof SubscriptionInterface) {
+                throw new UnexpectedTypeException($subscription, SubscriptionInterface::class);
+            }
+
+            $renewals = array_merge($renewals, SubscriptionUtils::filterRenewals($subscription));
+        }
 
         if (empty($renewals)) {
             return '';
         }
+
+        $renewals = SubscriptionUtils::sortRenewals($renewals, false);
 
         $options = array_replace_recursive([
             'width'     => 1200,

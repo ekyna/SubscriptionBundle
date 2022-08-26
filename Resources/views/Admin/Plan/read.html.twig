@@ -1,7 +1,5 @@
 {% extends '@EkynaAdmin/Entity/Crud/read.html.twig' %}
 
-{% block actions %}{% endblock %}
-
 {% block main_contents -%}
     <div class="tab-pane active" id="{{ resource_name }}-general">
         {{ show_row(plan.designation, 'text', {
@@ -22,5 +20,9 @@
                 }) }}
             </div>
         </div>
+        {{ show_row(plan.forwardPlan, 'resource', {
+            'label': t('plan.field.forward_plan', {}, 'EkynaSubscription'),
+            'resource': 'ekyna_subscription.plan'
+        }) }}
     </div>
 {%- endblock main_contents %}

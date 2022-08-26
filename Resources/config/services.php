@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Ekyna\Bundle\CommerceBundle\Event\AdminReadEvents;
-use Ekyna\Bundle\SubscriptionBundle\Action\Renewal\CreateAction;
+use Ekyna\Bundle\SubscriptionBundle\Action\Renewal\CreateAction as RenewalCreateAction;
+use Ekyna\Bundle\SubscriptionBundle\Action\Subscription\CreateAction as SubscriptionCreateAction;
 use Ekyna\Bundle\SubscriptionBundle\Command\GenerateSubscriptionCommand;
 use Ekyna\Bundle\SubscriptionBundle\Command\WatchSubscriptionCommand;
 use Ekyna\Bundle\SubscriptionBundle\Event\RenewalEvents;
@@ -17,6 +18,7 @@ use Ekyna\Bundle\SubscriptionBundle\EventListener\ReadOrderEventListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\RenewalListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\SubscriptionListener;
 use Ekyna\Bundle\SubscriptionBundle\Factory\RenewalFactory;
+use Ekyna\Bundle\SubscriptionBundle\Form\Type\RenewalType;
 use Ekyna\Bundle\SubscriptionBundle\MessageHandler\OrderItemAddHandler;
 use Ekyna\Bundle\SubscriptionBundle\MessageHandler\OrderItemQuantityChangeHandler;
 use Ekyna\Bundle\SubscriptionBundle\MessageHandler\OrderStateChangeHandler;
@@ -24,6 +26,7 @@ use Ekyna\Bundle\SubscriptionBundle\Service\ConstantsHelper;
 use Ekyna\Bundle\SubscriptionBundle\Service\RenewalHelper;
 use Ekyna\Bundle\SubscriptionBundle\Service\RenewalUpdater;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionGenerator;
+use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionHelper;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionRenderer;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionStateResolver;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionUpdater;
@@ -35,10 +38,25 @@ return static function (ContainerConfigurator $container) {
     $container
         ->services()
 
+        // Renewal form type
+        ->set('ekyna_subscription.form_type.renewal', RenewalType::class)
+            ->args([
+                service('security.authorization_checker'),
+            ])
+            ->tag('form.type')
+
         // Renewal create action
-        ->set('ekyna_subscription.action.renewal.create', CreateAction::class)
+        ->set('ekyna_subscription.action.renewal.create', RenewalCreateAction::class)
             ->args([
                 service('ekyna_subscription.helper.renewal'),
+            ])
+            ->tag('ekyna_resource.action')
+
+        // Subscription create action
+        ->set('ekyna_subscription.action.subscription.create', SubscriptionCreateAction::class)
+            ->args([
+                service('ekyna_subscription.helper.subscription'),
+                service('ekyna_subscription.repository.subscription'),
             ])
             ->tag('ekyna_resource.action')
 
@@ -80,6 +98,7 @@ return static function (ContainerConfigurator $container) {
         // Renewal helper
         ->set('ekyna_subscription.helper.renewal', RenewalHelper::class)
             ->args([
+                service('ekyna_subscription.factory.subscription'),
                 service('ekyna_commerce.factory.order'),
                 service('ekyna_commerce.helper.factory'),
                 service('ekyna_commerce.helper.sale_item'),
@@ -190,6 +209,7 @@ return static function (ContainerConfigurator $container) {
         ->set('ekyna_subscription.listener.admin_read_customer', ReadCustomerEventListener::class)
             ->args([
                 service('ekyna_subscription.repository.subscription'),
+                service('ekyna_subscription.helper.subscription'),
             ])
             ->tag('kernel.event_listener', [
                 'event'  => AdminReadEvents::CUSTOMER,
@@ -210,6 +230,13 @@ return static function (ContainerConfigurator $container) {
                 service('ekyna_resource.helper'),
             ])
             ->tag('twig.runtime')
+
+        // Subscription helper
+        ->set('ekyna_subscription.helper.subscription', SubscriptionHelper::class)
+            ->args([
+                service('ekyna_resource.helper'),
+                service('form.factory'),
+            ])
 
         // Twig subscription extension
         ->set('ekyna_subscription.twig.extension.subscription', SubscriptionExtension::class)

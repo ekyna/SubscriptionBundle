@@ -6,6 +6,8 @@ namespace Ekyna\Bundle\SubscriptionBundle\Form\Type;
 
 use Ekyna\Bundle\ProductBundle\Form\Type\ProductSearchType;
 use Ekyna\Bundle\ResourceBundle\Form\Type\AbstractResourceType;
+use Ekyna\Bundle\ResourceBundle\Form\Type\ResourceChoiceType;
+use Ekyna\Bundle\SubscriptionBundle\Model\PlanInterface;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -31,6 +33,11 @@ class PlanType extends AbstractResourceType
             ])
             ->add('renewalDuration', IntegerType::class, [
                 'label' => t('plan.field.renewal_duration', [], 'EkynaSubscription'),
+            ])
+            ->add('forwardPlan', ResourceChoiceType::class, [
+                'label'    => t('plan.field.forward_plan', [], 'EkynaSubscription'),
+                'resource' => PlanInterface::class,
+                'required' => false,
             ]);
     }
 }

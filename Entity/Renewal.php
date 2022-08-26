@@ -155,11 +155,7 @@ class Renewal extends AbstractResource implements RenewalInterface
 
     public function getOrder(): ?OrderInterface
     {
-        if (null === $this->orderItem) {
-            return null;
-        }
-
-        return $this->orderItem->getRootSale();
+        return $this->orderItem?->getRootSale();
     }
 
     public function getRange(): DateRange

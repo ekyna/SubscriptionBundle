@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\SubscriptionBundle\Table\Type;
 
-use Ekyna\Bundle\AdminBundle\Action\DeleteAction;
-use Ekyna\Bundle\AdminBundle\Action\UpdateAction;
 use Ekyna\Bundle\AdminBundle\Table\Type\Column\ResourceType;
 use Ekyna\Bundle\ProductBundle\Model\ProductInterface;
 use Ekyna\Bundle\ResourceBundle\Table\Type\AbstractResourceType;
+use Ekyna\Bundle\SubscriptionBundle\Model\PlanInterface;
 use Ekyna\Bundle\TableBundle\Extension\Type as BType;
 use Ekyna\Component\Table\Extension\Core\Type as CType;
 use Ekyna\Component\Table\TableBuilderInterface;
@@ -33,12 +32,13 @@ class PlanType extends AbstractResourceType
                 'resource' => ProductInterface::class,
                 'position' => 20,
             ])
+            ->addColumn('forwardPlan', ResourceType::class, [
+                'label'    => t('plan.field.forward_plan', [], 'EkynaSubscription'),
+                'resource' => PlanInterface::class,
+                'position' => 30,
+            ])
             ->addColumn('actions', BType\Column\ActionsType::class, [
                 'resource' => $this->dataClass,
-                'actions'  => [
-                    UpdateAction::class,
-                    DeleteAction::class,
-                ],
             ])
             ->addFilter('designation', CType\Filter\TextType::class, [
                 'label'    => t('field.title', [], 'EkynaUi'),

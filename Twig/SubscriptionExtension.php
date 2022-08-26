@@ -21,7 +21,7 @@ class SubscriptionExtension extends AbstractExtension
     {
         return [
             new TwigFunction(
-                'render_subscription_svg',
+                'subscription_graph',
                 [SubscriptionRenderer::class, 'renderSvgGraph'],
                 ['is_safe' => ['html']]
             ),

@@ -114,7 +114,7 @@ class GenerateSubscriptionCommand extends Command
             ['Count' => $renewal->getCount()],
         );
 
-        $previous = SubscriptionUtils::sortRenewals($renewal->getSubscription(), $renewal);
+        $previous = SubscriptionUtils::getRenewals($renewal->getSubscription(), $renewal);
         if (!empty($previous)) {
             $table = new Table($this->output);
             $table->setHeaders(['Order id', 'Order number', 'Accepted at', 'Starts at', 'Ends at', 'Count']);

@@ -13,8 +13,7 @@ plan:
     field:
         initial_duration: Durée initiale
         renewal_duration: Durée renouvellement
-    alert:
-        empty_list: Aucun tarif configuré
+        forward_plan: Abonnement suivant
 
 subscription:
     label:
@@ -52,3 +51,4 @@ renewal:
     message:
         order_creation: Une commande de renouvellement sera automatiquement créée, et vous serez redirigé(e) vers celle-ci.
         pending_subscription: Un renouvellement est déjà en attente de réglement.
+        forwarding: Une nouvelle souscription sera créé avec l'abonnement « {plan} ».

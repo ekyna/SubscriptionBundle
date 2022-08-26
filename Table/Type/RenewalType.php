@@ -8,13 +8,14 @@ use Ekyna\Bundle\AdminBundle\Action\DeleteAction;
 use Ekyna\Bundle\AdminBundle\Action\UpdateAction;
 use Ekyna\Bundle\AdminBundle\Table\Type\Column\ResourceType as ResourceColumn;
 use Ekyna\Bundle\ResourceBundle\Table\Type\AbstractResourceType;
+use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
 use Ekyna\Bundle\TableBundle\Extension\Type as BType;
 use Ekyna\Component\Commerce\Order\Model\OrderInterface;
 use Ekyna\Component\Table\Extension\Core\Type\Column\BooleanType;
 use Ekyna\Component\Table\Extension\Core\Type\Column\DateTimeType;
 use Ekyna\Component\Table\Extension\Core\Type\Column\NumberType;
+use Ekyna\Component\Table\Source\RowInterface;
 use Ekyna\Component\Table\TableBuilderInterface;
-
 use Ekyna\Component\Table\Util\ColumnSort;
 
 use function Symfony\Component\Translation\t;
@@ -58,7 +59,14 @@ class RenewalType extends AbstractResourceType
                 'resource' => $this->dataClass,
                 'actions'  => [
                     UpdateAction::class,
-                    DeleteAction::class,
+                    DeleteAction::class => [
+                        'disable' => static function (RowInterface $row): bool {
+                            /** @var RenewalInterface $renewal */
+                            $renewal = $row->getData(null);
+
+                            return null !== $renewal->getOrderItem();
+                        },
+                    ],
                 ],
             ]);
     }
