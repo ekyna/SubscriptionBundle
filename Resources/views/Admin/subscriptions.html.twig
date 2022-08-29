@@ -17,7 +17,19 @@
                     {{ subscription }}
                 </a>
             </td>
-            <td>{{ subscription|subscription_state_badge }}</td>
+            <td>
+                {{ subscription|subscription_state_badge }}
+                {# TODO Add state test in SubscriptionExtension #}
+                {% if subscription.state in [constant('Ekyna\\Bundle\\SubscriptionBundle\\Model\\SubscriptionStates::STATE_NEW'), constant('Ekyna\\Bundle\\SubscriptionBundle\\Model\\SubscriptionStates::STATE_EXPIRED')] -%}
+                    &nbsp;{{ admin_resource_btn('ekyna_subscription.renewal', 'Ekyna\\Bundle\\SubscriptionBundle\\Action\\Renewal\\CreateAction', {
+                        'label': '',
+                        'size': 'xs',
+                        'parameters': {
+                            'subscriptionId': subscription.id
+                        }
+                    }) }}
+                {%- endif %}
+            </td>
             <td>
                 {% if subscription.expiresAt is not null -%}
                     {{ subscription.expiresAt|format_date }}

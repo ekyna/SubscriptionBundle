@@ -15,6 +15,7 @@ use OzdemirBurak\Iris\Color\Hsl;
 
 use function array_filter;
 use function array_replace_recursive;
+use function ceil;
 use function count;
 use function floor;
 use function sprintf;
@@ -53,16 +54,16 @@ class SubscriptionRenderer
 
         $options = array_replace_recursive([
             'width'     => 1200,
-            'height'    => 500,
+            'height'    => 650,
             'class'     => 'img-responsive',
             'rectangle' => [
                 'padding'    => 2,
-                'min_height' => 28,
+                'min_height' => 50,
                 'multiplier' => 4,
             ],
             'text'      => [
                 'offset' => 4,
-                'size'   => '14px',
+                'size'   => 12,
             ],
         ], $options);
 
@@ -149,6 +150,7 @@ class SubscriptionRenderer
                 'height'  => $height,
                 'color'   => (string)new Hsl($color . ',80,80'),
                 'order'   => $order->getNumber(),
+                'plan'    => $renewal->getSubscription()->getPlan()->getDesignation(),
                 'path'    => $this->resourceHelper->generateResourcePath($order, ReadAction::class),
                 'summary' => $this->resourceHelper->generateResourcePath($order, SummaryAction::class),
                 'count'   => $count,
@@ -201,7 +203,7 @@ class SubscriptionRenderer
                 ) . PHP_EOL;
 
             $code .= sprintf(
-                    '<text x="%d" y="%d" style="fill:#000;font-size:%s">%s</text>',
+                    '<text x="%d" y="%d" style="fill:#000;font-size:%spx">%s</text>',
                     $x + $textOffset,
                     $dateHeight - $textOffset,
                     $textSize,
@@ -233,12 +235,20 @@ class SubscriptionRenderer
                 ) . PHP_EOL;
 
             $code .= sprintf(
-                    '<text x="%d" y="%d" style="fill:#000;font-size:%s">%s (%s)</text>',
+                    '<text x="%d" y="%d" style="fill:#000;font-size:%spx">%s (%s)</text>',
                     $rect['x'] + $padding + $textOffset,
-                    $rect['y'] + $rect['height'] - $padding - $textOffset,
+                    $rect['y'] + ceil($textSize * 1.2) + $padding,
                     $textSize,
                     $rect['order'],
                     $rect['count']
+                ) . PHP_EOL;
+
+            $code .= sprintf(
+                    '<text x="%d" y="%d" style="fill:#666;font-size:%spx">%s</text>',
+                    $rect['x'] + $padding + $textOffset,
+                    $rect['y'] + ceil($textSize * 1.2) + $textSize + $padding,
+                    ceil($textSize * .7),
+                    $rect['plan']
                 ) . PHP_EOL;
 
             $code .= '</a>' . PHP_EOL;
