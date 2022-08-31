@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\SubscriptionBundle\EventListener;
 
+use DateTime;
 use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
@@ -16,6 +17,7 @@ use Ekyna\Component\Resource\Persistence\PersistenceHelperInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function is_null;
+use function preg_replace;
 
 /**
  * Class RenewalListener
@@ -94,9 +96,30 @@ class RenewalListener
             return;
         }
 
+        while ($item->isPrivate()) {
+            $item = $item->getParent();
+        }
+
         $formatter = $this->formatterFactory->create($item->getRootSale()->getLocale());
 
-        $description = $this->translator->trans('field.date_range', [
+        $date = strtr($formatter->date(new DateTime('2000-01-02')), [
+            '2000' => '\d{4}',
+            '01'   => '\d{2}',
+            '02'   => '\d{2}',
+        ]);
+
+        $pattern = $this->translator->trans('field.date_range', [
+            '{from}' => $date,
+            '{to}'   => $date,
+        ], 'EkynaUi');
+
+        $description = trim(preg_replace("~$pattern~", '', (string)$item->getDescription()), " \t\n\r\0\x0B.");
+
+        if (!empty($description)) {
+            $description .= '. ';
+        }
+
+        $description .= $this->translator->trans('field.date_range', [
             '{from}' => $formatter->date($renewal->getStartsAt()),
             '{to}'   => $formatter->date($renewal->getEndsAt()),
         ], 'EkynaUi');

@@ -38,13 +38,6 @@ return static function (ContainerConfigurator $container) {
     $container
         ->services()
 
-        // Renewal form type
-        ->set('ekyna_subscription.form_type.renewal', RenewalType::class)
-            ->args([
-                service('security.authorization_checker'),
-            ])
-            ->tag('form.type')
-
         // Renewal create action
         ->set('ekyna_subscription.action.renewal.create', RenewalCreateAction::class)
             ->args([

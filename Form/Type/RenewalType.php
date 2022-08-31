@@ -13,7 +13,6 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 use function is_null;
 use function Symfony\Component\Translation\t;
@@ -25,15 +24,17 @@ use function Symfony\Component\Translation\t;
  */
 class RenewalType extends AbstractResourceType
 {
-    public function __construct(private readonly AuthorizationCheckerInterface $authorizationChecker)
-    {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('subscription', FormStaticControlType::class, [
                 'label' => t('subscription.label.singular', [], 'EkynaSubscription'),
+            ])
+            ->add('startsAt', DateType::class, [
+                'label'    => t('field.start_date', [], 'EkynaUi'),
+            ])
+            ->add('endsAt', DateType::class, [
+                'label'    => t('field.end_date', [], 'EkynaUi'),
             ])
             ->add('paid', CheckboxType::class, [
                 'label'    => t('renewal.field.paid', [], 'EkynaSubscription'),
@@ -44,41 +45,29 @@ class RenewalType extends AbstractResourceType
                 ],
             ]);
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event): void {
             /** @var RenewalInterface $renewal */
             $renewal = $event->getData();
             $form = $event->getForm();
 
-            $disabled = !is_null($renewal->getOrderItem())
-                && !$this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN');
+            $disabled = !is_null($renewal->getOrderItem());
 
-            $form
-                ->add('startsAt', DateType::class, [
-                    'label'    => t('field.start_date', [], 'EkynaUi'),
-                    'disabled' => $disabled && !$renewal->isNeedsReview(),
-                ])
-                ->add('endsAt', DateType::class, [
-                    'label'    => t('field.end_date', [], 'EkynaUi'),
-                    'disabled' => $disabled && !$renewal->isNeedsReview(),
-                ])
-                ->add('count', IntegerType::class, [
-                    'label'    => t('field.quantity', [], 'EkynaUi'),
-                    'disabled' => $disabled,
-                ]);
+            $form->add('count', IntegerType::class, [
+                'label'    => t('field.quantity', [], 'EkynaUi'),
+                'disabled' => $disabled,
+            ]);
 
             if (!$renewal->isNeedsReview()) {
                 return;
             }
 
-            $form
-                ->remove('paid')
-                ->add('paid', CheckboxType::class, [
-                    'label'    => t('renewal.field.needs_review', [], 'EkynaSubscription'),
-                    'required' => false,
-                    'attr'     => [
-                        'align_with_widget' => true,
-                    ],
-                ]);
+            $form->add('needsReview', CheckboxType::class, [
+                'label'    => t('renewal.field.needs_review', [], 'EkynaSubscription'),
+                'required' => false,
+                'attr'     => [
+                    'align_with_widget' => true,
+                ],
+            ]);
         });
     }
 }
