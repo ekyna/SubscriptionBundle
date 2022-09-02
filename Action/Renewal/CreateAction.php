@@ -36,6 +36,7 @@ class CreateAction extends BaseAction
 
         $subscription = $resource->getSubscription();
         if (null === $resource->getSubscription()->getId()) {
+            $this->getManager($subscription)->persist($this->context->getParentResource());
             $this->getManager($subscription)->persist($subscription);
         }
 

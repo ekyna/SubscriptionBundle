@@ -52,3 +52,6 @@ renewal:
         order_creation: Une commande de renouvellement sera automatiquement créée, et vous serez redirigé(e) vers celle-ci.
         pending_subscription: Un renouvellement est déjà en attente de réglement.
         forwarding: Une nouvelle souscription sera créé avec l'abonnement « {plan} ».
+
+order:
+    title: Renouvellement Licence

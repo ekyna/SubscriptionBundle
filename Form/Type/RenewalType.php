@@ -14,7 +14,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use function is_null;
 use function Symfony\Component\Translation\t;
 
 /**
@@ -31,10 +30,13 @@ class RenewalType extends AbstractResourceType
                 'label' => t('subscription.label.singular', [], 'EkynaSubscription'),
             ])
             ->add('startsAt', DateType::class, [
-                'label'    => t('field.start_date', [], 'EkynaUi'),
+                'label' => t('field.start_date', [], 'EkynaUi'),
             ])
             ->add('endsAt', DateType::class, [
-                'label'    => t('field.end_date', [], 'EkynaUi'),
+                'label' => t('field.end_date', [], 'EkynaUi'),
+            ])
+            ->add('count', IntegerType::class, [
+                'label' => t('field.quantity', [], 'EkynaUi'),
             ])
             ->add('paid', CheckboxType::class, [
                 'label'    => t('renewal.field.paid', [], 'EkynaSubscription'),
@@ -49,13 +51,6 @@ class RenewalType extends AbstractResourceType
             /** @var RenewalInterface $renewal */
             $renewal = $event->getData();
             $form = $event->getForm();
-
-            $disabled = !is_null($renewal->getOrderItem());
-
-            $form->add('count', IntegerType::class, [
-                'label'    => t('field.quantity', [], 'EkynaUi'),
-                'disabled' => $disabled,
-            ]);
 
             if (!$renewal->isNeedsReview()) {
                 return;

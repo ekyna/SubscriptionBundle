@@ -9,10 +9,12 @@ use Ekyna\Bundle\CommerceBundle\Service\SaleItemHelper;
 use Ekyna\Bundle\SubscriptionBundle\Exception\LogicException;
 use Ekyna\Bundle\SubscriptionBundle\Factory\SubscriptionFactoryInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
+use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
 use Ekyna\Component\Commerce\Common\Factory\SaleFactoryInterface;
 use Ekyna\Component\Commerce\Common\Helper\FactoryHelperInterface;
 use Ekyna\Component\Commerce\Order\Model\OrderInterface;
 use Ekyna\Component\Commerce\Order\Model\OrderItemInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class RenewalHelper
@@ -23,9 +25,10 @@ class RenewalHelper
 {
     public function __construct(
         private readonly SubscriptionFactoryInterface $subscriptionFactory,
-        private readonly SaleFactoryInterface   $orderFactory,
-        private readonly FactoryHelperInterface $factoryHelper,
-        private readonly SaleItemHelper         $saleItemHelper
+        private readonly SaleFactoryInterface         $orderFactory,
+        private readonly FactoryHelperInterface       $factoryHelper,
+        private readonly SaleItemHelper               $saleItemHelper,
+        private readonly TranslatorInterface          $translator,
     ) {
     }
 
@@ -52,6 +55,12 @@ class RenewalHelper
         }
 
         if (null !== $forward = $plan->getForwardPlan()) {
+            if (null === $product = $forward->getProduct()) {
+                throw new LogicException('Plan product is not set');
+            }
+
+            $subscription->setState(SubscriptionStates::STATE_CANCELLED);
+
             $subscription = $this->subscriptionFactory->createWithCustomerAndPlan($customer, $forward);
 
             $renewal->setSubscription($subscription);
@@ -59,6 +68,7 @@ class RenewalHelper
 
         /** @var OrderInterface $order */
         $order = $this->orderFactory->createWithCustomer($customer);
+        $order->setTitle($this->translator->trans('order.title', [], 'EkynaSubscription'));
 
         /** @var OrderItemInterface $item */
         $item = $this->factoryHelper->createItemForSale($order);

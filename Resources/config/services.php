@@ -95,6 +95,7 @@ return static function (ContainerConfigurator $container) {
                 service('ekyna_commerce.factory.order'),
                 service('ekyna_commerce.helper.factory'),
                 service('ekyna_commerce.helper.sale_item'),
+                service('translator'),
             ])
 
         // Order item add message handler

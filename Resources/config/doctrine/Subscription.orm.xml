@@ -39,7 +39,7 @@
         </many-to-one>
 
         <one-to-many target-entity="Ekyna\Bundle\SubscriptionBundle\Entity\Renewal"
-                     field="renewals" mapped-by="subscription" orphan-removal="true">
+                     field="renewals" mapped-by="subscription">
             <order-by>
                 <order-by-field name="startsAt" direction="ASC"/>
                 <order-by-field name="endsAt" direction="ASC"/>
