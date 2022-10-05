@@ -14,6 +14,10 @@ plan:
         initial_duration: Durée initiale
         renewal_duration: Durée renouvellement
         forward_plan: Abonnement suivant
+    message:
+        product_deletion_prevented:
+            Ce produit est lié à l'abonnement <a href="{url}">{designation}</a> et ne peut donc pas être supprimé.
+            Modifiez cet abonnement avant de pouvoir supprimer ce produit.
 
 subscription:
     label:

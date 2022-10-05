@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Ekyna\Bundle\CommerceBundle\Event\AdminReadEvents;
+use Ekyna\Bundle\ProductBundle\Event\ProductEvents;
 use Ekyna\Bundle\SubscriptionBundle\Action\Renewal\CreateAction as RenewalCreateAction;
 use Ekyna\Bundle\SubscriptionBundle\Action\Subscription\CreateAction as SubscriptionCreateAction;
 use Ekyna\Bundle\SubscriptionBundle\Command\GenerateSubscriptionCommand;
@@ -13,12 +14,12 @@ use Ekyna\Bundle\SubscriptionBundle\Event\RenewalEvents;
 use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\OrderItemListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\OrderListener;
+use Ekyna\Bundle\SubscriptionBundle\EventListener\ProductDeleteListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\ReadCustomerEventListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\ReadOrderEventListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\RenewalListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\SubscriptionListener;
 use Ekyna\Bundle\SubscriptionBundle\Factory\RenewalFactory;
-use Ekyna\Bundle\SubscriptionBundle\Form\Type\RenewalType;
 use Ekyna\Bundle\SubscriptionBundle\MessageHandler\OrderItemAddHandler;
 use Ekyna\Bundle\SubscriptionBundle\MessageHandler\OrderItemQuantityChangeHandler;
 use Ekyna\Bundle\SubscriptionBundle\MessageHandler\OrderStateChangeHandler;
@@ -180,6 +181,18 @@ return static function (ContainerConfigurator $container) {
                 'method' => 'onUpdate',
             ])
 
+        // Product resource delete event listener
+        ->set('ekyna_subscription.listener.product.delete', ProductDeleteListener::class)
+            ->args([
+                service('ekyna_subscription.repository.plan'),
+                service('ekyna_resource.helper'),
+            ])
+            ->tag('resource.event_listener', [
+                'event'    => ProductEvents::PRE_DELETE,
+                'method'   => 'onPreDelete',
+                'priority' => 1024,
+            ])
+
         // Renewal (resource) event listener
         ->set('ekyna_subscription.listener.renewal', RenewalListener::class)
             ->args([
@@ -208,7 +221,7 @@ return static function (ContainerConfigurator $container) {
                 service('ekyna_subscription.helper.subscription'),
             ])
             ->tag('kernel.event_listener', [
-                'event'  => AdminReadEvents::CUSTOMER,
+                'event' => AdminReadEvents::CUSTOMER,
             ])
 
         // Admin order read event listener
@@ -217,7 +230,7 @@ return static function (ContainerConfigurator $container) {
                 service('ekyna_subscription.repository.subscription'),
             ])
             ->tag('kernel.event_listener', [
-                'event'  => AdminReadEvents::ORDER,
+                'event' => AdminReadEvents::ORDER,
             ])
 
         // Subscription renderer

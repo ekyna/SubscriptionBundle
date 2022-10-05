@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\SubscriptionBundle\Repository;
 
+use Ekyna\Bundle\ProductBundle\Model\ProductInterface;
 use Ekyna\Component\Resource\Doctrine\ORM\Hydrator\IdHydrator;
 use Ekyna\Component\Resource\Doctrine\ORM\Repository\ResourceRepository;
 
@@ -28,5 +29,17 @@ class PlanRepository extends ResourceRepository implements PlanRepositoryInterfa
             ->select('p.id')
             ->getQuery()
             ->getResult(IdHydrator::NAME);
+    }
+
+    public function findByProduct(ProductInterface $product, int $limit = null): iterable
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        return $qb
+            ->andWhere($qb->expr()->eq('p.product', ':product'))
+            ->getQuery()
+            ->setMaxResults($limit)
+            ->setParameter('product', $product)
+            ->getResult();
     }
 }
