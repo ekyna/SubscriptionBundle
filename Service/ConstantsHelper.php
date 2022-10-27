@@ -15,15 +15,10 @@ use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
  */
 class ConstantsHelper extends AbstractConstantsHelper
 {
-
     /**
      * Renders the subscription state label.
-     *
-     * @param SubscriptionInterface|string $stateOrSubscription
-     *
-     * @return string
      */
-    public function renderSubscriptionStateLabel($stateOrSubscription): string
+    public function renderSubscriptionStateLabel(SubscriptionInterface|string $stateOrSubscription): string
     {
         if ($stateOrSubscription instanceof SubscriptionInterface) {
             $stateOrSubscription = $stateOrSubscription->getState();
@@ -38,12 +33,8 @@ class ConstantsHelper extends AbstractConstantsHelper
 
     /**
      * Renders the subscription state badge.
-     *
-     * @param SubscriptionInterface|string $stateOrSubscription
-     *
-     * @return string
      */
-    public function renderSubscriptionStateBadge($stateOrSubscription): string
+    public function renderSubscriptionStateBadge(SubscriptionInterface|string $stateOrSubscription): string
     {
         if ($stateOrSubscription instanceof SubscriptionInterface) {
             $stateOrSubscription = $stateOrSubscription->getState();

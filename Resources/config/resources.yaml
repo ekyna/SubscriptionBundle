@@ -37,8 +37,11 @@ resources:
             actions:
                 admin_crud:
                     templates: '@EkynaSubscription/Admin/Subscription'
+                    create: false
                 Ekyna\Bundle\SubscriptionBundle\Action\Subscription\CancelAction: ~
-                Ekyna\Bundle\SubscriptionBundle\Action\Subscription\CreateAction: ~
+                Ekyna\Bundle\SubscriptionBundle\Action\Subscription\CreateAction:
+                    template: '@EkynaSubscription/Admin/Subscription/create.html.twig'
+                    form_template: '@EkynaSubscription/Admin/Subscription/_form.html.twig'
 
         renewal:
             driver: doctrine/orm

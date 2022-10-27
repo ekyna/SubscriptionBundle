@@ -19,8 +19,5 @@ interface PlanRepositoryInterface extends ResourceRepositoryInterface
 {
     public function getIdentifiers(): array;
 
-    /**
-     * @return iterable<PlanInterface>
-     */
-    public function findByProduct(ProductInterface $product, int $limit = null): iterable;
+    public function findOneByProduct(ProductInterface $product): ?PlanInterface;
 }

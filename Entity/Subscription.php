@@ -7,7 +7,6 @@ namespace Ekyna\Bundle\SubscriptionBundle\Entity;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Selectable;
 use Ekyna\Bundle\SubscriptionBundle\Model\PlanInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
@@ -27,11 +26,12 @@ class Subscription extends AbstractResource implements SubscriptionInterface
 {
     use TimestampableTrait;
 
-    protected ?PlanInterface     $plan     = null;
-    protected ?CustomerInterface $customer = null;
-    protected string             $state     = SubscriptionStates::STATE_NEW;
-    protected ?DateTimeInterface $expiresAt = null;
-    /** @var Collection<RenewalInterface>|Selectable<RenewalInterface> */
+    protected ?PlanInterface     $plan        = null;
+    protected ?CustomerInterface $customer    = null;
+    protected string             $state       = SubscriptionStates::STATE_NEW;
+    protected ?string            $description = null;
+    protected ?DateTimeInterface $expiresAt   = null;
+    /** @var Collection<RenewalInterface> */
     protected Collection $renewals;
 
     public function __construct()
@@ -80,6 +80,18 @@ class Subscription extends AbstractResource implements SubscriptionInterface
     public function setState(string $state): SubscriptionInterface
     {
         $this->state = $state;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): SubscriptionInterface
+    {
+        $this->description = $description;
 
         return $this;
     }

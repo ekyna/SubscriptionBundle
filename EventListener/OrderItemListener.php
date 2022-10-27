@@ -139,6 +139,8 @@ class OrderItemListener
             $identifiers = array_fill(0, 2, $item->getSubjectIdentity()->getIdentifier());
         }
 
+        // TODO Abort if identifiers are not associated with a plan
+
         $helper = new QuantityChangeHelper($this->persistenceHelper);
         $quantities = $helper->getTotalQuantityChangeSet($item);
 

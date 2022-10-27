@@ -6,7 +6,6 @@ namespace Ekyna\Bundle\SubscriptionBundle\Model;
 
 use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Selectable;
 use Ekyna\Component\Commerce\Customer\Model\CustomerInterface;
 use Ekyna\Component\Resource\Model\ResourceInterface;
 use Ekyna\Component\Resource\Model\TimestampableInterface;
@@ -30,12 +29,16 @@ interface SubscriptionInterface extends ResourceInterface, TimestampableInterfac
 
     public function setState(string $state): SubscriptionInterface;
 
+    public function getDescription(): ?string;
+
+    public function setDescription(?string $description): SubscriptionInterface;
+
     public function getExpiresAt(): ?DateTimeInterface;
 
     public function setExpiresAt(?DateTimeInterface $date): SubscriptionInterface;
 
     /**
-     * @return Collection<RenewalInterface>|Selectable<RenewalInterface>
+     * @return Collection<RenewalInterface>
      */
     public function getRenewals(): Collection;
 

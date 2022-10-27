@@ -1,0 +1,12 @@
+{%- block ekyna_subscription_sale_item_renewal_widget -%}
+{% apply spaceless %}
+    <div class="row">
+        <div class="col-sm-6">
+            {{- form_row(form.start, {'label_col': 4, 'widget_col': 8}) -}}
+        </div>
+        <div class="col-sm-6">
+            {{- form_row(form.end, {'label_col': 4, 'widget_col': 8}) -}}
+        </div>
+    </div>
+{% endapply %}
+{%- endblock ekyna_subscription_sale_item_renewal_widget -%}

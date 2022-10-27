@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\SubscriptionBundle\EventListener;
 
-use DateTime;
 use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Bundle\SubscriptionBundle\Service\RenewalUpdater;
-use Ekyna\Component\Commerce\Common\Util\FormatterFactory;
+use Ekyna\Bundle\SubscriptionBundle\Service\SaleItemUpdater;
 use Ekyna\Component\Resource\Event\ResourceEventInterface;
 use Ekyna\Component\Resource\Exception\RuntimeException;
 use Ekyna\Component\Resource\Exception\UnexpectedTypeException;
 use Ekyna\Component\Resource\Persistence\PersistenceHelperInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function is_null;
-use function preg_replace;
 
 /**
  * Class RenewalListener
@@ -29,8 +26,7 @@ class RenewalListener
     public function __construct(
         private readonly PersistenceHelperInterface $persistenceHelper,
         private readonly RenewalUpdater             $renewalUpdater,
-        private readonly FormatterFactory           $formatterFactory,
-        private readonly TranslatorInterface        $translator
+        private readonly SaleItemUpdater            $saleItemUpdater,
     ) {
     }
 
@@ -43,6 +39,7 @@ class RenewalListener
         }
 
         $this->updateItemDescription($renewal);
+        $this->updateItemNetPrice($renewal);
 
         if ($this->persistenceHelper->isScheduledForInsert($renewal->getSubscription())) {
             return;
@@ -57,6 +54,10 @@ class RenewalListener
 
         if ($this->renewalUpdater->update($renewal)) {
             $this->persistenceHelper->persistAndRecompute($renewal, false);
+        }
+
+        if ($this->persistenceHelper->isChanged($renewal, ['startsAt', 'endsAt'])) {
+            $this->updateItemNetPrice($renewal);
         }
 
         if ($this->persistenceHelper->isChanged($renewal, ['startsAt', 'endsAt', 'paid'])) {
@@ -96,37 +97,32 @@ class RenewalListener
             return;
         }
 
-        while ($item->isPrivate()) {
-            $item = $item->getParent();
+        if (null === $range = $renewal->getDateRange()) {
+            throw new RuntimeException('Renewal date range is not defined.');
         }
 
-        $formatter = $this->formatterFactory->create($item->getRootSale()->getLocale());
+        if ($this->saleItemUpdater->updateDescription($item, $range)) {
+            $this->persistenceHelper->persistAndRecompute($item, false);
+        }
+    }
 
-        $date = strtr($formatter->date(new DateTime('2000-01-02')), [
-            '2000' => '\d{4}',
-            '01'   => '\d{2}',
-            '02'   => '\d{2}',
-        ]);
-
-        $pattern = $this->translator->trans('field.date_range', [
-            '{from}' => $date,
-            '{to}'   => $date,
-        ], 'EkynaUi');
-
-        $description = trim(preg_replace("~$pattern~", '', (string)$item->getDescription()), " \t\n\r\0\x0B.");
-
-        if (!empty($description)) {
-            $description .= '. ';
+    protected function updateItemNetPrice(RenewalInterface $renewal): void
+    {
+        if (null === $item = $renewal->getOrderItem()) {
+            return;
         }
 
-        $description .= $this->translator->trans('field.date_range', [
-            '{from}' => $formatter->date($renewal->getStartsAt()),
-            '{to}'   => $formatter->date($renewal->getEndsAt()),
-        ], 'EkynaUi');
+        if (null === $plan = $renewal->getSubscription()?->getPlan()) {
+            throw new RuntimeException('Renewal subscription plan is not defined.');
+        }
 
-        $item->setDescription($description);
+        if (null === $range = $renewal->getDateRange()) {
+            throw new RuntimeException('Renewal date range is not defined.');
+        }
 
-        $this->persistenceHelper->persistAndRecompute($item, false);
+        if ($this->saleItemUpdater->updateNetPrice($item, $plan, $range)) {
+            $this->persistenceHelper->persistAndRecompute($item, false);
+        }
     }
 
     protected function getRenewalFromEvent(ResourceEventInterface $event): RenewalInterface

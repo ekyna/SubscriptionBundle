@@ -19,6 +19,7 @@
         </id>
 
         <field name="state" column="state" type="string" length="16"/>
+        <field name="description" column="description" type="text" nullable="true"/>
         <field name="expiresAt" column="expiresAt" type="date" nullable="true"/>
 
         <field name="createdAt" column="created_at" type="datetime">

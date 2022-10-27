@@ -55,6 +55,32 @@ class CreateAction extends BaseAction
         return $this->redirect($this->generateResourcePath($resource->getOrder()));
     }
 
+    protected function buildParameters(array $extra = []): array
+    {
+        /** @var RenewalInterface $resource */
+        $resource = $this->context->getResource();
+
+        $renewals = $resource->getSubscription()->getRenewals()->toArray();
+
+        $pending = false;
+        foreach ($renewals as $renewal) {
+            if ($renewal === $resource) {
+                continue;
+            }
+
+            if ($renewal->isPaid()) {
+                continue;
+            }
+
+            $pending = true;
+            break;
+        }
+
+        $extra['pending_subscription'] = $pending;
+
+        return parent::buildParameters($extra);
+    }
+
     public static function configureAction(): array
     {
         return array_replace_recursive(parent::configureAction(), [

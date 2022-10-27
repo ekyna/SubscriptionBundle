@@ -9,9 +9,12 @@ use Ekyna\Bundle\ResourceBundle\Form\Type\AbstractResourceType;
 use Ekyna\Bundle\ResourceBundle\Form\Type\ResourceChoiceType;
 use Ekyna\Bundle\SubscriptionBundle\Model\PlanInterface;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionUtils;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+
+use function Symfony\Component\Translation\t;
 
 /**
  * Class SubscriptionType
@@ -22,6 +25,11 @@ class SubscriptionType extends AbstractResourceType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $builder->add('description', TextareaType::class, [
+            'label'    => t('field.description', [], 'EkynaCommerce'),
+            'required' => false,
+        ]);
+
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $subscription = $event->getData();
             $form = $event->getForm();

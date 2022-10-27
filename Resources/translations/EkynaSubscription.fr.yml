@@ -13,6 +13,7 @@ plan:
     field:
         initial_duration: Durée initiale
         renewal_duration: Durée renouvellement
+        renewal_date: Date de renouvellement
         forward_plan: Abonnement suivant
     message:
         product_deletion_prevented:

@@ -6,6 +6,7 @@ namespace Ekyna\Bundle\SubscriptionBundle\Model;
 
 use DateTimeInterface;
 use Ekyna\Bundle\ProductBundle\Model\ProductInterface;
+use Ekyna\Component\Resource\Model\Anniversary;
 use Ekyna\Component\Resource\Model\ResourceInterface;
 
 /**
@@ -52,6 +53,16 @@ interface PlanInterface extends ResourceInterface
      * Sets the plan that should be used to renew.
      */
     public function setForwardPlan(?PlanInterface $forwardPlan): PlanInterface;
+
+    /**
+     * Returns the renewal «anniversary» date.
+     */
+    public function getRenewalDate(): ?Anniversary;
+
+    /**
+     * Sets the renewal «anniversary» date.
+     */
+    public function setRenewalDate(?Anniversary $anniversary): PlanInterface;
 
     /**
      * Returns the date when subscription should be renewed.

@@ -10,6 +10,7 @@ use Ekyna\Bundle\SubscriptionBundle\Exception\LogicException;
 use Ekyna\Bundle\SubscriptionBundle\Factory\SubscriptionFactoryInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
+use Ekyna\Component\Commerce\Common\Event\SaleItemEvent;
 use Ekyna\Component\Commerce\Common\Factory\SaleFactoryInterface;
 use Ekyna\Component\Commerce\Common\Helper\FactoryHelperInterface;
 use Ekyna\Component\Commerce\Order\Model\OrderInterface;
@@ -75,11 +76,14 @@ class RenewalHelper
         $order->addItem($item);
         $renewal->setOrderItem($item);
 
-        $this->saleItemHelper->initialize($item, $product);
+        $event = new SaleItemEvent($item);
+        $event->setDatum(RenewalInterface::DATA_KEY, $renewal);
+
+        $this->saleItemHelper->initialize($item, $product, $event);
 
         $item->setQuantity(new Decimal($renewal->getCount()));
 
-        $this->saleItemHelper->build($item);
+        $this->saleItemHelper->build($item, $event);
 
         return $order;
     }

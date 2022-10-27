@@ -17,6 +17,8 @@ use Ekyna\Component\Resource\Model\ResourceInterface;
  */
 interface RenewalInterface extends ResourceInterface
 {
+    public const DATA_KEY = 'renewal';
+
     public function getSubscription(): ?SubscriptionInterface;
 
     public function setSubscription(?SubscriptionInterface $subscription): RenewalInterface;
@@ -32,6 +34,10 @@ interface RenewalInterface extends ResourceInterface
     public function getEndsAt(): ?DateTimeInterface;
 
     public function setEndsAt(?DateTimeInterface $date): RenewalInterface;
+
+    public function getDateRange(): ?DateRange;
+
+    public function setDateRange(DateRange $range): RenewalInterface;
 
     public function getCount(): int;
 

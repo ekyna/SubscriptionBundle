@@ -33,12 +33,9 @@ class ProductDeleteListener
             throw new UnexpectedTypeException($product, ProductInterface::class);
         }
 
-        $plans = $this->planRepository->findByProduct($product);
-        if (empty($plans)) {
+        if (null === $plan = $this->planRepository->findOneByProduct($product)) {
             return;
         }
-
-        $plan = $plans[0];
 
         $message = ResourceMessage::create('plan.message.product_deletion_prevented', ResourceMessage::TYPE_ERROR)
             ->setParameters([

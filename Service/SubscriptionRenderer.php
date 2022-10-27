@@ -43,7 +43,7 @@ class SubscriptionRenderer
                 throw new UnexpectedTypeException($subscription, SubscriptionInterface::class);
             }
 
-            $renewals = array_merge($renewals, SubscriptionUtils::filterRenewals($subscription));
+            $renewals = array_merge($renewals, $subscription->getRenewals()->toArray());
         }
 
         if (empty($renewals)) {
@@ -154,6 +154,7 @@ class SubscriptionRenderer
                 'path'    => $this->resourceHelper->generateResourcePath($order, ReadAction::class),
                 'summary' => $this->resourceHelper->generateResourcePath($order, SummaryAction::class),
                 'count'   => $count,
+                'paid'    => $renewal->isPaid(),
             ];
 
             $color += $colorStep;
@@ -225,13 +226,15 @@ class SubscriptionRenderer
                     $rect['summary']
                 ) . PHP_EOL;
 
+            $style = $rect['paid'] ? 'fill:' . $rect['color'] : 'fill:transparent;stroke-width:3;stroke:' . $rect['color'];
+
             $code .= sprintf(
-                    '<rect class="renewal" x="%d" y="%d" width="%d" height="%d" style="fill:%s" />',
+                    '<rect class="renewal" x="%d" y="%d" width="%d" height="%d" style="%s" />',
                     $rect['x'] + $padding,
                     $rect['y'] + $padding,
                     $rect['width'] - 2 * $padding,
                     $rect['height'] - 2 * $padding,
-                    $rect['color']
+                    $style
                 ) . PHP_EOL;
 
             $code .= sprintf(
@@ -254,9 +257,7 @@ class SubscriptionRenderer
             $code .= '</a>' . PHP_EOL;
         }
 
-        $code .= <<<HTML
-</svg>
-HTML;
+        $code .= '</svg>';
 
         return $code;
     }

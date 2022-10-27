@@ -19,9 +19,9 @@ use Ekyna\Component\Commerce\Order\Model\OrderItemInterface;
 use Ekyna\Component\Commerce\Payment\Model\PaymentStates;
 use Ekyna\Component\Commerce\Shipment\Model\ShipmentStates;
 use Ekyna\Component\Resource\Factory\ResourceFactoryInterface;
+use Ekyna\Component\Resource\Model\DateRange;
 use Generator;
 
-use function call_user_func;
 use function in_array;
 
 /**
@@ -48,8 +48,6 @@ class SubscriptionGenerator
     private RenewalFactoryInterface         $renewalFactory;
     private RenewalUpdater                  $renewalUpdater;
 
-    private ?array $onCreateRenewal = null;
-
     public function __construct(
         PlanRepositoryInterface         $planRepository,
         SubscriptionRepositoryInterface $subscriptionRepository,
@@ -64,15 +62,10 @@ class SubscriptionGenerator
         $this->renewalUpdater = $renewalUpdater;
     }
 
-    public function setOnCreateRenewal(?array $onCreateRenewal): void
+    private function isPaidOrDelivered(OrderInterface $order): bool
     {
-        $this->onCreateRenewal = $onCreateRenewal;
-    }
-
-    private function isPaidAndDelivered(OrderInterface $order): bool
-    {
-        if (!in_array($order->getPaymentState(), self::RENEW_PAYMENT_STATES, true)) {
-            return false;
+        if (in_array($order->getPaymentState(), self::RENEW_PAYMENT_STATES, true)) {
+            return true;
         }
 
         return in_array($order->getShipmentState(), self::RENEW_SHIPMENT_STATES, true);
@@ -91,7 +84,7 @@ class SubscriptionGenerator
             return;
         }
 
-        $renew = $this->isPaidAndDelivered($order);
+        $renew = $this->isPaidOrDelivered($order);
 
         $customer = $order->getCustomer();
 
@@ -155,16 +148,19 @@ class SubscriptionGenerator
         $renewal = $this->renewalFactory->create();
 
         $renewal
-            ->setNeedsReview(!$subscription->getRenewals()->isEmpty())
             ->setSubscription($subscription)
             ->setOrderItem($item)
             ->setPaid(true);
 
-        $this->renewalUpdater->update($renewal);
-
-        if (null !== $this->onCreateRenewal) {
-            call_user_func($this->onCreateRenewal, $renewal);
+        // Use user defined date range
+        if ($item->hasDatum(RenewalInterface::DATA_KEY)) {
+            $datum = $item->getDatum(RenewalInterface::DATA_KEY);
+            if (null !== $range = DateRange::fromString($datum)) {
+                $renewal->setDateRange($range);
+            }
         }
+
+        $this->renewalUpdater->update($renewal);
 
         return $renewal;
     }

@@ -6,9 +6,12 @@
     <div class="alert alert-info">
         <p>{{ 'renewal.message.order_creation'|trans({}, 'EkynaSubscription') }}</p>
     </div>
-    {% if renewal.subscription.state == 'pending' %}
+    {% if pending_subscription %}
         <div class="alert alert-danger">
-            <p>{{ 'renewal.message.pending_subscription'|trans({}, 'EkynaSubscription') }}</p>
+            <p>
+                <span class="fa fa-warning"></span>
+                {{ 'renewal.message.pending_subscription'|trans({}, 'EkynaSubscription') }}
+            </p>
         </div>
     {% endif %}
     {% if renewal.subscription.plan.forwardPlan is not null %}

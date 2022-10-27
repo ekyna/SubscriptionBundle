@@ -7,6 +7,7 @@ namespace Ekyna\Bundle\SubscriptionBundle\Service;
 use Ekyna\Bundle\ResourceBundle\Helper\ResourceHelper;
 use Ekyna\Bundle\SubscriptionBundle\Action\Subscription\CreateAction;
 use Ekyna\Bundle\SubscriptionBundle\Form\Type\SubscribeType;
+use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\Subscribe;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Component\Commerce\Customer\Model\CustomerInterface;
@@ -24,6 +25,11 @@ class SubscriptionHelper
         private readonly ResourceHelper       $resourceHelper,
         private readonly FormFactoryInterface $formFactory,
     ) {
+    }
+
+    public function findUnpaidRenewal(SubscriptionInterface $subscription): ?RenewalInterface
+    {
+
     }
 
     public function getSubscribeForm(CustomerInterface $customer = null): FormInterface

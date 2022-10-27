@@ -9,6 +9,10 @@
             name="Ekyna\Bundle\SubscriptionBundle\Entity\Plan"
             table="subscription_plan">
 
+        <unique-constraints>
+            <unique-constraint columns="product_id" name="unique_subscription_product"/>
+        </unique-constraints>
+
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO"/>
         </id>
@@ -16,6 +20,7 @@
         <field name="designation" column="designation" type="string" length="128" nullable="false"/>
         <field name="initialDuration" column="initial_duration" type="smallint" nullable="false"/>
         <field name="renewalDuration" column="renewal_duration" type="smallint" nullable="false"/>
+        <field name="renewalDate" column="renewal_date" type="anniversary" nullable="true"/>
 
         <many-to-one target-entity="Ekyna\Bundle\ProductBundle\Model\ProductInterface"
                      field="product">

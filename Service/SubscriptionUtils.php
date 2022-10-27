@@ -78,6 +78,9 @@ final class SubscriptionUtils
         return array_filter($renewals, $test);
     }
 
+    /**
+     * Returns the latest subscription renewal.
+     */
     public static function findLatest(
         SubscriptionInterface $subscription,
         ?RenewalInterface     $ignore = null
@@ -91,6 +94,9 @@ final class SubscriptionUtils
         return reset($renewals);
     }
 
+    /**
+     * Finds the renewal which is active at the given date.
+     */
     public static function findActiveRenewalAt(
         SubscriptionInterface $subscription,
         DateTimeInterface     $date = null,

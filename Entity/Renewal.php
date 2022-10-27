@@ -105,6 +105,23 @@ class Renewal extends AbstractResource implements RenewalInterface
         return $this;
     }
 
+    public function getDateRange(): ?DateRange
+    {
+        if (null !== $this->startsAt && null !== $this->endsAt) {
+            return new DateRange($this->startsAt, $this->endsAt);
+        }
+
+        return null;
+    }
+
+    public function setDateRange(DateRange $range): RenewalInterface
+    {
+        $this->startsAt = DateTime::createFromInterface($range->getStart());
+        $this->endsAt = DateTime::createFromInterface($range->getEnd());
+
+        return $this;
+    }
+
     public function getCount(): int
     {
         return $this->count;

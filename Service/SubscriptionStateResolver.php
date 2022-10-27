@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\SubscriptionBundle\Service;
 
+use DateTime;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
 
@@ -26,11 +27,13 @@ class SubscriptionStateResolver
             return SubscriptionStates::STATE_NEW;
         }
 
-        if (null === $renewal = SubscriptionUtils::findActiveRenewalAt($subscription)) {
-            return SubscriptionStates::STATE_EXPIRED;
-        }
+        // Latest paid renew
+        if (null !== $renewal = SubscriptionUtils::findLatest($subscription)) {
+            $today = (new DateTime())->setTime(23, 59, 59);
+            if ($today > $renewal->getEndsAt()) {
+                return SubscriptionStates::STATE_EXPIRED;
+            }
 
-        if ($renewal->isPaid()) {
             return SubscriptionStates::STATE_RENEWED;
         }
 

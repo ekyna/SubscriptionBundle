@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Ekyna\Bundle\CommerceBundle\Event\AdminReadEvents;
+use Ekyna\Bundle\CommerceBundle\Event\SaleItemFormEvent;
 use Ekyna\Bundle\ProductBundle\Event\ProductEvents;
 use Ekyna\Bundle\SubscriptionBundle\Action\Renewal\CreateAction as RenewalCreateAction;
 use Ekyna\Bundle\SubscriptionBundle\Action\Subscription\CreateAction as SubscriptionCreateAction;
@@ -18,20 +19,24 @@ use Ekyna\Bundle\SubscriptionBundle\EventListener\ProductDeleteListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\ReadCustomerEventListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\ReadOrderEventListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\RenewalListener;
+use Ekyna\Bundle\SubscriptionBundle\EventListener\SaleItemListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\SubscriptionListener;
 use Ekyna\Bundle\SubscriptionBundle\Factory\RenewalFactory;
 use Ekyna\Bundle\SubscriptionBundle\MessageHandler\OrderItemAddHandler;
 use Ekyna\Bundle\SubscriptionBundle\MessageHandler\OrderItemQuantityChangeHandler;
 use Ekyna\Bundle\SubscriptionBundle\MessageHandler\OrderStateChangeHandler;
 use Ekyna\Bundle\SubscriptionBundle\Service\ConstantsHelper;
+use Ekyna\Bundle\SubscriptionBundle\Service\RenewalCalculator;
 use Ekyna\Bundle\SubscriptionBundle\Service\RenewalHelper;
 use Ekyna\Bundle\SubscriptionBundle\Service\RenewalUpdater;
+use Ekyna\Bundle\SubscriptionBundle\Service\SaleItemUpdater;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionGenerator;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionHelper;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionRenderer;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionStateResolver;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionUpdater;
 use Ekyna\Bundle\SubscriptionBundle\Twig\SubscriptionExtension;
+use Ekyna\Component\Commerce\Common\Event\SaleItemEvents;
 use Ekyna\Component\Commerce\Order\Event\OrderEvents;
 use Ekyna\Component\Commerce\Order\Event\OrderItemEvents;
 
@@ -63,8 +68,22 @@ return static function (ContainerConfigurator $container) {
                 service('ekyna_subscription.resolver.subscription_state'),
             ])
 
+        // Renewal calculator
+        ->set('ekyna_subscription.calculator.renewal', RenewalCalculator::class)
+
         // Renewal updater
         ->set('ekyna_subscription.updater.renewal', RenewalUpdater::class)
+            ->args([
+                service('ekyna_subscription.calculator.renewal'),
+            ])
+
+        // Sale item updater
+        ->set('ekyna_subscription.updater.sale_item', SaleItemUpdater::class)
+            ->args([
+                service('ekyna_commerce.provider.context'),
+                service('ekyna_commerce.factory.formatter'),
+                service('translator'),
+            ])
 
         // Renewal factory
         ->set('ekyna_subscription.factory.renewal', RenewalFactory::class)
@@ -198,8 +217,7 @@ return static function (ContainerConfigurator $container) {
             ->args([
                 service('ekyna_resource.orm.persistence_helper'),
                 service('ekyna_subscription.updater.renewal'),
-                service('ekyna_commerce.factory.formatter'),
-                service('translator'),
+                service('ekyna_subscription.updater.sale_item'),
             ])
             ->tag('resource.event_listener', [
                 'event'  => RenewalEvents::INSERT,
@@ -212,6 +230,26 @@ return static function (ContainerConfigurator $container) {
             ->tag('resource.event_listener', [
                 'event'  => RenewalEvents::DELETE,
                 'method' => 'onDelete',
+            ])
+
+        // Sale item event listener
+        ->set('ekyna_subscription.listener.sale_item', SaleItemListener::class)
+            ->args([
+                service('ekyna_subscription.repository.plan'),
+                service('ekyna_commerce.helper.subject'),
+                service('ekyna_subscription.repository.renewal'),
+                service('ekyna_subscription.updater.sale_item'),
+                service('ekyna_subscription.calculator.renewal'),
+            ])
+            ->tag('kernel.event_listener', [
+                'event'    => SaleItemEvents::BUILD,
+                'method'   => 'onSaleItemBuild',
+                'priority' => -1024,
+            ])
+            ->tag('kernel.event_listener', [
+                'event'    => SaleItemFormEvent::BUILD_FORM,
+                'method'   => 'onSaleItemBuildForm',
+                'priority' => -1024,
             ])
 
         // Admin customer read event listener

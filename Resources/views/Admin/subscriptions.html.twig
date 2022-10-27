@@ -20,15 +20,13 @@
             <td>
                 {{ subscription|subscription_state_badge }}
                 {# TODO Add state test in SubscriptionExtension #}
-                {% if subscription.state in [constant('Ekyna\\Bundle\\SubscriptionBundle\\Model\\SubscriptionStates::STATE_NEW'), constant('Ekyna\\Bundle\\SubscriptionBundle\\Model\\SubscriptionStates::STATE_EXPIRED')] -%}
-                    &nbsp;{{ admin_resource_btn('ekyna_subscription.renewal', 'Ekyna\\Bundle\\SubscriptionBundle\\Action\\Renewal\\CreateAction', {
-                        'label': '',
-                        'size': 'xs',
-                        'parameters': {
-                            'subscriptionId': subscription.id
-                        }
-                    }) }}
-                {%- endif %}
+                &nbsp;{{ admin_resource_btn('ekyna_subscription.renewal', 'Ekyna\\Bundle\\SubscriptionBundle\\Action\\Renewal\\CreateAction', {
+                    'label': '',
+                    'size': 'xs',
+                    'parameters': {
+                        'subscriptionId': subscription.id
+                    }
+                }) }}
                 {% if subscription.state == constant('Ekyna\\Bundle\\SubscriptionBundle\\Model\\SubscriptionStates::STATE_EXPIRED') %}
                     &nbsp;{{ admin_resource_btn(subscription, 'Ekyna\\Bundle\\SubscriptionBundle\\Action\\Subscription\\CancelAction', {
                     'label': '',
@@ -44,6 +42,12 @@
         </tr>
         <tr>
             <td colspan="3" style="padding-left:50px">
+                {% if subscription.description is not empty -%}
+                <p>
+                    <strong class="text-muted">{{ 'field.description'|trans({}, 'EkynaCommerce') }}</strong> :
+                    {{ subscription.description }}
+                </p>
+                {%- endif %}
                 <table class="table table-striped table-condensed table-hover table-alt-head">
                     <thead>
                     <tr>

@@ -25,6 +25,9 @@
         {{ show_row(subscription|subscription_state_badge, 'text', {
             'label': 'field.status'|trans({}, 'EkynaUi')
         }) }}
+        {{ show_row(subscription.description, 'textarea', {
+            'label': 'field.description'|trans({}, 'EkynaCommerce')
+        }) }}
     </div>
     <div class="tab-pane" id="{{ resource_name }}-graph">
         {{ subscription_graph([subscription]) }}
