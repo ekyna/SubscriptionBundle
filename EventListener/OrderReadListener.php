@@ -13,11 +13,11 @@ use Ekyna\Component\Resource\Exception\UnexpectedTypeException;
 use function Symfony\Component\Translation\t;
 
 /**
- * Class ReadOrderEventListener
+ * Class OrderReadListener
  * @package Ekyna\Bundle\SubscriptionBundle\EventListener
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class ReadOrderEventListener
+class OrderReadListener
 {
     private SubscriptionRepositoryInterface $subscriptionRepository;
 
@@ -43,8 +43,9 @@ class ReadOrderEventListener
         $event->addTab(Tab::create(
             'subscriptions',
             t('subscription.label.plural', [], 'EkynaSubscription'),
-            '@EkynaSubscription/Admin/Order/Read/subscriptions.html.twig',
+            '@EkynaSubscription/Admin/Order/read_subscriptions.html.twig',
             [
+                'order'         => $order,
                 'subscriptions' => $subscriptions,
             ]
         ));

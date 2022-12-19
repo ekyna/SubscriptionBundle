@@ -18,7 +18,7 @@ use function Symfony\Component\Translation\t;
  * @package Ekyna\Bundle\SubscriptionBundle\EventListener
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class ReadCustomerEventListener
+class CustomerReadListener
 {
     public function __construct(
         private readonly SubscriptionRepositoryInterface $subscriptionRepository,
@@ -43,9 +43,10 @@ class ReadCustomerEventListener
         $event->addTab(Tab::create(
             'subscriptions',
             t('subscription.label.plural', [], 'EkynaSubscription'),
-            '@EkynaSubscription/Admin/Customer/Read/subscriptions.html.twig',
+            '@EkynaSubscription/Admin/Customer/read_subscriptions.html.twig',
             [
-                'subscriptions' => $subscriptions,
+                'customer'       => $customer,
+                'subscriptions'  => $subscriptions,
                 'subscribe_form' => $subscribeForm->createView(),
             ]
         ));

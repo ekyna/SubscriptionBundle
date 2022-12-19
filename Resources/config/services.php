@@ -16,8 +16,8 @@ use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\OrderItemListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\OrderListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\ProductDeleteListener;
-use Ekyna\Bundle\SubscriptionBundle\EventListener\ReadCustomerEventListener;
-use Ekyna\Bundle\SubscriptionBundle\EventListener\ReadOrderEventListener;
+use Ekyna\Bundle\SubscriptionBundle\EventListener\CustomerReadListener;
+use Ekyna\Bundle\SubscriptionBundle\EventListener\OrderReadListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\RenewalListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\SaleItemListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\SubscriptionListener;
@@ -253,7 +253,7 @@ return static function (ContainerConfigurator $container) {
             ])
 
         // Admin customer read event listener
-        ->set('ekyna_subscription.listener.admin_read_customer', ReadCustomerEventListener::class)
+        ->set('ekyna_subscription.listener.customer_admin_read', CustomerReadListener::class)
             ->args([
                 service('ekyna_subscription.repository.subscription'),
                 service('ekyna_subscription.helper.subscription'),
@@ -263,7 +263,7 @@ return static function (ContainerConfigurator $container) {
             ])
 
         // Admin order read event listener
-        ->set('ekyna_subscription.listener.admin_read_order', ReadOrderEventListener::class)
+        ->set('ekyna_subscription.listener.order_admin_read', OrderReadListener::class)
             ->args([
                 service('ekyna_subscription.repository.subscription'),
             ])
