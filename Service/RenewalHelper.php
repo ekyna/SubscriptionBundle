@@ -6,6 +6,7 @@ namespace Ekyna\Bundle\SubscriptionBundle\Service;
 
 use Decimal\Decimal;
 use Ekyna\Bundle\CommerceBundle\Service\SaleItemHelper;
+use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionForwardEvent;
 use Ekyna\Bundle\SubscriptionBundle\Exception\LogicException;
 use Ekyna\Bundle\SubscriptionBundle\Factory\SubscriptionFactoryInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
@@ -15,6 +16,7 @@ use Ekyna\Component\Commerce\Common\Factory\SaleFactoryInterface;
 use Ekyna\Component\Commerce\Common\Helper\FactoryHelperInterface;
 use Ekyna\Component\Commerce\Order\Model\OrderInterface;
 use Ekyna\Component\Commerce\Order\Model\OrderItemInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -30,6 +32,7 @@ class RenewalHelper
         private readonly FactoryHelperInterface       $factoryHelper,
         private readonly SaleItemHelper               $saleItemHelper,
         private readonly TranslatorInterface          $translator,
+        private readonly EventDispatcherInterface     $eventDispatcher,
     ) {
     }
 
@@ -60,11 +63,13 @@ class RenewalHelper
                 throw new LogicException('Plan product is not set');
             }
 
-            $subscription->setState(SubscriptionStates::STATE_CANCELLED);
+            $previous = $subscription->setState(SubscriptionStates::STATE_CANCELLED);
 
             $subscription = $this->subscriptionFactory->createWithCustomerAndPlan($customer, $forward);
 
             $renewal->setSubscription($subscription);
+
+            $this->eventDispatcher->dispatch(new SubscriptionForwardEvent($previous, $subscription));
         }
 
         /** @var OrderInterface $order */

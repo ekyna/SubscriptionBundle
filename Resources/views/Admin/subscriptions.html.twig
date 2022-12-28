@@ -18,21 +18,23 @@
                 </a>
             </td>
             <td>
-                {{ subscription|subscription_state_badge }}
+                {% block subscription_actions -%}
+                {{ subscription|subscription_state_badge }}&nbsp;
                 {# TODO Add state test in SubscriptionExtension #}
-                &nbsp;{{ admin_resource_btn('ekyna_subscription.renewal', 'Ekyna\\Bundle\\SubscriptionBundle\\Action\\Renewal\\CreateAction', {
-                    'label': '',
+                {{ admin_resource_btn('ekyna_subscription.renewal', 'Ekyna\\Bundle\\SubscriptionBundle\\Action\\Renewal\\CreateAction', {
+                    'label': t('subscription.button.renew', {}, 'EkynaSubscription'),
                     'size': 'xs',
                     'parameters': {
                         'subscriptionId': subscription.id
                     }
                 }) }}
-                {% if subscription.state == constant('Ekyna\\Bundle\\SubscriptionBundle\\Model\\SubscriptionStates::STATE_EXPIRED') %}
-                    &nbsp;{{ admin_resource_btn(subscription, 'Ekyna\\Bundle\\SubscriptionBundle\\Action\\Subscription\\CancelAction', {
-                    'label': '',
+                {% if subscription.state == constant('Ekyna\\Bundle\\SubscriptionBundle\\Model\\SubscriptionStates::STATE_EXPIRED') -%}
+                {{ admin_resource_btn(subscription, 'Ekyna\\Bundle\\SubscriptionBundle\\Action\\Subscription\\CancelAction', {
+                    'label': t('button.cancel', {}, 'EkynaUi'),
                     'size': 'xs'
                 }) }}
                 {%- endif %}
+                {%- endblock subscription_actions %}
             </td>
             <td>
                 {% if subscription.expiresAt is not null -%}

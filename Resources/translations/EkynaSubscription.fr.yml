@@ -31,6 +31,8 @@ subscription:
         edit: Modifier la souscription <small>%name%</small>
         remove: Supprimer la souscription <small>%name%</small>
         cancel: Annuler la souscription <small>%name%</small>
+    button:
+        renew: Renouveler
     state:
         new: Nouveau
         pending: En attente
