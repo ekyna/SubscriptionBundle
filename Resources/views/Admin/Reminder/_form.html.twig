@@ -1,0 +1,9 @@
+{% extends '@EkynaAdmin/Entity/Crud/_form_default.html.twig' %}
+
+{% block main_contents -%}
+    <div class="tab-pane active" id="{{ resource_name }}-general">
+        {{ form_row(form.plan) }}
+        {{ form_row(form.days) }}
+        {{ form_row(form.translations, {'label_col': 0, 'widget_col': 12}) }}
+    </div>
+{%- endblock main_contents %}

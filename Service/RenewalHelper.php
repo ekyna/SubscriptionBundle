@@ -27,6 +27,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class RenewalHelper
 {
     public function __construct(
+        private readonly RenewalCalculator $renewalCalculator,
         private readonly SubscriptionFactoryInterface $subscriptionFactory,
         private readonly SaleFactoryInterface         $orderFactory,
         private readonly FactoryHelperInterface       $factoryHelper,
@@ -56,6 +57,10 @@ class RenewalHelper
 
         if (null === $product = $plan->getProduct()) {
             throw new LogicException('Plan product is not set');
+        }
+
+        if (0 === $renewal->getCount()) {
+            $renewal->setCount($this->renewalCalculator->calculateCount($renewal));
         }
 
         if (null !== $forward = $plan->getForwardPlan()) {

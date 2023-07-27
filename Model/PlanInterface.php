@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ekyna\Bundle\SubscriptionBundle\Model;
 
 use DateTimeInterface;
+use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\ProductBundle\Model\ProductInterface;
 use Ekyna\Component\Resource\Model\Anniversary;
 use Ekyna\Component\Resource\Model\ResourceInterface;
@@ -63,6 +64,21 @@ interface PlanInterface extends ResourceInterface
      * Sets the renewal «anniversary» date.
      */
     public function setRenewalDate(?Anniversary $anniversary): PlanInterface;
+
+    /**
+     * Adds the reminder.
+     */
+    public function addReminder(ReminderInterface $reminder): PlanInterface;
+
+    /**
+     * Removes the reminder.
+     */
+    public function removeReminder(ReminderInterface $reminder): PlanInterface;
+
+    /**
+     * Returns the reminders.
+     */
+    public function getReminders(): Collection;
 
     /**
      * Returns the date when subscription should be renewed.

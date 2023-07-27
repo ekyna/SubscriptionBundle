@@ -8,7 +8,6 @@ use DateTime;
 use DateTimeInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\PlanInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
-use Ekyna\Component\Dpd\Definition\Decimal;
 use Ekyna\Component\Resource\Exception\RuntimeException;
 use Ekyna\Component\Resource\Model\DateRange;
 
@@ -59,7 +58,7 @@ class RenewalCalculator
         }
 
         $duration = $plan->getInitialDuration();
-        if (null !== $latest = SubscriptionUtils::findLatest($subscription, $renewal)) {
+        if (null !== $latest = SubscriptionUtils::findLatestRenewal($subscription, $renewal)) {
             $start = (clone $latest->getEndsAt());
             $start->modify('+1 day');
 
@@ -126,7 +125,7 @@ class RenewalCalculator
         }
 
         // Look for a previous renewal
-        $latest = SubscriptionUtils::findLatest($subscription, $renewal);
+        $latest = SubscriptionUtils::findLatestRenewal($subscription, $renewal);
         if (null === $latest) {
             return 1;
         }

@@ -28,7 +28,7 @@ class SubscriptionStateResolver
         }
 
         // Latest paid renew
-        if (null !== $renewal = SubscriptionUtils::findLatest($subscription)) {
+        if (null !== $renewal = SubscriptionUtils::findLatestRenewal($subscription)) {
             $today = (new DateTime())->setTime(23, 59, 59);
             if ($today > $renewal->getEndsAt()) {
                 return SubscriptionStates::STATE_EXPIRED;

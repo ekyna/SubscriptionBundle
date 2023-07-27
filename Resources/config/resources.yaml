@@ -38,6 +38,8 @@ resources:
                 admin_crud:
                     templates: '@EkynaSubscription/Admin/Subscription'
                     create: false
+                admin_toggle:
+                    properties: [ autoNotify ]
                 Ekyna\Bundle\SubscriptionBundle\Action\Subscription\CancelAction: ~
                 Ekyna\Bundle\SubscriptionBundle\Action\Subscription\CreateAction:
                     template: '@EkynaSubscription/Admin/Subscription/create.html.twig'
@@ -64,3 +66,26 @@ resources:
                     list: false
                     templates: '@EkynaSubscription/Admin/Renewal'
                 Ekyna\Bundle\SubscriptionBundle\Action\Renewal\CreateAction: ~
+                Ekyna\Bundle\SubscriptionBundle\Action\Renewal\NotifyAction: ~
+
+        reminder:
+            driver: doctrine/orm
+            entity:
+                interface: Ekyna\Bundle\SubscriptionBundle\Model\ReminderInterface
+                class: Ekyna\Bundle\SubscriptionBundle\Entity\Reminder
+            repository:
+                interface: Ekyna\Bundle\SubscriptionBundle\Repository\ReminderRepositoryInterface
+                class: Ekyna\Bundle\SubscriptionBundle\Repository\ReminderRepository
+            form: Ekyna\Bundle\SubscriptionBundle\Form\Type\ReminderType
+            table: Ekyna\Bundle\SubscriptionBundle\Table\Type\ReminderType
+            parent: ekyna_subscription.plan
+            trans_domain: EkynaSubscription
+            translation:
+                interface: Ekyna\Bundle\SubscriptionBundle\Model\ReminderTranslationInterface
+                class: Ekyna\Bundle\SubscriptionBundle\Entity\ReminderTranslation
+                fields: [ title, content ]
+            actions:
+                admin_crud:
+                    templates: '@EkynaSubscription/Admin/Reminder'
+                admin_toggle:
+                    properties: [ enabled ]

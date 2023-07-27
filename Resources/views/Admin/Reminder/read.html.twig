@@ -1,0 +1,15 @@
+{% extends '@EkynaAdmin/Entity/Crud/read.html.twig' %}
+
+{% block actions %}{% endblock %}
+
+{% block main_contents -%}
+    <div class="tab-pane active" id="{{ resource_name }}-general">
+        {{ show_row(reminder.plan, 'resource') }}
+        {{ show_row(reminder.title, 'text', {
+            'label': t('field.title', {}, 'EkynaUi')
+        }) }}
+        {{ show_row(reminder.days, 'number', {
+            'label': t('reminder.field.days', {}, 'EkynaSubscription')
+        }) }}
+    </div>
+{%- endblock main_contents %}

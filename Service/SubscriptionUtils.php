@@ -81,7 +81,7 @@ final class SubscriptionUtils
     /**
      * Returns the latest subscription renewal.
      */
-    public static function findLatest(
+    public static function findLatestRenewal(
         SubscriptionInterface $subscription,
         ?RenewalInterface     $ignore = null
     ): ?RenewalInterface {
@@ -151,15 +151,17 @@ final class SubscriptionUtils
 
         if ($descendant) {
             $callback = function (RenewalInterface $a, RenewalInterface $b) {
-                return $b->getStartsAt()->getTimestamp() <=> $a->getStartsAt()->getTimestamp();
+                $ret = $b->getStartsAt()->getTimestamp() - $a->getStartsAt()->getTimestamp();
+                return $ret;
             };
         } else {
             $callback = function (RenewalInterface $a, RenewalInterface $b) {
-                return $a->getStartsAt()->getTimestamp() <=> $b->getStartsAt()->getTimestamp();
+                $ret = $a->getStartsAt()->getTimestamp() - $b->getStartsAt()->getTimestamp();
+                return $ret;
             };
         }
 
-        uasort($renewals, $callback);
+        usort($renewals, $callback);
 
         return $renewals;
     }

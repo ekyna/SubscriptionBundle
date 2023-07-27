@@ -22,6 +22,14 @@
         <field name="renewalDuration" column="renewal_duration" type="smallint" nullable="false"/>
         <field name="renewalDate" column="renewal_date" type="anniversary" nullable="true"/>
 
+        <one-to-many field="reminders"
+                     target-entity="Ekyna\Bundle\SubscriptionBundle\Model\ReminderInterface"
+                     mapped-by="plan">
+            <order-by>
+                <order-by-field name="days" direction="DESC" />
+            </order-by>
+        </one-to-many>
+
         <many-to-one target-entity="Ekyna\Bundle\ProductBundle\Model\ProductInterface"
                      field="product">
             <join-column name="product_id" referenced-column-name="id" nullable="false" on-delete="RESTRICT"/>

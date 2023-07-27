@@ -6,6 +6,7 @@ namespace Ekyna\Bundle\SubscriptionBundle\Model;
 
 use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
+use Ekyna\Bundle\SubscriptionBundle\Entity\Subscription;
 use Ekyna\Component\Commerce\Customer\Model\CustomerInterface;
 use Ekyna\Component\Resource\Model\ResourceInterface;
 use Ekyna\Component\Resource\Model\TimestampableInterface;
@@ -32,6 +33,10 @@ interface SubscriptionInterface extends ResourceInterface, TimestampableInterfac
     public function getDescription(): ?string;
 
     public function setDescription(?string $description): SubscriptionInterface;
+
+    public function isAutoNotify(): bool;
+
+    public function setAutoNotify(bool $autoNotify): SubscriptionInterface;
 
     public function getExpiresAt(): ?DateTimeInterface;
 

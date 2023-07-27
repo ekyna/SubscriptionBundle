@@ -62,7 +62,7 @@ class SubscriptionUpdater
             return null;
         }
 
-        if (null === $latest = SubscriptionUtils::findLatest($subscription)) {
+        if (null === $latest = SubscriptionUtils::findLatestRenewal($subscription)) {
             return null;
         }
 

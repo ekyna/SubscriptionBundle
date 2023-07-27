@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Ekyna\Bundle\SubscriptionBundle\Entity;
 
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\ProductBundle\Model\ProductInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\PlanInterface;
+use Ekyna\Bundle\SubscriptionBundle\Model\ReminderInterface;
 use Ekyna\Component\Resource\Model\AbstractResource;
 use Ekyna\Component\Resource\Model\Anniversary;
 
@@ -23,6 +26,13 @@ class Plan extends AbstractResource implements PlanInterface
     protected int               $renewalDuration = 12;
     protected ?Anniversary      $renewalDate     = null;
     protected ?PlanInterface    $forwardPlan     = null;
+
+    protected Collection $reminders;
+
+    public function __construct()
+    {
+        $this->reminders = new ArrayCollection();
+    }
 
     public function __toString(): string
     {
@@ -99,6 +109,29 @@ class Plan extends AbstractResource implements PlanInterface
         $this->renewalDate = $anniversary;
 
         return $this;
+    }
+
+    public function addReminder(ReminderInterface $reminder): PlanInterface
+    {
+        if (!$this->reminders->contains($reminder)) {
+            $this->reminders->add($reminder);
+        }
+
+        return $this;
+    }
+
+    public function removeReminder(ReminderInterface $reminder): PlanInterface
+    {
+        if ($this->reminders->contains($reminder)) {
+            $this->reminders->removeElement($reminder);
+        }
+
+        return $this;
+    }
+
+    public function getReminders(): Collection
+    {
+        return $this->reminders;
     }
 
     public function getAnniversary(): ?DateTimeInterface

@@ -6,11 +6,9 @@ namespace Ekyna\Bundle\SubscriptionBundle\Table\Type;
 
 use Ekyna\Bundle\AdminBundle\Action\DeleteAction;
 use Ekyna\Bundle\AdminBundle\Action\UpdateAction;
-use Ekyna\Bundle\AdminBundle\Table\Type\Column\ResourceType as ResourceColumn;
 use Ekyna\Bundle\ResourceBundle\Table\Type\AbstractResourceType;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
 use Ekyna\Bundle\TableBundle\Extension\Type as BType;
-use Ekyna\Component\Commerce\Order\Model\OrderInterface;
 use Ekyna\Component\Table\Extension\Core\Type\Column\BooleanType;
 use Ekyna\Component\Table\Extension\Core\Type\Column\DateTimeType;
 use Ekyna\Component\Table\Extension\Core\Type\Column\NumberType;
@@ -34,11 +32,8 @@ class RenewalType extends AbstractResourceType
             ->addDefaultSort('startsAt', ColumnSort::DESC)
             ->addDefaultSort('endsAt', ColumnSort::DESC)
             ->addDefaultSort('id', ColumnSort::DESC)
-            ->addColumn('order', ResourceColumn::class, [
-                'property_path'    => 'orderItem.rootSale',
-                'resource'         => OrderInterface::class,
-                'summary'          => true,
-                'summary_as_panel' => true,
+            ->addColumn('order', BType\Column\AnchorType::class, [
+                'label' => t('renewal.label.singular', [], 'EkynaSubscription'),
             ])
             ->addColumn('startsAt', DateTimeType::class, [
                 'label'       => t('field.start_date', [], 'EkynaUi'),

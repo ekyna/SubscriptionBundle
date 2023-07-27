@@ -22,9 +22,22 @@
     <div class="tab-pane active" id="{{ resource_name }}-general">
         {{ show_row(subscription.plan, 'resource') }}
         {{ show_row(subscription.customer, 'resource') }}
-        {{ show_row(subscription|subscription_state_badge, 'text', {
-            'label': 'field.status'|trans({}, 'EkynaUi')
-        }) }}
+        <div class="row">
+            <div class="col-md-6">
+                {{ show_row(subscription|subscription_state_badge, 'text', {
+                    'label': 'field.status'|trans({}, 'EkynaUi'),
+                    'label_col': 4
+                }) }}
+            </div>
+            <div class="col-md-6">
+                {{- show_row(subscription.autoNotify, 'boolean', {
+                    'label': 'sale.field.auto_notify',
+                    'label_trans_domain': 'EkynaCommerce',
+                    'label_col': 4,
+                    'toggle_path': admin_resource_path(subscription, 'admin_toggle', {property: 'autoNotify'})
+                }) -}}
+            </div>
+        </div>
         {{ show_row(subscription.description, 'textarea', {
             'label': 'field.description'|trans({}, 'EkynaCommerce')
         }) }}

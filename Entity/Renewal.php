@@ -6,6 +6,8 @@ namespace Ekyna\Bundle\SubscriptionBundle\Entity;
 
 use DateTime;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Component\Commerce\Order\Model\OrderInterface;
@@ -22,18 +24,21 @@ use function sprintf;
  */
 class Renewal extends AbstractResource implements RenewalInterface
 {
-    private ?SubscriptionInterface $subscription = null;
-    private ?OrderItemInterface    $orderItem    = null;
-    private ?DateTimeInterface     $startsAt     = null;
-    private ?DateTimeInterface     $endsAt       = null;
-    private int                    $count        = 0;
-    private bool                   $needsReview  = false;
-    private bool                   $paid         = false;
-    private DateTimeInterface      $createdAt;
+    protected ?SubscriptionInterface $subscription = null;
+    protected ?OrderItemInterface    $orderItem    = null;
+    protected ?DateTimeInterface     $startsAt     = null;
+    protected ?DateTimeInterface     $endsAt       = null;
+    protected int                    $count        = 0;
+    protected bool                   $needsReview  = false;
+    protected bool                   $paid         = false;
+    protected DateTimeInterface      $createdAt;
+
+    protected Collection $notifications;
 
     public function __construct()
     {
         $this->createdAt = new DateTime();
+        $this->notifications = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -168,6 +173,31 @@ class Renewal extends AbstractResource implements RenewalInterface
         $this->createdAt = $createdAt;
 
         return $this;
+    }
+
+    public function addNotification(Notification $notification): RenewalInterface
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
+            $notification->setRenewal($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): RenewalInterface
+    {
+        if ($this->notifications->contains($notification)) {
+            $this->notifications->removeElement($notification);
+            $notification->setRenewal(null);
+        }
+
+        return $this;
+    }
+
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
     }
 
     public function getOrder(): ?OrderInterface

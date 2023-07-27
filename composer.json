@@ -16,6 +16,7 @@
     "homepage": "https://github.com/ekyna/SubscriptionBundle",
     "license": "MIT",
     "require": {
+        "ext-decimal": "*",
         "ekyna/product-bundle": "0.9.x-dev",
         "symfony/messenger": "^5.0"
     },

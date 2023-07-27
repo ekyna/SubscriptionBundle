@@ -24,6 +24,14 @@
         <field name="needsReview" column="needs_review" type="boolean"/>
         <field name="createdAt" column="created_at" type="datetime" nullable="false"/>
 
+        <one-to-many field="notifications"
+                     target-entity="Ekyna\Bundle\SubscriptionBundle\Entity\Notification"
+                     mapped-by="renewal" orphan-removal="true">
+            <cascade>
+                <cascade-all/>
+            </cascade>
+        </one-to-many>
+
         <many-to-one target-entity="Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface"
                      field="subscription" inversed-by="renewals">
             <join-column name="subscription_id" referenced-column-name="id" on-delete="RESTRICT" nullable="false" />

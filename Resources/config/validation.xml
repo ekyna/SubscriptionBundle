@@ -29,10 +29,10 @@
             <!--<option name="message">ekyna_subscription.subscription.duplicate</option>-->
         </constraint>
         <property name="plan">
-            <constraint name="NotNull" />
+            <constraint name="NotNull"/>
         </property>
         <property name="customer">
-            <constraint name="NotNull" />
+            <constraint name="NotNull"/>
         </property>
     </class>
 
@@ -44,16 +44,42 @@
             <!--<option name="message">ekyna_subscription.renewal.duplicate</option>-->
         </constraint>
         <property name="subscription">
-            <constraint name="NotNull" />
+            <constraint name="NotNull"/>
         </property>
         <property name="startsAt">
-            <constraint name="NotNull" />
+            <constraint name="NotNull"/>
         </property>
         <property name="endsAt">
-            <constraint name="NotNull" />
+            <constraint name="NotNull"/>
         </property>
         <property name="count">
             <constraint name="GreaterThan">0</constraint>
+        </property>
+    </class>
+
+    <class name="Ekyna\Bundle\SubscriptionBundle\Entity\Reminder">
+        <property name="plan">
+            <constraint name="NotNull"/>
+        </property>
+        <property name="days">
+            <constraint name="NotBlank"/>
+            <constraint name="GreaterThanOrEqual">0</constraint>
+        </property>
+        <property name="translations">
+            <constraint name="Valid"/>
+        </property>
+    </class>
+
+    <class name="Ekyna\Bundle\SubscriptionBundle\Entity\ReminderTranslation">
+        <property name="title">
+            <constraint name="NotBlank"/>
+            <constraint name="Length">
+                <option name="min">5</option>
+                <option name="max">128</option>
+            </constraint>
+        </property>
+        <property name="content">
+            <constraint name="NotBlank"/>
         </property>
     </class>
 

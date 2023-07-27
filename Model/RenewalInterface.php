@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Ekyna\Bundle\SubscriptionBundle\Model;
 
 use DateTimeInterface;
+use Doctrine\Common\Collections\Collection;
+use Ekyna\Bundle\SubscriptionBundle\Entity\Notification;
 use Ekyna\Component\Commerce\Order\Model\OrderInterface;
 use Ekyna\Component\Commerce\Order\Model\OrderItemInterface;
 use Ekyna\Component\Resource\Model\DateRange;
@@ -54,6 +56,15 @@ interface RenewalInterface extends ResourceInterface
     public function getCreatedAt(): DateTimeInterface;
 
     public function setCreatedAt(DateTimeInterface $createdAt): RenewalInterface;
+
+    public function addNotification(Notification $notification): RenewalInterface;
+
+    public function removeNotification(Notification $notification): RenewalInterface;
+
+    /**
+     * @return Collection<Notification>
+     */
+    public function getNotifications(): Collection;
 
     public function getOrder(): ?OrderInterface;
 

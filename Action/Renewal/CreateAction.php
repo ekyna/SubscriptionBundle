@@ -34,6 +34,8 @@ class CreateAction extends BaseAction
 
         $order = $this->renewalHelper->renew($resource);
 
+        // TODO Validate order (need addresses, etc)
+
         $subscription = $resource->getSubscription();
         if (null === $resource->getSubscription()->getId()) {
             $this->getManager($subscription)->persist($this->context->getParentResource());

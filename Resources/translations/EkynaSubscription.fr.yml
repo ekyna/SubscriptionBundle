@@ -59,6 +59,31 @@ renewal:
         order_creation: Une commande de renouvellement sera automatiquement créée, et vous serez redirigé(e) vers celle-ci.
         pending_subscription: Un renouvellement est déjà en attente de réglement.
         forwarding: Une nouvelle souscription sera créé avec l'abonnement « {plan} ».
+        remind_confirm: Êtes-vous sûr de vouloir relancer le client pour le renouvellement de son abonnement ?
+
+reminder:
+    label:
+        singular: Relance
+        plural: Relances
+    header:
+        list: Relances <small>Liste des relances</small>
+        show: Détail de la relance <small>%name%</small>
+        new: Créer un nouvelle relance
+        edit: Modifier la relance <small>%name%</small>
+        remove: Supprimer la relance <small>%name%</small>
+    field:
+        days: Jours avant expiration
+    help:
+        content: >
+            <p>
+                <strong>{expiresAt}</strong> : Date d'expiration<br>
+                <strong>{canceledAt}</strong> : Date d'annulation
+            </p>
+
+mail:
+    remind:
+        login_link: Retrouvez votre commande de renouvellement dans votre compte client.
+        contact_us: Contactez-nous pour le renouvellement de votre abonnement.
 
 order:
     title: Renouvellement Licence

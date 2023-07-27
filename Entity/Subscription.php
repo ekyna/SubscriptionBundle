@@ -30,6 +30,7 @@ class Subscription extends AbstractResource implements SubscriptionInterface
     protected ?CustomerInterface $customer    = null;
     protected string             $state       = SubscriptionStates::STATE_NEW;
     protected ?string            $description = null;
+    protected bool               $autoNotify  = true;
     protected ?DateTimeInterface $expiresAt   = null;
     /** @var Collection<RenewalInterface> */
     protected Collection $renewals;
@@ -92,6 +93,18 @@ class Subscription extends AbstractResource implements SubscriptionInterface
     public function setDescription(?string $description): SubscriptionInterface
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function isAutoNotify(): bool
+    {
+        return $this->autoNotify;
+    }
+
+    public function setAutoNotify(bool $autoNotify): SubscriptionInterface
+    {
+        $this->autoNotify = $autoNotify;
 
         return $this;
     }

@@ -6,12 +6,16 @@ namespace Ekyna\Bundle\SubscriptionBundle\Repository;
 
 use DateTime;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Query\Expr\Join;
 use Ekyna\Bundle\SubscriptionBundle\Model\PlanInterface;
+use Ekyna\Bundle\SubscriptionBundle\Model\ReminderInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
 use Ekyna\Component\Commerce\Customer\Model\CustomerInterface;
 use Ekyna\Component\Commerce\Order\Model\OrderInterface;
 use Ekyna\Component\Resource\Doctrine\ORM\Repository\ResourceRepository;
+
+use function sprintf;
 
 /**
  * Class SubscriptionRepository
@@ -20,6 +24,9 @@ use Ekyna\Component\Resource\Doctrine\ORM\Repository\ResourceRepository;
  */
 class SubscriptionRepository extends ResourceRepository implements SubscriptionRepositoryInterface
 {
+    /**
+     * @inheritDoc
+     */
     public function findOneByPlanAndCustomer(PlanInterface $plan, CustomerInterface $customer): ?SubscriptionInterface
     {
         return $this->findOneBy([
@@ -28,6 +35,9 @@ class SubscriptionRepository extends ResourceRepository implements SubscriptionR
         ]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function findByOrder(OrderInterface $order): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -53,7 +63,7 @@ class SubscriptionRepository extends ResourceRepository implements SubscriptionR
     }
 
     /**
-     * @return array<SubscriptionInterface>
+     * @inheritDoc
      */
     public function findExpiringToday(): array
     {
@@ -70,6 +80,44 @@ class SubscriptionRepository extends ResourceRepository implements SubscriptionR
                 SubscriptionStates::STATE_EXPIRED,
                 SubscriptionStates::STATE_NEW,
             ])
+            ->getResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findToRemind(ReminderInterface $reminder): array
+    {
+        $qb = $this->createQueryBuilder('s');
+        $ex = $qb->expr();
+
+        $date = (new DateTime())->modify(
+            sprintf('+%d days', $reminder->getDays())
+        )->format('Y-m-d');
+
+        return $qb
+            // Same plan as given reminder.
+            ->andWhere($ex->eq('s.plan', ':plan'))
+            // Not canceled.
+            ->andWhere($ex->neq('s.state', $ex->literal(SubscriptionStates::STATE_CANCELLED)))
+            // With 'auto notify' enabled
+            ->andWhere($ex->eq('s.autoNotify', 1))
+            // That will expire in $reminder->days days.
+            ->andWhere($ex->eq('DATE(s.expiresAt)', ':date'))
+            // Not having paid renewal posterior to current renewal.
+            ->leftJoin('s.renewals', 'r', Join::WITH, 'r.startsAt >= s.expiresAt')
+            ->andWhere($ex->orX(
+                $ex->isNull('r'),
+                $ex->eq('r.paid', 0),
+            ))
+            // Having pending renewal not notified for the given reminder.
+            ->leftJoin('r.notifications', 'n', Join::WITH, 'n.reminder = :reminder')
+            ->andWhere($ex->isNull('n'))
+            ->getQuery()
+            ->useQueryCache(true)
+            ->setParameter('plan', $reminder->getPlan())
+            ->setParameter('date', $date)
+            ->setParameter('reminder', $reminder)
             ->getResult();
     }
 }

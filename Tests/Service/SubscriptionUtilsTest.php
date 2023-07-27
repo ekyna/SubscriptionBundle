@@ -14,15 +14,45 @@ use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionUtils;
 use Generator;
 use PHPUnit\Framework\TestCase;
 
+use function array_reverse;
 use function date;
 
 /**
- * Class SubscriptionHelper
+ * Class SubscriptionUtilsTest
  * @package Ekyna\Bundle\SubscriptionBundle\Tests\Service
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class SubscriptionHelperTest extends TestCase
+class SubscriptionUtilsTest extends TestCase
 {
+    /**
+     * @dataProvider provideSortRenewals
+     */
+    public function testSortRenewals(array $renewals, array $expected): void
+    {
+        $actual = SubscriptionUtils::sortRenewals($renewals, false);
+
+        self::assertEquals($expected, $actual);
+
+        $actual = SubscriptionUtils::sortRenewals($renewals);
+
+        self::assertEquals(array_reverse($expected), $actual);
+    }
+
+    public function provideSortRenewals(): Generator
+    {
+        $expected = [
+            $a = $this->createRenewal('2000-03-03', '2000-12-31'),
+            $b = $this->createRenewal('2000-06-15', '2000-12-31'),
+            $c = $this->createRenewal('2021-01-01', '2021-12-31'),
+            $d = $this->createRenewal('2021-04-23', '2021-12-31'),
+            $e = $this->createRenewal('2022-01-01', '2022-12-31'),
+        ];
+
+        yield [[$e, $c, $a, $d, $b], $expected];
+        yield [[$c, $d, $b, $a, $e], $expected];
+        yield [[$a, $d, $e, $b, $c], $expected];
+    }
+
     /**
      * @dataProvider provideFindActiveRenewalAt
      */
@@ -68,7 +98,7 @@ class SubscriptionHelperTest extends TestCase
         $expected = null;
         $subscription = new Subscription();
         for ($i = -1; $i < 2; $i++) {
-            $year = date('Y') + $i;
+            $year = $i + (int)date('Y');
 
             $renewal = (new Renewal())
                 ->setStartsAt(new DateTime($year.'-01-01'))
@@ -83,5 +113,12 @@ class SubscriptionHelperTest extends TestCase
         }
 
         yield [$subscription, $expected, null];
+    }
+
+    private function createRenewal(string $start, string $end): Renewal
+    {
+        return (new Renewal())
+            ->setStartsAt(new DateTime($start))
+            ->setEndsAt(new DateTime($end));
     }
 }

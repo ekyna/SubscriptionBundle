@@ -5,6 +5,7 @@
 {% block main_contents -%}
     <div class="tab-pane active" id="{{ resource_name }}-general">
         {{ show_row(renewal.subscription, 'resource') }}
+        {{ show_row(renewal.order, 'resource') }}
         <div class="row">
             <div class="col-md-6">
                 {{ show_row(renewal.startsAt, 'datetime', {
@@ -36,5 +37,60 @@
                 }) }}
             </div>
         </div>
+        {% set reminders = renewal.subscription.plan.reminders %}
+        {% if reminders is not empty -%}
+        <div class="row show-row">
+            <div class="col-md-2 show-label">
+                {{ 'reminder.label.plural'|trans({}, 'EkynaSubscription') }}
+            </div>
+            <div class="col-md-10">
+                <div class="show-widget">
+                    <table class="table table-striped table-condensed">
+                    <thead>
+                    <tr>
+                        <th>{{ 'field.title'|trans({}, 'EkynaUi') }}</th>
+                        <th>{{ 'reminder.field.days'|trans({}, 'EkynaSubscription') }}</th>
+                        <th>{{ 'field.notified_at'|trans({}, 'EkynaUi') }}</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                    </thead>
+                    {% for reminder in reminders -%}
+                        <tbody>
+                        <tr>
+                            <td>
+                                {{ reminder.title }}
+                            </td>
+                            <td>
+                                {{ reminder.days }}
+                            </td>
+                            <td>
+                                {%- set notification = find_renewal_notification(renewal, reminder) -%}
+                                {%- if notification -%}
+                                    <span class="fa fa-check text-success"></span>
+                                    {{- notification.notifiedAt|format_date -}}
+                                {% else %}
+                                    <span class="fa fa-remove text-danger"></span>
+                                    {# TODO Notify/Send button #}
+                                {%- endif -%}
+                            </td>
+                            <td>
+                                {% if not renewal.paid and reminder.enabled %}
+                                {{ admin_resource_btn(renewal, 'Ekyna\\Bundle\\SubscriptionBundle\\Action\\Renewal\\NotifyAction', {
+                                    'parameters': {'reminderId': reminder.id},
+                                    'size': 'xs',
+                                    'label': ''
+                                }, {
+                                    'onclick': ('return confirm(\'' ~ ('renewal.message.remind_confirm'|trans({}, 'EkynaSubscription')|escape('js')) ~ '\')')
+                                }) }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        </tbody>
+                    {%- endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        {%- endif %}
     </div>
 {%- endblock main_contents %}

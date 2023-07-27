@@ -1,0 +1,20 @@
+{% extends "email.html.twig" %}
+
+{% block subject %}
+    {{ reminder.title }}
+{% endblock subject %}
+
+{% block body %}
+    {{ reminder.content|raw }}
+
+    <p style="text-align:center">
+    {%- if login_link -%}
+        <a class="button" href="{{ login_link.url }}">
+            {{ 'mail.remind.login_link'|trans({}, 'EkynaSubscription') }}
+        </a><br><br>
+        <em>{{ 'login_link_expires_at'|trans({'{date}': login_link.expiresAt|format_datetime}, 'EkynaUser') }}</em>
+    {%- else -%}
+        <strong>{{ 'mail.remind.contact_us'|trans({}, 'EkynaSubscription') }}</strong>
+    {%- endif -%}
+    </p>
+{% endblock body %}

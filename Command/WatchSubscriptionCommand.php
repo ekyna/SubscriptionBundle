@@ -20,15 +20,11 @@ class WatchSubscriptionCommand extends Command
 {
     protected static $defaultName = 'ekyna:subscription:watch';
 
-    private SubscriptionRepositoryInterface $repository;
-    private ResourceManagerInterface        $manager;
-
-    public function __construct(SubscriptionRepositoryInterface $repository, ResourceManagerInterface $manager)
-    {
+    public function __construct(
+        private readonly SubscriptionRepositoryInterface $repository,
+        private readonly ResourceManagerInterface $manager
+    ) {
         parent::__construct();
-
-        $this->repository = $repository;
-        $this->manager = $manager;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
