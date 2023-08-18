@@ -24,7 +24,7 @@ class RenewalUpdater
     {
         $changed = false;
 
-        if (null === $renewal->getStartsAt()) {
+        if (null === $renewal->getStartsAt() || null === $renewal->getEndsAt()) {
             $range = $this->renewalCalculator->calculateDateRange($renewal);
 
             $changed = $this->updateStartsAt($renewal, $range->getStart());

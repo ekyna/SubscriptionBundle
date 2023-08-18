@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Ekyna\Bundle\SubscriptionBundle\Action\Renewal;
 
 use Ekyna\Bundle\AdminBundle\Action\CreateAction as BaseAction;
+use Ekyna\Bundle\ResourceBundle\Action\RepositoryTrait;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
 use Ekyna\Bundle\SubscriptionBundle\Service\RenewalHelper;
+use Ekyna\Component\Commerce\Invoice\Model\InvoiceInterface;
 use Ekyna\Component\Resource\Event\ResourceEventInterface;
 use Ekyna\Component\Resource\Exception\UnexpectedTypeException;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,9 +22,31 @@ use function array_replace_recursive;
  */
 class CreateAction extends BaseAction
 {
+    use RepositoryTrait;
+
     public function __construct(
         private readonly RenewalHelper $renewalHelper,
     ) {
+    }
+
+    protected function onInit(): ?Response
+    {
+        $resource = $this->context->getResource();
+        if (!$resource instanceof RenewalInterface) {
+            throw new UnexpectedTypeException($resource, RenewalInterface::class);
+        }
+
+        if (0 < $id = $this->request->query->getInt('extend')) {
+            $extend = $this->getRepository($this->context->getConfig()->getEntityClass())->find($id);
+
+            if ($extend instanceof RenewalInterface) {
+                $resource
+                    ->setStartsAt(clone $extend->getStartsAt())
+                    ->setEndsAt(clone $extend->getEndsAt());
+            }
+        }
+
+        return parent::onInit();
     }
 
     protected function doPersist(): ResourceEventInterface

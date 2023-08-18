@@ -54,14 +54,14 @@
                         <th>&nbsp;</th>
                     </tr>
                     </thead>
+                    <tbody>
                     {% for reminder in reminders -%}
-                        <tbody>
                         <tr>
                             <td>
-                                {{ reminder.title }}
+                                {{- reminder.title -}}
                             </td>
                             <td>
-                                {{ reminder.days }}
+                                {{- reminder.days -}}
                             </td>
                             <td>
                                 {%- set notification = find_renewal_notification(renewal, reminder) -%}
@@ -74,7 +74,7 @@
                                 {%- endif -%}
                             </td>
                             <td>
-                                {% if not renewal.paid and reminder.enabled %}
+                                {%- if not renewal.paid and reminder.enabled -%}
                                 {{ admin_resource_btn(renewal, 'Ekyna\\Bundle\\SubscriptionBundle\\Action\\Renewal\\NotifyAction', {
                                     'parameters': {'reminderId': reminder.id},
                                     'size': 'xs',
@@ -82,11 +82,11 @@
                                 }, {
                                     'onclick': ('return confirm(\'' ~ ('renewal.message.remind_confirm'|trans({}, 'EkynaSubscription')|escape('js')) ~ '\')')
                                 }) }}
-                                {% endif %}
+                                {%- endif -%}
                             </td>
                         </tr>
-                        </tbody>
                     {%- endfor %}
+                    </tbody>
                     </table>
                 </div>
             </div>

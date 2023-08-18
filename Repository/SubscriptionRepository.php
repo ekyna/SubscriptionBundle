@@ -102,7 +102,7 @@ class SubscriptionRepository extends ResourceRepository implements SubscriptionR
             ->andWhere($ex->neq('s.state', $ex->literal(SubscriptionStates::STATE_CANCELLED)))
             // With 'auto notify' enabled
             ->andWhere($ex->eq('s.autoNotify', 1))
-            // That will expire in $reminder->days days.
+            // That will expire in '$reminder->days' days.
             ->andWhere($ex->eq('DATE(s.expiresAt)', ':date'))
             // Not having paid renewal posterior to current renewal.
             ->leftJoin('s.renewals', 'r', Join::WITH, 'r.startsAt >= s.expiresAt')

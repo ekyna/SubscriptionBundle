@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ekyna\Bundle\SubscriptionBundle\Twig;
 
 use Ekyna\Bundle\SubscriptionBundle\Service\ConstantsHelper;
-use Ekyna\Bundle\SubscriptionBundle\Service\ReminderHelper;
+use Ekyna\Bundle\SubscriptionBundle\Service\NotificationHelper;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionRenderer;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -28,7 +28,11 @@ class SubscriptionExtension extends AbstractExtension
             ),
             new TwigFunction(
                 'find_renewal_notification',
-                [ReminderHelper::class, 'findNotification']
+                [NotificationHelper::class, 'findRenewalNotificationByReminder']
+            ),
+            new TwigFunction(
+                'find_subscription_notifications',
+                [NotificationHelper::class, 'findSubscriptionNotifications']
             ),
         ];
     }

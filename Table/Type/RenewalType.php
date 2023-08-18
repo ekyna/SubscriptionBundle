@@ -7,6 +7,7 @@ namespace Ekyna\Bundle\SubscriptionBundle\Table\Type;
 use Ekyna\Bundle\AdminBundle\Action\DeleteAction;
 use Ekyna\Bundle\AdminBundle\Action\UpdateAction;
 use Ekyna\Bundle\ResourceBundle\Table\Type\AbstractResourceType;
+use Ekyna\Bundle\SubscriptionBundle\Action\Renewal\CreateAction;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
 use Ekyna\Bundle\TableBundle\Extension\Type as BType;
 use Ekyna\Component\Table\Extension\Core\Type\Column\BooleanType;
@@ -53,6 +54,15 @@ class RenewalType extends AbstractResourceType
             ->addColumn('actions', BType\Column\ActionsType::class, [
                 'resource' => $this->dataClass,
                 'actions'  => [
+                    CreateAction::class => [
+                        'label'          => t('subscription.button.extend', [], 'EkynaSubscription'),
+                        'icon'           => 'resize-vertical',
+                        'theme'          => 'primary',
+                        'parameters_map' => [
+                            'subscriptionId' => 'subscription.id',
+                            'extend'         => 'id',
+                        ],
+                    ],
                     UpdateAction::class,
                     DeleteAction::class => [
                         'disable' => static function (RowInterface $row): bool {

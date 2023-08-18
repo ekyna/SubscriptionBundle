@@ -27,7 +27,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class RenewalHelper
 {
     public function __construct(
-        private readonly RenewalCalculator $renewalCalculator,
+        private readonly RenewalCalculator            $renewalCalculator,
         private readonly SubscriptionFactoryInterface $subscriptionFactory,
         private readonly SaleFactoryInterface         $orderFactory,
         private readonly FactoryHelperInterface       $factoryHelper,

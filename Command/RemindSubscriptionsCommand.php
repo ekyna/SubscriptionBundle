@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ekyna\Bundle\SubscriptionBundle\Command;
 
 use Ekyna\Bundle\SubscriptionBundle\Message\Notify;
-use Ekyna\Bundle\SubscriptionBundle\Model\ReminderInterface;
 use Ekyna\Bundle\SubscriptionBundle\Repository\ReminderRepositoryInterface;
 use Ekyna\Bundle\SubscriptionBundle\Repository\SubscriptionRepositoryInterface;
 use Symfony\Component\Console\Command\Command;

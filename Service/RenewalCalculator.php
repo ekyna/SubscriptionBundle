@@ -31,6 +31,10 @@ class RenewalCalculator
             throw new RuntimeException('Renewal subscription is not set');
         }
 
+        if (null === $plan = $subscription->getPlan()) {
+            throw new RuntimeException('Subscription plan is not set');
+        }
+
         // Select the initial start date.
         $start = new DateTime();
         if (null !== $date = $renewal->getStartsAt()) {
@@ -46,17 +50,7 @@ class RenewalCalculator
             }
         }
 
-        // If another renewal of this subscription is active 1 month later
-        $at = (clone $start)->modify('+1 month');
-        if (null !== $extend = SubscriptionUtils::findActiveRenewalAt($subscription, $at, $renewal)) {
-            // Use its date range
-            return $extend->getRange();
-        }
-
-        if (null === $plan = $subscription->getPlan()) {
-            throw new RuntimeException('Subscription plan is not set');
-        }
-
+        // Resolve duration
         $duration = $plan->getInitialDuration();
         if (null !== $latest = SubscriptionUtils::findLatestRenewal($subscription, $renewal)) {
             $start = (clone $latest->getEndsAt());
@@ -73,11 +67,6 @@ class RenewalCalculator
             }
 
             return new DateRange($start, $end);
-        }
-
-        // Use plan duration
-        if (($item = $renewal->getOrderItem()) && $item->hasParent()) {
-            $duration *= $item->getQuantity()->toInt();
         }
 
         $end = (clone $start);

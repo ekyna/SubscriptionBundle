@@ -59,9 +59,10 @@ class SubscriptionUtilsTest extends TestCase
     public function testFindActiveRenewalAt(
         SubscriptionInterface $subscription,
         ?RenewalInterface     $expected,
-        ?DateTimeInterface    $date
+        ?DateTimeInterface    $date,
+        ?RenewalInterface     $ignored
     ): void {
-        $result = SubscriptionUtils::findActiveRenewalAt($subscription, $date);
+        $result = SubscriptionUtils::findActiveRenewalAt($subscription, $date, $ignored);
 
         self::assertSame($expected, $result);
     }
@@ -70,30 +71,21 @@ class SubscriptionUtilsTest extends TestCase
     {
         $subscription = new Subscription();
 
-        yield [$subscription, null, null];
+        yield [$subscription, null, null, null];
 
         $subscription = new Subscription();
         $subscription
             ->addRenewal(
-                (new Renewal())
-                    ->setStartsAt(new DateTime('2020-01-01'))
-                    ->setEndsAt(new DateTime('2020-12-31'))
-                    ->setPaid(true)
+                $this->createRenewal('2020-01-01', '2020-12-31')->setPaid(true)
             )
             ->addRenewal(
-                $expected = (new Renewal())
-                    ->setStartsAt(new DateTime('2021-01-01'))
-                    ->setEndsAt(new DateTime('2021-12-31'))
-                    ->setPaid(true)
+                $expected = $this->createRenewal('2021-01-01', '2021-12-31')->setPaid(true)
             )
             ->addRenewal(
-                (new Renewal())
-                    ->setStartsAt(new DateTime('2022-01-01'))
-                    ->setEndsAt(new DateTime('2022-12-31'))
-                    ->setPaid(true)
+                $this->createRenewal('2000-03-03', '2000-12-31')->setPaid(true)
             );
 
-        yield [$subscription, $expected, new DateTime('2021-06-15')];
+        yield [$subscription, $expected, new DateTime('2021-06-15'), null];
 
         $expected = null;
         $subscription = new Subscription();
@@ -112,7 +104,30 @@ class SubscriptionUtilsTest extends TestCase
             }
         }
 
-        yield [$subscription, $expected, null];
+        yield [$subscription, $expected, null, null];
+
+        $subscription = new Subscription();
+        $subscription
+            ->addRenewal(
+                (new Renewal())
+                    ->setStartsAt(new DateTime('2020-01-01'))
+                    ->setEndsAt(new DateTime('2020-12-31'))
+                    ->setPaid(true)
+            )
+            ->addRenewal(
+                $ignore = (new Renewal())
+                    ->setStartsAt(new DateTime('2021-01-01'))
+                    ->setEndsAt(new DateTime('2021-12-31'))
+                    ->setPaid(true)
+            )
+            ->addRenewal(
+                (new Renewal())
+                    ->setStartsAt(new DateTime('2022-01-01'))
+                    ->setEndsAt(new DateTime('2022-12-31'))
+                    ->setPaid(true)
+            );
+
+        yield [$subscription, null, new DateTime('2021-06-15'), $ignore];
     }
 
     private function createRenewal(string $start, string $end): Renewal

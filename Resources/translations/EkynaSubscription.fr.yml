@@ -33,6 +33,7 @@ subscription:
         cancel: Annuler la souscription <small>%name%</small>
     button:
         renew: Renouveler
+        extend: Étendre
     state:
         new: Nouveau
         pending: En attente
@@ -77,8 +78,14 @@ reminder:
         content: >
             <p>
                 <strong>{expiresAt}</strong> : Date d'expiration<br>
-                <strong>{canceledAt}</strong> : Date d'annulation
+                <strong>{cancelsAt}</strong> : Date d'annulation
             </p>
+
+notification:
+    label:
+        plural: Notifications
+    message:
+        none: Aucune notification enregistré.
 
 mail:
     remind:

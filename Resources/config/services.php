@@ -27,10 +27,11 @@ use Ekyna\Bundle\SubscriptionBundle\MessageHandler\NotifyHandler;
 use Ekyna\Bundle\SubscriptionBundle\MessageHandler\OrderItemAddHandler;
 use Ekyna\Bundle\SubscriptionBundle\MessageHandler\OrderItemQuantityChangeHandler;
 use Ekyna\Bundle\SubscriptionBundle\MessageHandler\OrderStateChangeHandler;
+use Ekyna\Bundle\SubscriptionBundle\Repository\NotificationRepository;
 use Ekyna\Bundle\SubscriptionBundle\Service\ConstantsHelper;
 use Ekyna\Bundle\SubscriptionBundle\Service\Mailer;
+use Ekyna\Bundle\SubscriptionBundle\Service\NotificationHelper;
 use Ekyna\Bundle\SubscriptionBundle\Service\Notifier;
-use Ekyna\Bundle\SubscriptionBundle\Service\ReminderHelper;
 use Ekyna\Bundle\SubscriptionBundle\Service\RenewalCalculator;
 use Ekyna\Bundle\SubscriptionBundle\Service\RenewalHelper;
 use Ekyna\Bundle\SubscriptionBundle\Service\RenewalUpdater;
@@ -157,6 +158,7 @@ return static function (ContainerConfigurator $container) {
             service('ekyna_user.security.login_link_helper'),
             service('twig'),
             service('ekyna_admin.helper.mailer'),
+            service('ekyna_commerce.helper.mailer'),
             service('ekyna_commerce.factory.formatter'),
             service('mailer'),
         ]);
@@ -166,6 +168,7 @@ return static function (ContainerConfigurator $container) {
         ->set('ekyna_subscription.notifier', Notifier::class)
         ->args([
             service('ekyna_subscription.helper.renewal'),
+            service('ekyna_commerce.generator.document'),
             service('ekyna_resource.factory.factory'),
             service('ekyna_resource.manager.factory'),
             service('ekyna_subscription.mailer'),
@@ -241,6 +244,14 @@ return static function (ContainerConfigurator $container) {
             service('ekyna_subscription.manager.subscription'),
         ])
         ->tag('console.command');
+
+    // Notification repository
+    $services
+        ->set('ekyna_subscription.repository.notification', NotificationRepository::class)
+        ->args([
+            service('doctrine'),
+        ])
+        ->tag('doctrine.repository_service');
 
     // Subscription (resource) event listener
     $services
@@ -363,6 +374,14 @@ return static function (ContainerConfigurator $container) {
         ->set('ekyna_subscription.renderer.subscription', SubscriptionRenderer::class)
         ->args([
             service('ekyna_resource.helper'),
+        ])
+        ->tag('twig.runtime');
+
+    // Notification helper
+    $services
+        ->set('ekyna_subscription.helper.notification', NotificationHelper::class)
+        ->args([
+            service('ekyna_subscription.repository.notification'),
         ])
         ->tag('twig.runtime');
 

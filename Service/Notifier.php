@@ -5,12 +5,18 @@ declare(strict_types=1);
 namespace Ekyna\Bundle\SubscriptionBundle\Service;
 
 use DateTime;
+use Ekyna\Bundle\CommerceBundle\Service\Document\DocumentGenerator;
 use Ekyna\Bundle\SubscriptionBundle\Entity\Notification;
 use Ekyna\Bundle\SubscriptionBundle\Entity\Reminder;
 use Ekyna\Bundle\SubscriptionBundle\Model\ReminderInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
+use Ekyna\Component\Commerce\Document\Model\DocumentTypes;
+use Ekyna\Component\Commerce\Document\Util\DocumentUtil;
+use Ekyna\Component\Commerce\Exception\InvalidArgumentException;
+use Ekyna\Component\Commerce\Order\Model\OrderInterface;
+use Ekyna\Component\Resource\Exception\PdfException;
 use Ekyna\Component\Resource\Factory\FactoryFactoryInterface;
 use Ekyna\Component\Resource\Manager\ManagerFactoryInterface;
 use Ekyna\Component\Resource\Model\ResourceInterface;
@@ -26,6 +32,7 @@ class Notifier
 {
     public function __construct(
         private readonly RenewalHelper           $renewalHelper,
+        private readonly DocumentGenerator       $documentGenerator,
         private readonly FactoryFactoryInterface $factoryFactory,
         private readonly ManagerFactoryInterface $managerFactory,
         private readonly Mailer                  $mailer,
@@ -34,6 +41,10 @@ class Notifier
 
     public function remind(SubscriptionInterface $subscription, Reminder $reminder): void
     {
+        if (!$subscription->isAutoNotify()) {
+            return;
+        }
+
         // Don't notify canceled subscription
         if (SubscriptionStates::STATE_CANCELLED === $subscription->getState()) {
             return;
@@ -79,12 +90,24 @@ class Notifier
             return;
         }
 
+        $subscription = $renewal->getSubscription();
+
+        if (!$subscription->isAutoNotify()) {
+            return;
+        }
+
+        // Don't notify canceled subscription
+        if (SubscriptionStates::STATE_CANCELLED === $subscription->getState()) {
+            return;
+        }
+
         if (!$reminder->isEnabled()) {
             return;
         }
 
         // Log notification
-        if (null === $notification = ReminderHelper::findNotification($renewal, $reminder)) {
+        $notification = NotificationHelper::findRenewalNotificationByReminder($renewal, $reminder);
+        if (null === $notification) {
             $notification = new Notification();
             $notification->setReminder($reminder);
             $renewal->addNotification($notification);
@@ -103,7 +126,30 @@ class Notifier
             return;
         }
 
+        // Generate quote attachment
+        $this->generateQuote($renewal->getOrder());
+
         $this->mailer->sendNotification($notification);
+    }
+
+    private function generateQuote(OrderInterface $order): void
+    {
+        if (DocumentUtil::findWithType($order, DocumentTypes::TYPE_QUOTE)) {
+            return;
+        }
+
+        try {
+            $attachment = $this
+                ->documentGenerator
+                ->generate($order, DocumentTypes::TYPE_QUOTE);
+        } catch (InvalidArgumentException|PdfException) {
+            return;
+        }
+
+        $this
+            ->managerFactory
+            ->getManager(get_class($attachment))
+            ->save($attachment);
     }
 
     private function createRenewal(SubscriptionInterface $subscription): RenewalInterface

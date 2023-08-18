@@ -16,6 +16,11 @@
             Graph
         </a>
     </li>
+    <li>
+        <a href="#{{ resource_name }}-notifications" id="toggle-notifications" data-toggle="tab">
+            {{ 'notification.label.plural'|trans({}, 'EkynaSubscription') }}
+        </a>
+    </li>
 {% endblock main_tabs -%}
 
 {% block main_contents -%}
@@ -44,6 +49,39 @@
     </div>
     <div class="tab-pane" id="{{ resource_name }}-graph">
         {{ subscription_graph([subscription]) }}
+    </div>
+    <div class="tab-pane" id="{{ resource_name }}-notifications">
+        <table class="table table-striped table-condensed">
+            <thead>
+            <tr>
+                <th>{{ 'field.title'|trans({}, 'EkynaUi') }}</th>
+                <th>{{ 'reminder.field.days'|trans({}, 'EkynaSubscription') }}</th>
+                <th>{{ 'field.notified_at'|trans({}, 'EkynaUi') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for notification in find_subscription_notifications(subscription) -%}
+                <tr>
+                    <td>
+                        {{- notification.reminder.title -}}
+                    </td>
+                    <td>
+                        {{- notification.reminder.days -}}
+                    </td>
+                    <td>
+                        <span class="fa fa-check text-success"></span>
+                        {{- notification.notifiedAt|format_date -}}
+                    </td>
+                </tr>
+            {%- else -%}
+                <tr>
+                    <td colspan="3" style="text-align:center">
+                        <em>{{ 'notification.message.none'|trans({}, 'EkynaSubscription') }}</em>
+                    </td>
+                </tr>
+            {%- endfor %}
+            </tbody>
+        </table>
     </div>
 {%- endblock main_contents %}
 

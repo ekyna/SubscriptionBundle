@@ -1,0 +1,96 @@
+label: Subscriptions
+
+plan:
+    label:
+        singular: Plan
+        plural: Plans
+    header:
+        list: Plans <small>plans list</small>
+        show: Plan detail <small>%name%</small>
+        new: Create a new plan
+        edit: Edit plan <small>%name%</small>
+        remove: Remove plan <small>%name%</small>
+    field:
+        initial_duration: Initial duration
+        renewal_duration: Renewal duration
+        renewal_date: Renewal date
+        forward_plan: Forward plan
+    message:
+        product_deletion_prevented:
+            This product is linked to the <a href="{url}">{designation}</a> subscription and therefore cannot be deleted.
+            Modify this subscription before you can delete this product.
+
+subscription:
+    label:
+        singular: Subscription
+        plural: Subscriptions
+    header:
+        list: Subscriptions <small>Subscriptions list</small>
+        show: Subscription detail <small>%name%</small>
+        new: Create a new Subscription
+        edit: Edit subscription <small>%name%</small>
+        remove: Remove subscription <small>%name%</small>
+        cancel: Cancel subscription <small>%name%</small>
+    button:
+        renew: Renew
+        extend: Extend
+    state:
+        new: New
+        pending: Pending
+        renewed: Renewd
+        expired: Expired
+        cancelled: Canceled
+    message:
+        cancel_confirm: Are you sure you want to cancel this subscription?
+
+renewal:
+    label:
+        singular: Renewal
+        plural: Renewals
+    header:
+        list: Renewals <small>Renewals list</small>
+        show: Renewal detail <small>%name%</small>
+        new: Create a new renewal
+        edit: Edit renewal <small>%name%</small>
+        remove: Remove renewal <small>%name%</small>
+    field:
+        paid: Paid
+        needs_review: Needs review
+    message:
+        order_creation: A renewal order will be automatically created, and you will be redirected to it.
+        pending_subscription: A renewal is already awaiting payment.
+        forwarding: A new subscription will be created with the « {plan} » subscription.
+        remind_confirm: Are you sure you want to remind the customer to renew his subscription?
+
+reminder:
+    label:
+        singular: Reminder
+        plural: Reminders
+    header:
+        list: Reminders <small>Reminders list</small>
+        show: Reminder detail <small>%name%</small>
+        new: Create a new reminder
+        edit: Edit reminder <small>%name%</small>
+        remove: Remove reminder <small>%name%</small>
+    field:
+        days: Days to expiration
+    help:
+        content: >
+            <p>
+                <strong>{expiresAt}</strong> : Expiration date<br>
+                <strong>{cancelsAt}</strong> : Cancellation date
+            </p>
+
+notification:
+    label:
+        plural: Notifications
+    message:
+        none: No notification registered.
+
+mail:
+    remind:
+        login_link: Find your renewal order in your customer account.
+        contact_us: Contact us to renew your subscription.
+
+order:
+    title: Licence renewal
