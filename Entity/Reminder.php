@@ -19,6 +19,8 @@ class Reminder extends AbstractTranslatable implements ReminderInterface
 {
     protected ?PlanInterface $plan    = null;
     protected ?int           $days    = null;
+    protected ?string        $from    = null;
+    protected ?string        $replyTo = null;
     protected bool           $enabled = false;
 
     public function __toString(): string
@@ -66,6 +68,42 @@ class Reminder extends AbstractTranslatable implements ReminderInterface
     public function setDays(int $days): ReminderInterface
     {
         $this->days = $days;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFrom(): ?string
+    {
+        return $this->from;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setFrom(?string $from): ReminderInterface
+    {
+        $this->from = $from;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getReplyTo(): ?string
+    {
+        return $this->replyTo;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setReplyTo(?string $replyTo): ReminderInterface
+    {
+        $this->replyTo = $replyTo;
 
         return $this;
     }

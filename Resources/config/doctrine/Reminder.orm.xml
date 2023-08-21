@@ -14,6 +14,8 @@
         </id>
 
         <field name="days" column="days" type="smallint" nullable="false"/>
+        <field name="from" column="from_email" type="string" length="255" nullable="true"/>
+        <field name="replyTo" column="reply_to_email" type="string" length="255" nullable="true"/>
         <field name="enabled" column="enabled" type="boolean" nullable="false">
             <options>
                 <option name="default">0</option>

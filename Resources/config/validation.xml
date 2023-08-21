@@ -61,6 +61,18 @@
         <property name="plan">
             <constraint name="NotNull"/>
         </property>
+        <property name="from">
+            <constraint name="Email"/>
+            <constraint name="Length">
+                <option name="max">255</option>
+            </constraint>
+        </property>
+        <property name="replyTo">
+            <constraint name="Email"/>
+            <constraint name="Length">
+                <option name="max">255</option>
+            </constraint>
+        </property>
         <property name="days">
             <constraint name="NotBlank"/>
             <constraint name="GreaterThanOrEqual">0</constraint>

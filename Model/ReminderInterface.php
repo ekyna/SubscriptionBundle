@@ -43,6 +43,33 @@ interface ReminderInterface extends TranslatableInterface
      */
     public function setDays(int $days): ReminderInterface;
 
+    /**
+     * Returns the notification sender.
+     *
+     * @return string|null
+     */
+    public function getFrom(): ?string;
+
+    /**
+     * Sets the notification sender.
+     *
+     * @param string|null $from
+     */
+    public function setFrom(?string $from): ReminderInterface;
+
+    /**
+     * Returns the notification reply to.
+     *
+     * @return string|null
+     */
+    public function getReplyTo(): ?string;
+
+    /**
+     * Sets the notification reply to.
+     *
+     * @param string|null $replyTo
+     */
+    public function setReplyTo(?string $replyTo): ReminderInterface;
 
     /**
      * @return bool

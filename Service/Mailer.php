@@ -12,6 +12,7 @@ use Ekyna\Component\Commerce\Common\Util\FormatterFactory;
 use Ekyna\Component\Commerce\Document\Model\DocumentTypes;
 use Ekyna\Component\Commerce\Document\Util\DocumentUtil;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
@@ -75,11 +76,20 @@ class Mailer
 
         $body = strtr($body, $replacements);
 
+        $from = $this->adminMailerHelper->getNotificationSender();
+        if (null !== $address = $reminder->getFrom()) {
+            $from = new Address($address, $from->getName());
+        }
+
         $email = new Email();
         $email->subject($reminder->translate($locale)->getTitle());
         $email->html($body);
-        $email->from($this->adminMailerHelper->getNotificationSender());
+        $email->from($from);
         $email->to($order->getEmail());
+
+        if (null !== $address = $reminder->getReplyTo()) {
+            $email->replyTo($address);
+        }
 
         if (null !== $attachment = DocumentUtil::findWithType($order, DocumentTypes::TYPE_QUOTE)) {
             $this->commerceMailerHelper->attach($email, $attachment);

@@ -11,5 +11,11 @@
         {{ show_row(reminder.days, 'number', {
             'label': t('reminder.field.days', {}, 'EkynaSubscription')
         }) }}
+        {{ show_row(reminder.from, 'text', {
+            'label': t('email.from', {}, 'EkynaUi')
+        }) }}
+        {{ show_row(reminder.replyTo, 'text', {
+            'label': t('email.reply_to', {}, 'EkynaUi')
+        }) }}
     </div>
 {%- endblock main_contents %}

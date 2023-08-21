@@ -7,6 +7,7 @@ namespace Ekyna\Bundle\SubscriptionBundle\Form\Type;
 use A2lix\TranslationFormBundle\Form\Type\TranslationsFormsType;
 use Ekyna\Bundle\ResourceBundle\Form\Type\AbstractResourceType;
 use Ekyna\Bundle\UiBundle\Form\Type\FormStaticControlType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -27,6 +28,14 @@ class ReminderType extends AbstractResourceType
             ])
             ->add('days', IntegerType::class, [
                 'label' => t('reminder.field.days', [], 'EkynaSubscription'),
+            ])
+            ->add('from', EmailType::class, [
+                'label'    => t('email.from', [], 'EkynaUi'),
+                'required' => false,
+            ])
+            ->add('replyTo', EmailType::class, [
+                'label'    => t('email.reply_to', [], 'EkynaUi'),
+                'required' => false,
             ])
             ->add('translations', TranslationsFormsType::class, [
                 'form_type'      => ReminderTranslationType::class,
