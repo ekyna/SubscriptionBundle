@@ -1,0 +1,3 @@
+admin_ekyna_subscription_notification:
+    resource: 'admin/notification.yaml'
+    prefix: /notification

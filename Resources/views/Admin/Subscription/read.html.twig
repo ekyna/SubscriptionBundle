@@ -25,7 +25,20 @@
 
 {% block main_contents -%}
     <div class="tab-pane active" id="{{ resource_name }}-general">
-        {{ show_row(subscription.plan, 'resource') }}
+        <div class="row">
+            <div class="col-md-6">
+                {{ show_row(subscription.plan, 'resource', {
+                    'label_col': 4
+                }) }}
+            </div>
+            <div class="col-md-6">
+                {{- show_row(subscription.expiresAt, 'datetime', {
+                    'label': 'field.expires_at'|trans({}, 'EkynaUi'),
+                    'time': false,
+                    'label_col': 4
+                }) -}}
+            </div>
+        </div>
         {{ show_row(subscription.customer, 'resource') }}
         <div class="row">
             <div class="col-md-6">
@@ -36,8 +49,7 @@
             </div>
             <div class="col-md-6">
                 {{- show_row(subscription.autoNotify, 'boolean', {
-                    'label': 'sale.field.auto_notify',
-                    'label_trans_domain': 'EkynaCommerce',
+                    'label': t('sale.field.auto_notify', {}, 'EkynaCommerce'),
                     'label_col': 4,
                     'toggle_path': admin_resource_path(subscription, 'admin_toggle', {property: 'autoNotify'})
                 }) -}}

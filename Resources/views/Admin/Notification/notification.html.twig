@@ -1,0 +1,54 @@
+{% extends '@EkynaAdmin/Entity/layout.html.twig' %}
+
+{% block page_title %}
+    {{ 'notification.label.plural'|trans({}, 'EkynaSubscription') }}
+{% endblock page_title %}
+
+{% block title %}
+    <h1>{{ 'notification.label.plural'|trans({}, 'EkynaSubscription') }}</h1>
+{% endblock title %}
+
+{% block actions %}{% endblock actions %}
+
+{% block main %}
+    <table class="table table-striped table-condensed">
+        <thead>
+        <tr>
+            <th>{{ 'subscription.label.singular'|trans({}, 'EkynaSubscription') }}</th>
+            <th>{{ 'field.title'|trans({}, 'EkynaUi') }}</th>
+            <th>{{ 'reminder.field.days'|trans({}, 'EkynaSubscription') }}</th>
+            <th>{{ 'field.notified_at'|trans({}, 'EkynaUi') }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for notification in notifications -%}
+            <tr>
+                <td>
+                    <a href="{{ admin_resource_path(notification.renewal.subscription, 'admin_read') }}">
+                        {{- notification.renewal.subscription -}}
+                    </a>
+                </td>
+                <td>
+                    {{- notification.reminder.title -}}
+                </td>
+                <td>
+                    {{- notification.reminder.days -}}
+                </td>
+                <td>
+                    <span class="fa fa-check text-success"></span>
+                    {{- notification.notifiedAt|format_date -}}
+                </td>
+            </tr>
+        {%- else -%}
+            <tr>
+                <td colspan="3" style="text-align:center">
+                    <em>{{ 'notification.message.none'|trans({}, 'EkynaSubscription') }}</em>
+                </td>
+            </tr>
+        {%- endfor %}
+        </tbody>
+    </table>
+    <div style="text-align: center">
+        {{ pagerfanta(notifications, 'twitter_bootstrap3') }}
+    </div>
+{% endblock main %}

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ekyna\Bundle\SubscriptionBundle\Repository;
 
 use DateTime;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query\Expr\Join;
 use Ekyna\Bundle\SubscriptionBundle\Model\PlanInterface;
@@ -86,12 +87,12 @@ class SubscriptionRepository extends ResourceRepository implements SubscriptionR
     /**
      * @inheritDoc
      */
-    public function findToRemind(ReminderInterface $reminder): array
+    public function findToRemind(ReminderInterface $reminder, DateTimeInterface $date = null): array
     {
         $qb = $this->createQueryBuilder('s');
         $ex = $qb->expr();
 
-        $date = (new DateTime())->modify(
+        $date = ($date ?? new DateTime())->modify(
             sprintf('+%d days', $reminder->getDays())
         )->format('Y-m-d');
 

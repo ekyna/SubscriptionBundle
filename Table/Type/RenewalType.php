@@ -34,7 +34,8 @@ class RenewalType extends AbstractResourceType
             ->addDefaultSort('endsAt', ColumnSort::DESC)
             ->addDefaultSort('id', ColumnSort::DESC)
             ->addColumn('order', BType\Column\AnchorType::class, [
-                'label' => t('renewal.label.singular', [], 'EkynaSubscription'),
+                'label'   => t('renewal.label.singular', [], 'EkynaSubscription'),
+                'summary' => 'order',
             ])
             ->addColumn('startsAt', DateTimeType::class, [
                 'label'       => t('field.start_date', [], 'EkynaUi'),

@@ -37,7 +37,7 @@ subscription:
     state:
         new: Nouveau
         pending: En attente
-        renewed: Renouvellée
+        renewed: Renouvelée
         expired: Expirée
         cancelled: Annulée
     message:

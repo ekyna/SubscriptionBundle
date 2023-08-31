@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\SubscriptionBundle\Repository;
 
+use DateTimeInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\PlanInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\ReminderInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
@@ -49,9 +50,10 @@ interface SubscriptionRepositoryInterface extends ResourceRepositoryInterface
      * - Not having paid renewal posterior to current renewal.
      * - Having pending renewal not notified for the given reminder.
      *
-     * @param ReminderInterface $reminder
+     * @param ReminderInterface      $reminder
+     * @param DateTimeInterface|null $date The reference date (default today)
      *
      * @return array<int, SubscriptionInterface>
      */
-    public function findToRemind(ReminderInterface $reminder): array;
+    public function findToRemind(ReminderInterface $reminder, DateTimeInterface $date = null): array;
 }

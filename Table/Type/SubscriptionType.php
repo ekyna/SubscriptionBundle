@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\SubscriptionBundle\Table\Type;
 
-use Ekyna\Bundle\AdminBundle\Table\Type\Column\ConstantChoiceType as ConstantColumn;
-use Ekyna\Bundle\AdminBundle\Table\Type\Column\ResourceType as ResourceColumn;
-use Ekyna\Bundle\AdminBundle\Table\Type\Filter\ConstantChoiceType as ConstantFilter;
+use Ekyna\Bundle\AdminBundle\Table\Type as AType;
 use Ekyna\Bundle\CommerceBundle\Table\Filter\CustomerType;
 use Ekyna\Bundle\ResourceBundle\Table\Filter\ResourceType as ResourceFilter;
 use Ekyna\Bundle\ResourceBundle\Table\Type\AbstractResourceType;
@@ -14,8 +12,7 @@ use Ekyna\Bundle\SubscriptionBundle\Model\PlanInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
 use Ekyna\Bundle\TableBundle\Extension\Type as BType;
 use Ekyna\Component\Commerce\Customer\Model\CustomerInterface;
-use Ekyna\Component\Table\Extension\Core\Type\Column\DateTimeType as DateColumn;
-use Ekyna\Component\Table\Extension\Core\Type\Filter\DateTimeType as DateFilter;
+use Ekyna\Component\Table\Extension\Core\Type as CType;
 use Ekyna\Component\Table\TableBuilderInterface;
 
 use function Symfony\Component\Translation\t;
@@ -34,16 +31,20 @@ class SubscriptionType extends AbstractResourceType
                 'label'         => t('field.name', [], 'EkynaUi'),
                 'property_path' => false,
             ])
-            ->addColumn('state', ConstantColumn::class, [
+            ->addColumn('state', AType\Column\ConstantChoiceType::class, [
                 'label' => t('field.status', [], 'EkynaUi'),
                 'class' => SubscriptionStates::class,
                 'theme' => true,
             ])
-            ->addColumn('customer', ResourceColumn::class, [
+            ->addColumn('customer', AType\Column\ResourceType::class, [
                 'resource' => CustomerInterface::class,
             ])
-            ->addColumn('expiresAt', DateColumn::class, [
-                'label' => t('field.expires_at', [], 'EkynaUi'),
+            ->addColumn('autoNotify', CType\Column\BooleanType::class, [
+                'label' => t('sale.field.auto_notify', [], 'EkynaCommerce'),
+            ])
+            ->addColumn('expiresAt', CType\Column\DateTimeType::class, [
+                'label'       => t('field.expires_at', [], 'EkynaUi'),
+                'time_format' => 'none',
             ])
             ->addColumn('actions', BType\Column\ActionsType::class, [
                 'resource' => $this->dataClass,
@@ -52,11 +53,14 @@ class SubscriptionType extends AbstractResourceType
             ->addFilter('plan', ResourceFilter::class, [
                 'resource' => PlanInterface::class,
             ])
-            ->addFilter('state', ConstantFilter::class, [
+            ->addFilter('state', AType\Filter\ConstantChoiceType::class, [
                 'label' => t('field.status', [], 'EkynaUi'),
                 'class' => SubscriptionStates::class,
             ])
-            ->addFilter('expiresAt', DateFilter::class, [
+            ->addFilter('autoNotify', CType\Filter\BooleanType::class, [
+                'label' => t('sale.field.auto_notify', [], 'EkynaCommerce'),
+            ])
+            ->addFilter('expiresAt', CType\Filter\DateTimeType::class, [
                 'label' => t('field.expires_at', [], 'EkynaUi'),
             ]);
     }

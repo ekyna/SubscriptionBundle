@@ -7,11 +7,11 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Ekyna\Bundle\CommerceBundle\Event\AdminReadEvents;
 use Ekyna\Bundle\CommerceBundle\Event\SaleItemFormEvent;
 use Ekyna\Bundle\ProductBundle\Event\ProductEvents;
-use Ekyna\Bundle\SubscriptionBundle\Action\Renewal;
-use Ekyna\Bundle\SubscriptionBundle\Action\Subscription\CreateAction as SubscriptionCreateAction;
+use Ekyna\Bundle\SubscriptionBundle\Action;
 use Ekyna\Bundle\SubscriptionBundle\Command\GenerateSubscriptionCommand;
 use Ekyna\Bundle\SubscriptionBundle\Command\RemindSubscriptionsCommand;
 use Ekyna\Bundle\SubscriptionBundle\Command\WatchSubscriptionCommand;
+use Ekyna\Bundle\SubscriptionBundle\Controller;
 use Ekyna\Bundle\SubscriptionBundle\Event\RenewalEvents;
 use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\CustomerReadListener;
@@ -51,7 +51,7 @@ return static function (ContainerConfigurator $container) {
 
     // Renewal create action
     $services
-        ->set('ekyna_subscription.action.renewal.create', Renewal\CreateAction::class)
+        ->set('ekyna_subscription.action.renewal.create', Action\Renewal\CreateAction::class)
         ->args([
             service('ekyna_subscription.helper.renewal'),
         ])
@@ -59,7 +59,7 @@ return static function (ContainerConfigurator $container) {
 
     // Renewal notify action
     $services
-        ->set('ekyna_subscription.action.renewal.notify', Renewal\NotifyAction::class)
+        ->set('ekyna_subscription.action.renewal.notify', Action\Renewal\NotifyAction::class)
         ->args([
             service('ekyna_subscription.notifier'),
         ])
@@ -67,12 +67,22 @@ return static function (ContainerConfigurator $container) {
 
     // Subscription create action
     $services
-        ->set('ekyna_subscription.action.subscription.create', SubscriptionCreateAction::class)
+        ->set('ekyna_subscription.action.subscription.create', Action\Subscription\CreateAction::class)
         ->args([
             service('ekyna_subscription.helper.subscription'),
             service('ekyna_subscription.repository.subscription'),
         ])
         ->tag('ekyna_resource.action');
+
+    // Notification index controller
+    $services
+        ->set('ekyna_subscription.controller.notification.index', Controller\Admin\Notification\IndexController::class)
+        ->args([
+            service('ekyna_admin.menu.builder'),
+            service('ekyna_subscription.repository.notification'),
+            service('twig'),
+        ])
+        ->alias(Controller\Admin\Notification\IndexController::class, 'ekyna_subscription.controller.notification.index')->public();
 
     // Subscription state resolver
     $services->set('ekyna_subscription.resolver.subscription_state', SubscriptionStateResolver::class);

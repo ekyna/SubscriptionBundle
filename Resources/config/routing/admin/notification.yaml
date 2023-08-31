@@ -1,0 +1,4 @@
+admin_ekyna_subscription_notification_list:
+    path: ''
+    controller: Ekyna\Bundle\SubscriptionBundle\Controller\Admin\Notification\IndexController
+    methods: [ GET ]

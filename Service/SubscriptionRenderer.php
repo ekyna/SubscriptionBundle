@@ -8,6 +8,7 @@ use DateTime;
 use DateTimeInterface;
 use Ekyna\Bundle\AdminBundle\Action\ReadAction;
 use Ekyna\Bundle\AdminBundle\Action\SummaryAction;
+use Ekyna\Bundle\AdminBundle\Model\Ui;
 use Ekyna\Bundle\ResourceBundle\Helper\ResourceHelper;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Component\Resource\Exception\UnexpectedTypeException;
@@ -220,9 +221,11 @@ class SubscriptionRenderer
             $rect['y'] += $dateHeight;
 
             /** @noinspection HtmlUnknownTarget */
+            /** @noinspection HtmlUnknownAttribute */
             $code .= sprintf(
-                    '<a href="%s" data-side-detail="%s">',
+                    '<a href="%s" %s="%s">',
                     $rect['path'],
+                    Ui::SIDE_DETAIL_ATTR,
                     $rect['summary']
                 ) . PHP_EOL;
 

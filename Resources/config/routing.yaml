@@ -1,0 +1,3 @@
+admin_ekyna_subscription:
+    resource: 'routing/admin.yaml'
+    prefix:   '%ekyna_admin.routing_prefix%/subscription'

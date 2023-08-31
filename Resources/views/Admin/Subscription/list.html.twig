@@ -1,5 +1,9 @@
 {% extends '@EkynaAdmin/Entity/Crud/list.html.twig' %}
 
 {% block actions %}
+    {{ ui_button(t('notification.label.plural', {}, 'EkynaSubscription'), {
+        'type': 'link',
+        'path': path('admin_ekyna_subscription_notification_list'),
+    }) }}
     {{ admin_resource_btn(context.config.id, 'Ekyna\\Bundle\\SubscriptionBundle\\Action\\Subscription\\CreateAction') }}
 {% endblock %}
