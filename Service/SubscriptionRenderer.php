@@ -16,9 +16,11 @@ use OzdemirBurak\Iris\Color\Hsl;
 
 use function array_filter;
 use function array_replace_recursive;
+use function array_reverse;
 use function ceil;
 use function count;
 use function floor;
+use function implode;
 use function sprintf;
 use function usort;
 
@@ -143,19 +145,27 @@ class SubscriptionRenderer
             }
 
             $order = $renewal->getOrder();
+            $plan = $renewal->getSubscription()->getPlan();
+
+            $notifications = [];
+            foreach ($plan->getReminders() as $reminder) {
+                $notification = NotificationHelper::findRenewalNotificationByReminder($renewal, $reminder);
+                $notifications[$reminder->getDays()] = null !== $notification;
+            }
 
             $rectangles[] = [
-                'x'       => $x,
-                'y'       => $y,
-                'width'   => $width,
-                'height'  => $height,
-                'color'   => (string)new Hsl($color . ',80,80'),
-                'order'   => $order->getNumber(),
-                'plan'    => $renewal->getSubscription()->getPlan()->getDesignation(),
-                'path'    => $this->resourceHelper->generateResourcePath($order, ReadAction::class),
-                'summary' => $this->resourceHelper->generateResourcePath($order, SummaryAction::class),
-                'count'   => $count,
-                'paid'    => $renewal->isPaid(),
+                'x'             => $x,
+                'y'             => $y,
+                'width'         => $width,
+                'height'        => $height,
+                'color'         => (string)new Hsl($color . ',80,80'),
+                'order'         => $order->getNumber(),
+                'plan'          => $plan->getDesignation(),
+                'path'          => $this->resourceHelper->generateResourcePath($order, ReadAction::class),
+                'summary'       => $this->resourceHelper->generateResourcePath($order, SummaryAction::class),
+                'count'         => $count,
+                'paid'          => $renewal->isPaid(),
+                'notifications' => $notifications,
             ];
 
             $color += $colorStep;
@@ -192,6 +202,22 @@ class SubscriptionRenderer
                 $options['height'],
             ) . PHP_EOL;
 
+        $code .= <<<EOL
+<style>
+    a.renewal:hover { 
+        text-decoration: none;
+    }
+    a.renewal:hover > rect {
+        stroke: black;
+        stroke-width: 1px;
+    }
+    a.renewal:hover > text.order {
+        font-weight: bold;
+    }
+</style>
+EOL;
+
+
         for ($year = $startYear; $year <= $endYear; $year++) {
             $x = $calcX(new DateTime($year . '-01-01')) * $xScale;
 
@@ -201,7 +227,9 @@ class SubscriptionRenderer
 
             $code .= sprintf(
                     '<line x1="%d" y1="0" x2="%d" y2="%d" style="stroke:#000;stroke-width:1" />',
-                    $x, $x, $dateHeight - $padding
+                    $x,
+                    $x,
+                    $dateHeight - $padding
                 ) . PHP_EOL;
 
             $code .= sprintf(
@@ -223,16 +251,18 @@ class SubscriptionRenderer
             /** @noinspection HtmlUnknownTarget */
             /** @noinspection HtmlUnknownAttribute */
             $code .= sprintf(
-                    '<a href="%s" %s="%s">',
+                    '<a href="%s" class="renewal" %s="%s">',
                     $rect['path'],
                     Ui::SIDE_DETAIL_ATTR,
                     $rect['summary']
                 ) . PHP_EOL;
 
-            $style = $rect['paid'] ? 'fill:' . $rect['color'] : 'fill:transparent;stroke-width:3;stroke:' . $rect['color'];
+            $style = $rect['paid']
+                ? 'fill:' . $rect['color']
+                : 'fill:transparent;stroke-width:3;stroke:' . $rect['color'];
 
             $code .= sprintf(
-                    '<rect class="renewal" x="%d" y="%d" width="%d" height="%d" style="%s" />',
+                    '<rect x="%d" y="%d" width="%d" height="%d" style="%s" />',
                     $rect['x'] + $padding,
                     $rect['y'] + $padding,
                     $rect['width'] - 2 * $padding,
@@ -241,7 +271,7 @@ class SubscriptionRenderer
                 ) . PHP_EOL;
 
             $code .= sprintf(
-                    '<text x="%d" y="%d" style="fill:#000;font-size:%spx">%s (%s)</text>',
+                    '<text class="order" x="%d" y="%d" style="fill:#000;font-size:%spx">%s (%s)</text>',
                     $rect['x'] + $padding + $textOffset,
                     $rect['y'] + ceil($textSize * 1.2) + $padding,
                     $textSize,
@@ -253,8 +283,26 @@ class SubscriptionRenderer
                     '<text x="%d" y="%d" style="fill:#666;font-size:%spx">%s</text>',
                     $rect['x'] + $padding + $textOffset,
                     $rect['y'] + ceil($textSize * 1.2) + $textSize + $padding,
-                    ceil($textSize * .7),
+                    ceil($textSize * .8),
                     $rect['plan']
+                ) . PHP_EOL;
+
+            $notifications = [];
+            foreach ($rect['notifications'] as $days => $done) {
+                $notifications[] = sprintf(
+                    '<tspan style="%s">[%s %s]</tspan> ',
+                    $done ? 'fill:#129900;font-weight:bold' : 'fill:#F00',
+                    $days,
+                    $done ? '✓' : '✕'
+                );
+            }
+
+            $code .= sprintf(
+                    '<text x="%d" y="%d" style="font-size:%spx">%s</text>',
+                    $rect['x'] + $padding + $textOffset,
+                    $rect['y'] + ceil($textSize * 1.2) + 2 * $textSize + $padding,
+                    ceil($textSize * .7),
+                    implode('&nbsp;', $notifications)
                 ) . PHP_EOL;
 
             $code .= '</a>' . PHP_EOL;

@@ -43,8 +43,8 @@ class Renewal extends AbstractResource implements RenewalInterface
 
     public function __toString(): string
     {
-        if ($this->startsAt && $this->endsAt) {
-            return sprintf('%s - %s', $this->startsAt->format('Y-m-d'), $this->endsAt->format('Y-m-d'));
+        if ($this->count && $this->endsAt) {
+            return sprintf('[%d] ⇾ %s', $this->count, $this->endsAt->format('Y-m-d'));
         }
 
         return 'New renewal';

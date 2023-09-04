@@ -77,6 +77,8 @@ interface PlanInterface extends ResourceInterface
 
     /**
      * Returns the reminders.
+     *
+     * @return Collection<ReminderInterface>
      */
     public function getReminders(): Collection;
 

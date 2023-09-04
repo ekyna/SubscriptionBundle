@@ -53,6 +53,7 @@
                 <table class="table table-striped table-condensed table-hover table-alt-head">
                     <thead>
                     <tr>
+                        <th>{{ 'renewal.label.singular'|trans({}, 'EkynaSubscription') }}</th>
                         <th>{{ 'order.label.singular'|trans({}, 'EkynaCommerce') }}</th>
                         <th>{{ 'field.start_date'|trans({}, 'EkynaUi') }}</th>
                         <th>{{ 'field.end_date'|trans({}, 'EkynaUi') }}</th>
@@ -62,8 +63,13 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for renewal in subscription.renewals -%}{# TODO Sort by start date desc #}
+                    {% for renewal in subscription|subscription_renewals -%}
                         <tr>
+                            <td>
+                                <a href="{{ admin_resource_path(renewal) }}">
+                                    {{ renewal }}
+                                </a>
+                            </td>
                             <td>
                                 <a href="{{ admin_resource_path(renewal.order) }}"
                                    data-side-detail="{{ admin_resource_path(renewal.order, 'Ekyna\\Bundle\\AdminBundle\\Action\\SummaryAction') }}">

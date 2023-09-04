@@ -12,7 +12,6 @@ use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
 use Ekyna\Component\Commerce\Common\Util\DateUtil;
 
 use function array_filter;
-use function uasort;
 
 /**
  * Class SubscriptionUtils
@@ -151,13 +150,11 @@ final class SubscriptionUtils
 
         if ($descendant) {
             $callback = function (RenewalInterface $a, RenewalInterface $b) {
-                $ret = $b->getStartsAt()->getTimestamp() - $a->getStartsAt()->getTimestamp();
-                return $ret;
+                return $b->getStartsAt()->getTimestamp() - $a->getStartsAt()->getTimestamp();
             };
         } else {
             $callback = function (RenewalInterface $a, RenewalInterface $b) {
-                $ret = $a->getStartsAt()->getTimestamp() - $b->getStartsAt()->getTimestamp();
-                return $ret;
+                return $a->getStartsAt()->getTimestamp() - $b->getStartsAt()->getTimestamp();
             };
         }
 

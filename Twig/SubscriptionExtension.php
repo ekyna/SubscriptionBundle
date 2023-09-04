@@ -7,6 +7,7 @@ namespace Ekyna\Bundle\SubscriptionBundle\Twig;
 use Ekyna\Bundle\SubscriptionBundle\Service\ConstantsHelper;
 use Ekyna\Bundle\SubscriptionBundle\Service\NotificationHelper;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionRenderer;
+use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionUtils;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -40,6 +41,10 @@ class SubscriptionExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
+            new TwigFilter(
+                'subscription_renewals',
+                [SubscriptionUtils::class, 'getRenewals']
+            ),
             new TwigFilter(
                 'subscription_state_label',
                 [ConstantsHelper::class, 'renderSubscriptionStateLabel']
