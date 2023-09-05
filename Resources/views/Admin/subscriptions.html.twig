@@ -63,7 +63,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for renewal in subscription|subscription_renewals -%}
+                    {% for renewal in subscription|subscription_renewals(paid=false) -%}
                         <tr>
                             <td>
                                 <a href="{{ admin_resource_path(renewal) }}">

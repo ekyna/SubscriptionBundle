@@ -21,6 +21,11 @@ use function sprintf;
  */
 class RenewalCalculator
 {
+    public function __construct(
+        private readonly int $minDays = 61
+    ) {
+    }
+
     public function calculateDateRange(RenewalInterface $renewal): DateRange
     {
         if (null !== $sibling = SubscriptionUtils::findSibling($renewal)) {
@@ -62,9 +67,10 @@ class RenewalCalculator
         // Use plan anniversary
         if (null !== $date = $plan->getRenewalDate()) {
             $year = (int)date('Y');
-            while ($start > $end = $date->toDate($year)->modify('-1 day')) {
+            do {
+                $end = $date->toDate($year)->modify('-1 day');
                 $year++;
-            }
+            } while ($this->minDays > (int)$start->diff($end)->format('%r%a'));
 
             return new DateRange($start, $end);
         }

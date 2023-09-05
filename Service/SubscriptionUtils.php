@@ -126,13 +126,14 @@ final class SubscriptionUtils
     public static function getRenewals(
         SubscriptionInterface $subscription,
         RenewalInterface      $ignore = null,
-        bool                  $descendant = true
+        bool                  $descendant = true,
+        bool                  $paid = true,
     ): array {
         if ($subscription->getRenewals()->isEmpty()) {
             return [];
         }
 
-        $renewals = self::filterRenewals($subscription, $ignore);
+        $renewals = self::filterRenewals($subscription, $ignore, $paid);
 
         return self::sortRenewals($renewals, $descendant);
     }
@@ -168,8 +169,11 @@ final class SubscriptionUtils
      *
      * @return array<RenewalInterface>
      */
-    public static function filterRenewals(SubscriptionInterface $subscription, RenewalInterface $ignore = null): array
-    {
+    public static function filterRenewals(
+        SubscriptionInterface $subscription,
+        RenewalInterface      $ignore = null,
+        bool                  $paid = true
+    ): array {
         if ($subscription->getRenewals()->isEmpty()) {
             return [];
         }
@@ -177,7 +181,9 @@ final class SubscriptionUtils
         $renewals = $subscription->getRenewals()->toArray();
 
         // Paid filter
-        $renewals = array_filter($renewals, fn(RenewalInterface $r): bool => $r->isPaid());
+        if ($paid) {
+            $renewals = array_filter($renewals, fn(RenewalInterface $r): bool => $r->isPaid());
+        }
 
         // Ignore filter
         if (null !== $ignore) {
