@@ -58,7 +58,7 @@ renewal:
         needs_review: À reviser
     message:
         order_creation: Une commande de renouvellement sera automatiquement créée, et vous serez redirigé(e) vers celle-ci.
-        pending_subscription: Un renouvellement est déjà en attente de réglement.
+        pending_subscription: Un renouvellement est déjà en attente de règlement.
         forwarding: Une nouvelle souscription sera créé avec l'abonnement « {plan} ».
         remind_confirm: Êtes-vous sûr de vouloir relancer le client pour le renouvellement de son abonnement ?
 

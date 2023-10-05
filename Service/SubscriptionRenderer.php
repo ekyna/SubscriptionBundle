@@ -161,7 +161,7 @@ class SubscriptionRenderer
                 'color'         => (string)new Hsl($color . ',80,80'),
                 'order'         => $order->getNumber(),
                 'plan'          => $plan->getDesignation(),
-                'path'          => $this->resourceHelper->generateResourcePath($order, ReadAction::class),
+                'path'          => $this->resourceHelper->generateResourcePath($renewal, ReadAction::class),
                 'summary'       => $this->resourceHelper->generateResourcePath($order, SummaryAction::class),
                 'count'         => $count,
                 'paid'          => $renewal->isPaid(),
