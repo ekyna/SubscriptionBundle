@@ -8,6 +8,7 @@ use Ekyna\Bundle\AdminBundle\Service\Menu\MenuBuilder;
 use Ekyna\Bundle\SubscriptionBundle\Repository\NotificationRepository;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 
@@ -25,7 +26,7 @@ class IndexController
     ) {
     }
 
-    public function __invoke(): Response
+    public function __invoke(Request $request): Response
     {
         $this
             ->menuBuilder
@@ -41,7 +42,13 @@ class IndexController
             ->createQueryBuilder('n')
             ->orderBy('n.notifiedAt', 'DESC');
 
+        $page = $request->query->getInt('page', 1);
+
         $notifications = new Pagerfanta(new QueryAdapter($query));
+        $notifications
+            ->setNormalizeOutOfRangePages(true)
+            ->setMaxPerPage(15)
+            ->setCurrentPage($page);
 
         $content = $this
             ->twig
