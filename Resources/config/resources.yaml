@@ -89,3 +89,4 @@ resources:
                     templates: '@EkynaSubscription/Admin/Reminder'
                 admin_toggle:
                     properties: [ enabled ]
+                admin_tinymce: ~

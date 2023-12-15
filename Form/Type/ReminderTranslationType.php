@@ -32,7 +32,7 @@ class ReminderTranslationType extends AbstractType
                 'theme'     => 'simple',
                 'required'  => false,
                 'help'      => t('reminder.help.content', [], 'EkynaSubscription'),
-                'help_text' => true,
+                'help_html' => true,
             ]);
     }
 

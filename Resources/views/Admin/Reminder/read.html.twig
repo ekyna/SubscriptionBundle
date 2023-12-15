@@ -17,5 +17,20 @@
         {{ show_row(reminder.replyTo, 'text', {
             'label': t('email.reply_to', {}, 'EkynaUi')
         }) }}
+        {{ show_row(reminder.translations, 'translations', {
+            'id': 'product_translations',
+            'fields': {
+                'title': {'label': t('field.title', [], 'EkynaUi')},
+                'content': {
+                    'label': t('field.content', [], 'EkynaUi'),
+                    'type': 'tinymce',
+                    'property_path': null,
+                    'options': {
+                        'height': 150,
+                        'field' : 'content'
+                    }
+                }
+            }
+        }) }}
     </div>
 {%- endblock main_contents %}
