@@ -41,7 +41,9 @@ use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionHelper;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionRenderer;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionStateResolver;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionUpdater;
+use Ekyna\Bundle\SubscriptionBundle\Table\Column\SubscriptionExpiresAtType;
 use Ekyna\Bundle\SubscriptionBundle\Twig\SubscriptionExtension;
+use Ekyna\Bundle\TableBundle\DependencyInjection\Compiler\TablePass;
 use Ekyna\Component\Commerce\Common\Event\SaleItemEvents;
 use Ekyna\Component\Commerce\Order\Event\OrderEvents;
 use Ekyna\Component\Commerce\Order\Event\OrderItemEvents;
@@ -394,6 +396,14 @@ return static function (ContainerConfigurator $container) {
             service('ekyna_subscription.repository.notification'),
         ])
         ->tag('twig.runtime');
+
+    // Subscription expires at table column type
+    $services
+        ->set('ekyna_subscription.table_column_type.subscription_expires_at', SubscriptionExpiresAtType::class)
+        ->call('setFormatterFactory', [
+            service('ekyna_commerce.factory.formatter'),
+        ])
+        ->tag(TablePass::COLUMN_TYPE);
 
     // Twig subscription extension
     $services

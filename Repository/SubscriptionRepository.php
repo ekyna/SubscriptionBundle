@@ -50,13 +50,15 @@ class SubscriptionRepository extends ResourceRepository implements SubscriptionR
             ->leftJoin('i2.parent', 'i3')
             ->leftJoin('i3.parent', 'i4')
             ->leftJoin('i4.parent', 'i5')
-            ->andWhere($qb->expr()->orX(
-                $qb->expr()->eq('i1.order', ':order'),
-                $qb->expr()->eq('i2.order', ':order'),
-                $qb->expr()->eq('i3.order', ':order'),
-                $qb->expr()->eq('i4.order', ':order'),
-                $qb->expr()->eq('i5.order', ':order')
-            ))
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('i1.order', ':order'),
+                    $qb->expr()->eq('i2.order', ':order'),
+                    $qb->expr()->eq('i3.order', ':order'),
+                    $qb->expr()->eq('i4.order', ':order'),
+                    $qb->expr()->eq('i5.order', ':order')
+                )
+            )
             ->getQuery()
             ->useQueryCache(true)
             ->setParameter('order', $order)
@@ -107,10 +109,12 @@ class SubscriptionRepository extends ResourceRepository implements SubscriptionR
             ->andWhere($ex->eq('DATE(s.expiresAt)', ':date'))
             // Not having paid renewal posterior to current renewal.
             ->leftJoin('s.renewals', 'r', Join::WITH, 'r.startsAt >= s.expiresAt')
-            ->andWhere($ex->orX(
-                $ex->isNull('r'),
-                $ex->eq('r.paid', 0),
-            ))
+            ->andWhere(
+                $ex->orX(
+                    $ex->isNull('r'),
+                    $ex->eq('r.paid', 0),
+                )
+            )
             // Having pending renewal not notified for the given reminder.
             ->leftJoin('r.notifications', 'n', Join::WITH, 'n.reminder = :reminder')
             ->andWhere($ex->isNull('n'))

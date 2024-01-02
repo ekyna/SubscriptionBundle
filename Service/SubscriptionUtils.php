@@ -9,9 +9,12 @@ use DateTimeInterface;
 use Ekyna\Bundle\SubscriptionBundle\Exception\LogicException;
 use Ekyna\Bundle\SubscriptionBundle\Model\RenewalInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionInterface;
+use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
 use Ekyna\Component\Commerce\Common\Util\DateUtil;
 
 use function array_filter;
+use function reset;
+use function sprintf;
 
 /**
  * Class SubscriptionUtils
@@ -191,5 +194,19 @@ final class SubscriptionUtils
         }
 
         return $renewals;
+    }
+
+    public static function shouldBeReminded(SubscriptionInterface $subscription): bool
+    {
+        if (SubscriptionStates::STATE_CANCELLED === $subscription->getState()) {
+            return false;
+        }
+
+        $reminders = $subscription->getPlan()->getReminders()->toArray();
+
+        if (empty($reminders))
+            return false;
+
+        return $subscription->getExpiresAt() < new DateTime(sprintf('+%d days', (reset($reminders)->getDays())));
     }
 }

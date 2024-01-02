@@ -10,6 +10,8 @@ use Ekyna\Bundle\ResourceBundle\Table\Filter\ResourceType as ResourceFilter;
 use Ekyna\Bundle\ResourceBundle\Table\Type\AbstractResourceType;
 use Ekyna\Bundle\SubscriptionBundle\Model\PlanInterface;
 use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
+use Ekyna\Bundle\SubscriptionBundle\Table\Column\SubscriptionExpiresAtType;
+use Ekyna\Bundle\SubscriptionBundle\Table\Column\SubscriptionRemindersType;
 use Ekyna\Bundle\TableBundle\Extension\Type as BType;
 use Ekyna\Component\Commerce\Customer\Model\CustomerInterface;
 use Ekyna\Component\Table\Extension\Core\Type as CType;
@@ -42,10 +44,8 @@ class SubscriptionType extends AbstractResourceType
             ->addColumn('autoNotify', CType\Column\BooleanType::class, [
                 'label' => t('sale.field.auto_notify', [], 'EkynaCommerce'),
             ])
-            ->addColumn('expiresAt', CType\Column\DateTimeType::class, [
-                'label'       => t('field.expires_at', [], 'EkynaUi'),
-                'time_format' => 'none',
-            ])
+            ->addColumn('reminders', SubscriptionRemindersType::class)
+            ->addColumn('expiresAt', SubscriptionExpiresAtType::class)
             ->addColumn('actions', BType\Column\ActionsType::class, [
                 'resource' => $this->dataClass,
             ])
