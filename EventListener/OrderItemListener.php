@@ -49,6 +49,11 @@ class OrderItemListener
         }
 
         $this->messageQueue->addMessage(function () use ($item) {
+            // Prevent error after db rollback :/
+            if (null === $item->getId()) {
+                return null;
+            }
+
             $identity = $item->getSubjectIdentity();
 
             return new OrderItemAdd(
