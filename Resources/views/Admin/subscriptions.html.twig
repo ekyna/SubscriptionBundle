@@ -19,6 +19,9 @@
             </td>
             <td>
                 {% block subscription_actions -%}
+                <span class="label label-{{ subscription.autoNotify ? 'success' : 'danger' }}">
+                    {{ 'notification.label.plural'|trans([], 'EkynaSubscription') }}
+                </span>
                 {{ subscription|subscription_state_badge }}&nbsp;
                 {# TODO Add state test in SubscriptionExtension #}
                 {{ admin_resource_btn('ekyna_subscription.renewal', 'Ekyna\\Bundle\\SubscriptionBundle\\Action\\Renewal\\CreateAction', {
