@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\SubscriptionBundle\Service;
 
-use Ekyna\Bundle\AdminBundle\Service\Mailer\MailerHelper as AdminMailerHelper;
-use Ekyna\Bundle\CommerceBundle\Service\Mailer\MailerHelper as CommerceMailerHelper;
+use Ekyna\Bundle\AdminBundle\Service\Mailer\AddressHelper;
+use Ekyna\Bundle\CommerceBundle\Service\Mailer\AttachmentHelper;
 use Ekyna\Bundle\SubscriptionBundle\Entity\Notification;
 use Ekyna\Bundle\UserBundle\Service\Security\LoginLinkHelper;
 use Ekyna\Component\Commerce\Common\Util\FormatterFactory;
@@ -30,8 +30,8 @@ class Mailer
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly LoginLinkHelper       $loginLinkHelper,
         private readonly Environment           $twig,
-        private readonly AdminMailerHelper     $adminMailerHelper,
-        private readonly CommerceMailerHelper  $commerceMailerHelper,
+        private readonly AddressHelper         $addressHelper,
+        private readonly AttachmentHelper      $attachmentHelper,
         private readonly FormatterFactory      $formatterFactory,
         private readonly MailerInterface       $mailer,
     ) {
@@ -76,7 +76,7 @@ class Mailer
 
         $body = strtr($body, $replacements);
 
-        $from = $this->adminMailerHelper->getNotificationSender();
+        $from = $this->addressHelper->getNotificationSender();
         if (null !== $address = $reminder->getFrom()) {
             $from = new Address($address, $from->getName());
         }
@@ -92,7 +92,7 @@ class Mailer
         }
 
         if (null !== $attachment = DocumentUtil::findWithType($order, DocumentTypes::TYPE_QUOTE)) {
-            $this->commerceMailerHelper->attach($email, $attachment);
+            $this->attachmentHelper->attach($email, $attachment);
         }
 
         $this->mailer->send($email);

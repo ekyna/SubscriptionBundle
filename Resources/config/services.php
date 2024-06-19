@@ -169,8 +169,8 @@ return static function (ContainerConfigurator $container) {
             service('router'),
             service('ekyna_user.security.login_link_helper'),
             service('twig'),
-            service('ekyna_admin.helper.mailer'),
-            service('ekyna_commerce.helper.mailer'),
+            service('ekyna_admin.helper.mailer.address'),
+            service('ekyna_commerce.helper.mailer.attachment'),
             service('ekyna_commerce.factory.formatter'),
             service('mailer'),
         ]);
