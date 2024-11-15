@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ekyna\Bundle\SubscriptionBundle;
 
 use Ekyna\Bundle\SubscriptionBundle\DependencyInjection\Compiler\AdminMenuPass;
+use Ekyna\Bundle\SubscriptionBundle\DependencyInjection\Compiler\MigrationPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -18,5 +19,6 @@ class EkynaSubscriptionBundle extends Bundle
     public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new AdminMenuPass());
+        $container->addCompilerPass(new MigrationPass());
     }
 }

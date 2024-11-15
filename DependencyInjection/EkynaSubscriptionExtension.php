@@ -20,7 +20,7 @@ class EkynaSubscriptionExtension extends Extension implements PrependExtensionIn
 {
     use PrependBundleConfigTrait;
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         $this->prependBundleConfigFiles($container);
     }

@@ -30,6 +30,7 @@ use Ekyna\Bundle\SubscriptionBundle\MessageHandler\OrderStateChangeHandler;
 use Ekyna\Bundle\SubscriptionBundle\Repository\NotificationRepository;
 use Ekyna\Bundle\SubscriptionBundle\Service\ConstantsHelper;
 use Ekyna\Bundle\SubscriptionBundle\Service\Mailer;
+use Ekyna\Bundle\SubscriptionBundle\Service\Migration\DescriptionConverter;
 use Ekyna\Bundle\SubscriptionBundle\Service\NotificationHelper;
 use Ekyna\Bundle\SubscriptionBundle\Service\Notifier;
 use Ekyna\Bundle\SubscriptionBundle\Service\RenewalCalculator;
@@ -409,4 +410,12 @@ return static function (ContainerConfigurator $container) {
     $services
         ->set('ekyna_subscription.twig.extension.subscription', SubscriptionExtension::class)
         ->tag('twig.extension');
+
+    // Migrate sale item description converter
+    $services
+        ->set('ekyna_subscription.migration.description_converter', DescriptionConverter::class)
+        ->args([
+                   service('ekyna_commerce.factory.formatter'),
+                   service('translator'),
+               ]);
 };
