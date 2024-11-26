@@ -77,8 +77,9 @@ reminder:
     help:
         content: >
             <p>
-                <strong>{expiresAt}</strong> : Date d'expiration<br>
-                <strong>{cancelsAt}</strong> : Date d'annulation
+                <strong>{daysLeft}</strong> : Nombre de jours avant expiration<br>
+                <!--<strong>{expiresAt}</strong> : Date d'expiration<br>
+                <strong>{cancelsAt}</strong> : Date d'annulation-->
             </p>
 
 notification:

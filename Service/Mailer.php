@@ -67,9 +67,10 @@ class Mailer
          * Keep is sync with content field help text.
          * @see \Ekyna\Bundle\SubscriptionBundle\Form\Type\ReminderTranslationType::buildForm
          */
-        $expiresAt = $renewal->getSubscription()->getExpiresAt();
+        $expiresAt = $renewal->getEndsAt();
         $cancelsAt = (clone $expiresAt)->modify('+1 month');
         $replacements = [
+            '{daysLeft}'  => $reminder->getDays(),
             '{expiresAt}' => $formatter->date($expiresAt),
             '{cancelsAt}' => $formatter->date($cancelsAt),
         ];
