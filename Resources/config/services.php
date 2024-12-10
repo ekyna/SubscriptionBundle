@@ -412,10 +412,10 @@ return static function (ContainerConfigurator $container) {
         ->tag('twig.extension');
 
     // Migrate sale item description converter
-    $services
+    /*$services
         ->set('ekyna_subscription.migration.description_converter', DescriptionConverter::class)
         ->args([
-                   service('ekyna_commerce.factory.formatter'),
-                   service('translator'),
-               ]);
+            service('ekyna_commerce.factory.formatter'),
+            service('translator'),
+        ]);*/
 };

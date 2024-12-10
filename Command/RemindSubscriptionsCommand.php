@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\SubscriptionBundle\Command;
 
-use DateTime;
 use DateTimeImmutable;
 use Ekyna\Bundle\SubscriptionBundle\Message\Notify;
 use Ekyna\Bundle\SubscriptionBundle\Repository\ReminderRepositoryInterface;
@@ -14,6 +13,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Throwable;
 
@@ -43,6 +43,7 @@ class RemindSubscriptionsCommand extends Command
 
         $this->addOption('from', 'f', InputOption::VALUE_REQUIRED, 'The reference date');
         $this->addOption('modifier', 'm', InputOption::VALUE_REQUIRED, 'The reference date modifier');
+        $this->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'To do a dry run');
         $this->addOption('id',
             'i',
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
@@ -73,6 +74,8 @@ class RemindSubscriptionsCommand extends Command
             $ids = array_unique(array_map(static fn($v): int => (int)$v, $ids));
         }
 
+        $dryRun = (bool)$input->getOption('dry-run');
+
         foreach ($reminders as $reminder) {
             $output->writeln(sprintf(
                 "%s [%d]\n  - <comment>%s</comment>",
@@ -90,10 +93,20 @@ class RemindSubscriptionsCommand extends Command
 
                 $output->writeln(sprintf('%d : %s', $subscription->getId(), $subscription));
 
-                $this->messageBus->dispatch(new Notify(
-                    $subscription->getId(),
-                    $reminder->getId()
-                ));
+                if ($dryRun) {
+                    continue;
+                }
+
+                try {
+                    $this->messageBus->dispatch(
+                        new Notify(
+                            $subscription->getId(),
+                            $reminder->getId()
+                        )
+                    );
+                } catch (Exception) {
+                    // Log failre ?
+                }
             }
 
             $output->writeln('');

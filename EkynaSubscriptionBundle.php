@@ -19,6 +19,6 @@ class EkynaSubscriptionBundle extends Bundle
     public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new AdminMenuPass());
-        $container->addCompilerPass(new MigrationPass());
+        //$container->addCompilerPass(new MigrationPass());
     }
 }
