@@ -39,7 +39,7 @@ class OrderItemQuantityChangeHandler
 
         $renewal->setCount($count);
 
-        $this->manager->persist($count);
+        $this->manager->persist($renewal);
         $this->manager->flush();
     }
 }

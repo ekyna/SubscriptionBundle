@@ -28,6 +28,21 @@ class SubscriptionRepository extends ResourceRepository implements SubscriptionR
     /**
      * @inheritDoc
      */
+    public function existsWithPlan(PlanInterface $plan): bool
+    {
+        $qb = $this->createQueryBuilder('s');
+
+        return null !== $qb
+            ->andWhere('s.plan = :plan')
+            ->setParameter('plan', $plan)
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findOneByPlanAndCustomer(PlanInterface $plan, CustomerInterface $customer): ?SubscriptionInterface
     {
         return $this->findOneBy([

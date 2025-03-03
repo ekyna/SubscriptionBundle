@@ -12,12 +12,14 @@ use Ekyna\Bundle\SubscriptionBundle\Command\GenerateSubscriptionCommand;
 use Ekyna\Bundle\SubscriptionBundle\Command\RemindSubscriptionsCommand;
 use Ekyna\Bundle\SubscriptionBundle\Command\WatchSubscriptionCommand;
 use Ekyna\Bundle\SubscriptionBundle\Controller;
+use Ekyna\Bundle\SubscriptionBundle\Event\PlanEvents;
 use Ekyna\Bundle\SubscriptionBundle\Event\RenewalEvents;
 use Ekyna\Bundle\SubscriptionBundle\Event\SubscriptionEvents;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\CustomerReadListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\OrderItemListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\OrderListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\OrderReadListener;
+use Ekyna\Bundle\SubscriptionBundle\EventListener\PlanListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\ProductDeleteListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\RenewalListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\SaleItemListener;
@@ -202,7 +204,6 @@ return static function (ContainerConfigurator $container) {
         ->set('ekyna_subscription.message_handler.order_item_add', OrderItemAddHandler::class)
         ->args([
             service('ekyna_commerce.repository.order_item'),
-            service('ekyna_subscription.repository.plan'),
             service('ekyna_subscription.generator.subscription'),
             service('ekyna_subscription.manager.subscription'),
         ])
@@ -295,6 +296,9 @@ return static function (ContainerConfigurator $container) {
     // Order item (resource) event listener
     $services
         ->set('ekyna_subscription.listener.order_item', OrderItemListener::class)
+        ->args([
+            service('ekyna_subscription.repository.plan'),
+        ])
         ->call('setPersistenceHelper', [service('ekyna_resource.orm.persistence_helper')])
         ->call('setMessageQueue', [service('ekyna_resource.queue.message')])
         ->tag('resource.event_listener', [
@@ -380,6 +384,23 @@ return static function (ContainerConfigurator $container) {
         ])
         ->tag('kernel.event_listener', [
             'event' => AdminReadEvents::ORDER,
+        ]);
+
+    // Plan event listener
+    $services
+        ->set('ekyna_subscription.listener.plan', PlanListener::class)
+        ->args([
+            service('ekyna_resource.orm.persistence_helper'),
+            service('ekyna_subscription.repository.subscription'),
+            service('doctrine.orm.default_result_cache')->nullOnInvalid(),
+        ])
+        ->tag('resource.event_listener', [
+            'event'  => PlanEvents::INSERT,
+            'method' => 'onInsert',
+        ])
+        ->tag('resource.event_listener', [
+            'event'  => PlanEvents::UPDATE,
+            'method' => 'onUpdate',
         ]);
 
     // Subscription renderer

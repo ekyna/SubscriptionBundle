@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\SubscriptionBundle\EventListener;
 
+use Ekyna\Bundle\ProductBundle\Service\Commerce\ProductProvider;
 use Ekyna\Bundle\SubscriptionBundle\Message\OrderItemAdd;
 use Ekyna\Bundle\SubscriptionBundle\Message\OrderItemQuantityChange;
 use Ekyna\Bundle\SubscriptionBundle\Message\OrderItemSubjectChange;
+use Ekyna\Bundle\SubscriptionBundle\Repository\PlanRepositoryInterface;
 use Ekyna\Component\Commerce\Common\Helper\QuantityChangeHelper;
 use Ekyna\Component\Commerce\Exception\LogicException;
 use Ekyna\Component\Commerce\Order\Model\OrderItemInterface;
-use Ekyna\Component\Commerce\Order\Model\OrderStates;
 use Ekyna\Component\Resource\Event\ResourceEventInterface;
 use Ekyna\Component\Resource\Exception\UnexpectedTypeException;
 use Ekyna\Component\Resource\Message\MessageQueueAwareTrait;
@@ -28,6 +29,11 @@ class OrderItemListener
     use MessageQueueAwareTrait;
     use PersistenceAwareTrait;
 
+    public function __construct(
+        private readonly PlanRepositoryInterface $planRepository
+    ) {
+    }
+
     private function getItemFromEvent(ResourceEventInterface $event): OrderItemInterface
     {
         $item = $event->getResource();
@@ -43,8 +49,7 @@ class OrderItemListener
     {
         $item = $this->getItemFromEvent($event);
 
-        // If order is not in stockable state
-        if (!OrderStates::isStockableState($item->getRootSale()->getState())) {
+        if (!$this->itemHasPlanSubject($item)) {
             return;
         }
 
@@ -77,19 +82,28 @@ class OrderItemListener
             return;
         }
 
-        // Abort if sale is not in a stockable state
-        $sale = $item->getRootSale();
-        if (!OrderStates::isStockableState($sale->getState())) {
-            return;
-        }
-
-        // Abort if order just changed to a stockable state
-        $stateCs = $this->persistenceHelper->getChangeSet($sale, 'state');
-        if (!empty($stateCs) && OrderStates::hasChangedToStockable($stateCs)) {
+        if (!$this->itemHasPlanSubject($item)) {
             return;
         }
 
         $this->sendMessagesRecursively($item);
+    }
+
+    private function itemHasPlanSubject(OrderItemInterface $item): bool
+    {
+        if (!$item->hasSubjectIdentity()) {
+            return false;
+        }
+
+        if ($item->getSubjectIdentity()->getProvider() !== ProductProvider::getName()) {
+            return false;
+        }
+
+        return in_array(
+            $item->getSubjectIdentity()->getIdentifier(),
+            $this->planRepository->getIdentifiers(),
+            true
+        );
     }
 
     /**

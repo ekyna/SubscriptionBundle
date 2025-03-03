@@ -16,6 +16,8 @@ use Ekyna\Component\Resource\Doctrine\ORM\Repository\ResourceRepository;
  */
 class PlanRepository extends ResourceRepository implements PlanRepositoryInterface
 {
+    public const IDENTIFIERS_CACHE_KEY = 'plans_identifiers';
+
     private ?array $planIdentifiers = null;
 
     public function getIdentifiers(): array
@@ -27,8 +29,9 @@ class PlanRepository extends ResourceRepository implements PlanRepositoryInterfa
         $qb = $this->createQueryBuilder('p');
 
         return $this->planIdentifiers = $qb
-            ->select('p.id')
+            ->select('IDENTITY(p.product)')
             ->getQuery()
+            ->enableResultCache(3600 * 24, self::IDENTIFIERS_CACHE_KEY)
             ->getResult(IdHydrator::NAME);
     }
 

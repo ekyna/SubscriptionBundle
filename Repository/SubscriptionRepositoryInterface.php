@@ -23,6 +23,13 @@ interface SubscriptionRepositoryInterface extends ResourceRepositoryInterface
 {
     /**
      * @param PlanInterface     $plan
+     *
+     * @return bool
+     */
+    public function existsWithPlan(PlanInterface $plan): bool;
+
+    /**
+     * @param PlanInterface     $plan
      * @param CustomerInterface $customer
      *
      * @return SubscriptionInterface|null
