@@ -6,14 +6,17 @@ namespace Ekyna\Bundle\SubscriptionBundle\Form\Type;
 
 use Ekyna\Bundle\CommerceBundle\Form\Type\Customer\CustomerSearchType;
 use Ekyna\Bundle\ResourceBundle\Form\Type\AbstractResourceType;
+use Ekyna\Bundle\ResourceBundle\Form\Type\ConstantChoiceType;
 use Ekyna\Bundle\ResourceBundle\Form\Type\ResourceChoiceType;
 use Ekyna\Bundle\SubscriptionBundle\Model\PlanInterface;
+use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
 use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionUtils;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 use function Symfony\Component\Translation\t;
 
@@ -24,6 +27,11 @@ use function Symfony\Component\Translation\t;
  */
 class SubscriptionType extends AbstractResourceType
 {
+    public function __construct(
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -54,5 +62,16 @@ class SubscriptionType extends AbstractResourceType
                     'disabled' => $disabled,
                 ]);
         });
+
+        if (!$this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
+            return;
+        }
+
+        $builder
+            ->add('state', ConstantChoiceType::class, [
+                'label'   => t('field.status', [], 'EkynaUi'),
+                'class'   => SubscriptionStates::class,
+                'select2' => false,
+            ]);
     }
 }

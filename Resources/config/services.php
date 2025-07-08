@@ -25,6 +25,7 @@ use Ekyna\Bundle\SubscriptionBundle\EventListener\RenewalListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\SaleItemListener;
 use Ekyna\Bundle\SubscriptionBundle\EventListener\SubscriptionListener;
 use Ekyna\Bundle\SubscriptionBundle\Factory\RenewalFactory;
+use Ekyna\Bundle\SubscriptionBundle\Form\Type\SubscriptionType;
 use Ekyna\Bundle\SubscriptionBundle\MessageHandler\NotifyHandler;
 use Ekyna\Bundle\SubscriptionBundle\MessageHandler\OrderItemAddHandler;
 use Ekyna\Bundle\SubscriptionBundle\MessageHandler\OrderItemQuantityChangeHandler;
@@ -164,6 +165,14 @@ return static function (ContainerConfigurator $container) {
             service('ekyna_resource.helper'),
             service('form.factory'),
         ]);
+
+    // Subscription form type
+    $services
+        ->set('ekyna_subscription.form_type.subscription', SubscriptionType::class)
+        ->args([
+            service('security.authorization_checker'),
+        ])
+        ->tag('form_type');
 
     // Subscription mailer
     $services
