@@ -10,6 +10,7 @@ use Ekyna\Bundle\SubscriptionBundle\Model\SubscriptionStates;
 use Ekyna\Component\Resource\Action\Permission;
 use Ekyna\Component\Resource\Event\ResourceEventInterface;
 use Ekyna\Component\Resource\Exception\UnexpectedTypeException;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 use function Symfony\Component\Translation\t;
 
@@ -35,8 +36,22 @@ class CancelAction extends AbstractConfirmAction
 
     protected function getFormOptions(): array
     {
-        return [
+        return array_replace(parent::getFormOptions(), [
             'message' => t('subscription.message.cancel_confirm', [], 'EkynaSubscription'),
+        ]);
+    }
+
+    protected function getFormButtons(string $cancelPath = null): array
+    {
+        return [
+            'submit' => [
+                'type'    => SubmitType::class,
+                'options' => [
+                    'button_class' => 'warning',
+                    'label'        => t('button.confirm', [], 'EkynaUi'),
+                    'attr'         => ['icon' => 'remove'],
+                ],
+            ],
         ];
     }
 
