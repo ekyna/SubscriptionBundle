@@ -79,7 +79,7 @@ class SaleItemUpdater
 
         $duration = $range->getDays();
 
-        $default = $range->getStart()->modify("+{$plan->getInitialDuration()} month")->modify('-1 day');
+        $default = $range->getStart()->modify("+{$plan->getInitialDuration()} month");
 
         $total = $range->getStart()->diff($default)->days;
 
