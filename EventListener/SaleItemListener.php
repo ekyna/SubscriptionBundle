@@ -63,6 +63,8 @@ class SaleItemListener
 
         $this->saleItemUpdater->updateNetPrice($item, $plan, $range);
         $this->saleItemUpdater->updateDescription($item, $range);
+
+        $event->stopPropagation();
     }
 
     /**

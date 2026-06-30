@@ -48,7 +48,7 @@ use Ekyna\Bundle\SubscriptionBundle\Service\SubscriptionUpdater;
 use Ekyna\Bundle\SubscriptionBundle\Table\Column\SubscriptionExpiresAtType;
 use Ekyna\Bundle\SubscriptionBundle\Twig\SubscriptionExtension;
 use Ekyna\Bundle\TableBundle\DependencyInjection\Compiler\TablePass;
-use Ekyna\Component\Commerce\Common\Event\SaleItemEvents;
+use Ekyna\Component\Commerce\Common\Event\SaleItemNetPriceEvent;
 use Ekyna\Component\Commerce\Order\Event\OrderEvents;
 use Ekyna\Component\Commerce\Order\Event\OrderItemEvents;
 
@@ -364,9 +364,9 @@ return static function (ContainerConfigurator $container) {
             service('ekyna_subscription.calculator.renewal'),
         ])
         ->tag('kernel.event_listener', [
-            'event'    => SaleItemEvents::BUILD,
+            'event'    => SaleItemNetPriceEvent::class,
             'method'   => 'onSaleItemBuild',
-            'priority' => -1024,
+            'priority' => 1024,
         ])
         ->tag('kernel.event_listener', [
             'event'    => SaleItemFormEvent::BUILD_FORM,
